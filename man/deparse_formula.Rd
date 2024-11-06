@@ -9,6 +9,9 @@ deparse_formula(formula)
 \arguments{
 \item{formula}{an R formula following the pattern above}
 }
+\value{
+nested lists for the left hand side and right hand side of the formula
+}
 \description{
 Translates an R formula into nested lists for both the left and the right
 hand side to create table rows and banners. Importantly, this function

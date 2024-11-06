@@ -15,6 +15,9 @@ deparse_formula_partial(
 \item{deparsed}{this function is a recursive function and makes use of the deparsed list.
 Don't change this manually.}
 }
+\value{
+a nested list with formula elements
+}
 \description{
 Translates the left of right hand side of an R formula into a nested list. Importantly, this function
 can only parse a specific subset of formulas that allows for the following
