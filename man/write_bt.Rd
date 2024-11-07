@@ -32,7 +32,7 @@ write_bt(
 Write a basic table to an excel workbook.
 }
 \examples{
-library(basciTables)
+library(basicTables)
 data("iris")
 
 tbl <- bt(data = iris[iris$Species == "setosa", ],

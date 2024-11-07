@@ -11,7 +11,7 @@
 #' @import openxlsx
 #' @export
 #' @examples
-#' library(basciTables)
+#' library(basicTables)
 #' data("iris")
 #'
 #' tbl <- bt(data = iris[iris$Species == "setosa", ],
