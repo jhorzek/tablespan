@@ -1,3 +1,11 @@
+#' get_locations
+#'
+#' Provides row and column indices for the table elements.
+#' @param tbl table created with basicTables::bt
+#' @param start_row row index at which the table will start
+#' @param start_col column index at which the table will start
+#' @returns list with locations
+#' @keywords internal
 get_locations <- function(tbl,
                           start_row,
                           start_col){
@@ -60,7 +68,7 @@ get_locations <- function(tbl,
       start_row_data = start_row_data,
       end_row_data = end_row_data,
       start_row_footnote = start_row_footnote,
-      end_row_footnote= end_row_footnote
+      end_row_footnote = end_row_footnote
     ),
     col = list(
       start_col_title = start_col_title,
@@ -72,7 +80,7 @@ get_locations <- function(tbl,
       start_col_header_rhs = start_col_header_rhs,
       end_col_header_rhs = end_col_header_rhs,
       start_col_footnote = start_col_footnote,
-      end_col_footnot = end_col_footnote
+      end_col_footnote = end_col_footnote
     )
   ))
 }

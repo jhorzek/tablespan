@@ -24,7 +24,9 @@ write_bt(
 
 \item{start_col}{column at which to start the table}
 
-\item{styles}{openxlsx style for the different table elements (see ?basicTables::bt_styles)}
+\item{styles}{openxlsx style for the different table elements (see ?basicTables::bt_styles).
+The styles element also allows applying custom styles to parts of the data shown in the
+table body.}
 }
 \description{
 Write a basic table to an excel workbook.
@@ -40,4 +42,50 @@ tbl <- bt(data = iris[iris$Species == "setosa", ],
 wb <- write_bt(tbl = tbl)
 
 # saveWorkbook(wb, "iris.xlsx")
+
+# To apply a custom style to some elements use the styles argument. The following
+# applies the "bold" style to the rows 1-5 of the Sepal.Length column and
+# the rows 9-10 of the Petal.Width column.
+bold <- openxlsx::createStyle(textDecoration = "bold")
+
+wb <- write_bt(tbl = tbl,
+               styles = bt_styles(cell_styles = list(cell_style(rows = 1:5,
+                                                                colnames = "Sepal.Length",
+                                                                style = bold),
+                                                     cell_style(rows = 9:10,
+                                                                colnames = "Petal.Width",
+                                                                style = bold))))
+# saveWorkbook(wb, "iris.xlsx")
+
+# The main use case for basicTables is when you already have a summarized table
+# that you now want to share using xlsx. The following shows an example using
+# the dplyr package:
+if (require("dplyr")) {
+# First summarize the data:
+summarized_table <- mtcars |>
+  group_by(cyl, vs) |>
+  summarise(N = n(),
+            mean_hp = mean(hp),
+            sd_hp = sd(hp),
+            mean_wt = mean(wt),
+            sd_wt = sd(wt))
+
+# Now, we want to create a table, where we show the grouping variables
+# as row names and also create spanners for the horse power (hp) and the
+# weight (wt) variables:
+tbl <- bt(data = summarized_table,
+          formula = Cylinder:cyl + Engine:vs ~
+            N +
+            (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+            (`Weight` = Mean:mean_wt + SD:sd_wt),
+          title = "Motor Trend Car Road Tests",
+          subtitle = "A table created with basicTables",
+          footnote = "Data from the infamous mtcars data set.")
+
+wb <- write_bt(tbl = tbl)
+
+# Create the excel table:
+# openxlsx::saveWorkbook(wb,
+#                        file = "cars.xlsx", overwrite = TRUE)
+}
 }

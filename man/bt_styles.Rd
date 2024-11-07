@@ -14,12 +14,16 @@ bt_styles(
     openxlsx::openxlsx_getOp("borderStyle", "double")),
   title_style = openxlsx::createStyle(fontSize = 14, halign = "left", textDecoration =
     "bold"),
-  subtitle_style = openxlsx::createStyle(fontSize = 14, halign = "left", textDecoration =
+  subtitle_style = openxlsx::createStyle(fontSize = 11, halign = "left", textDecoration =
     "bold"),
-  header_style = openxlsx::createStyle(fontSize = 14, halign = "center", border =
-    "BottomLeftRight", borderColour = openxlsx_getOp("borderColour", "black"),
-    borderStyle = openxlsx_getOp("borderStyle", "double"), textDecoration = "bold"),
-  footnote_style = openxlsx::createStyle(fontSize = 12, halign = "left")
+  header_style = openxlsx::createStyle(fontSize = 11, halign = "center", border =
+    "BottomLeftRight", borderColour = openxlsx::openxlsx_getOp("borderColour", "black"),
+    borderStyle = openxlsx::openxlsx_getOp("borderStyle", "double"), textDecoration =
+    "bold"),
+  merge_rownames = TRUE,
+  merged_rownames_style = createStyle(valign = "top"),
+  footnote_style = openxlsx::createStyle(fontSize = 11, halign = "left"),
+  cell_styles = NULL
 )
 }
 \arguments{
@@ -31,11 +35,23 @@ the style for the lines under spanners is defined in the title_style.}
 \item{vline_style}{style for the vertical lines used in the table. Note:
 the style for the lines under spanners is defined in the title_style.}
 
-\item{title_style}{style applied to the table subtitle}
+\item{title_style}{style applied to the table title}
+
+\item{subtitle_style}{style applied to the table subtitle}
 
 \item{header_style}{style applied to the table header (column names)}
 
+\item{merge_rownames}{boolean: Should adjacent rows with identical names be merged?}
+
+\item{merged_rownames_style}{style applied to the merged rownames}
+
 \item{footnote_style}{style applied to the table footnote}
+
+\item{cell_styles}{an optional list with styles for selected cells in the
+data frame.}
+}
+\value{
+a list with styles
 }
 \description{
 Define styles for different elements of the table.

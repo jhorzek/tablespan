@@ -104,6 +104,13 @@ bt <- function(data,
   return(bt_result)
 }
 
+#' check_variables
+#'
+#' Checks if the variables specified in the table formula exist in the data set
+#'
+#' @param data data set
+#' @param variables variable names from formula
+#' @keywords internal
 check_variables <- function(data, variables){
   if(!is.null(variables$row_variables)){
     check_row_variables <- setdiff(variables$row_variables, colnames(data))
@@ -118,16 +125,38 @@ check_variables <- function(data, variables){
                 paste0(check_col_variables, collapse = ",")))
 }
 
+#' get_col_data
+#'
+#' Extracts the data that will be used as row names in the table
+#'
+#' @param data data set
+#' @param col_variables variable names from formula
+#' @keywords internal
 get_col_data <- function(data, col_variables){
   return(data[,col_variables, drop = FALSE])
 }
 
+#' get_row_data
+#'
+#' Extracts the data that will be used as body in the table
+#'
+#' @param data data set
+#' @param row_variables variable names from formula
+#' @keywords internal
 get_row_data <- function(data, row_variables){
   if(!is.null(row_variables))
     return(data[,row_variables, drop = FALSE])
   return(NULL)
 }
 
+#' construct_header
+#'
+#' Adds width and depth (number of levels) to the deparsed
+#' table description.
+#'
+#' @param deparsed table formula translated in nested list
+#' @returns deparsed with widht and levels fields
+#' @keywords internal
 construct_header <- function(deparsed){
 
   deparsed$rhs <- add_header_width(deparsed$rhs)

@@ -7,7 +7,9 @@
 #' @param sheet name of the sheet to which the table should be written to
 #' @param start_row row at which to start the table
 #' @param start_col column at which to start the table
-#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles)
+#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles).
+#' The styles element also allows applying custom styles to parts of the data shown in the
+#' table body.
 #' @import openxlsx
 #' @export
 #' @examples
@@ -21,6 +23,52 @@
 #' wb <- write_bt(tbl = tbl)
 #'
 #' # saveWorkbook(wb, "iris.xlsx")
+#'
+#' # To apply a custom style to some elements use the styles argument. The following
+#' # applies the "bold" style to the rows 1-5 of the Sepal.Length column and
+#' # the rows 9-10 of the Petal.Width column.
+#' bold <- openxlsx::createStyle(textDecoration = "bold")
+#'
+#' wb <- write_bt(tbl = tbl,
+#'                styles = bt_styles(cell_styles = list(cell_style(rows = 1:5,
+#'                                                                 colnames = "Sepal.Length",
+#'                                                                 style = bold),
+#'                                                      cell_style(rows = 9:10,
+#'                                                                 colnames = "Petal.Width",
+#'                                                                 style = bold))))
+#' # saveWorkbook(wb, "iris.xlsx")
+#'
+#' # The main use case for basicTables is when you already have a summarized table
+#' # that you now want to share using xlsx. The following shows an example using
+#' # the dplyr package:
+#' if (require("dplyr")) {
+#' # First summarize the data:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Now, we want to create a table, where we show the grouping variables
+#' # as row names and also create spanners for the horse power (hp) and the
+#' # weight (wt) variables:
+#' tbl <- bt(data = summarized_table,
+#'           formula = Cylinder:cyl + Engine:vs ~
+#'             N +
+#'             (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'             (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'           title = "Motor Trend Car Road Tests",
+#'           subtitle = "A table created with basicTables",
+#'           footnote = "Data from the infamous mtcars data set.")
+#'
+#' wb <- write_bt(tbl = tbl)
+#'
+#' # Create the excel table:
+#' # openxlsx::saveWorkbook(wb,
+#' #                        file = "cars.xlsx", overwrite = TRUE)
+#' }
 write_bt <- function(tbl,
                      workbook = openxlsx::createWorkbook(),
                      sheet = "BasicTable",
@@ -72,6 +120,19 @@ write_bt <- function(tbl,
   return(workbook)
 }
 
+#' fill_background
+#'
+#' Fills the background of the table.
+#'
+#' @param tbl table created with basicTables::bt
+#' @param workbook Excel workbook created with openxlsx::createWorkbook()
+#' @param sheet name of the sheet to which the table should be written to
+#' @param locations list with overview of row and col locations for different table elements
+#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles).
+#' The styles element also allows applying custom styles to parts of the data shown in the
+#' table body.
+#' @import openxlsx
+#' @keywords internal
 fill_background <- function(tbl,
                             workbook,
                             sheet,
@@ -84,6 +145,8 @@ fill_background <- function(tbl,
   min_col <- locations$col |> unlist() |> min()
   max_col <- locations$col |> unlist() |> max()
 
+  max_row <- max_row - is.null(tbl$footnote)
+
   openxlsx::addStyle(wb = workbook,
                      sheet = sheet,
                      style = styles$background_style,
@@ -93,6 +156,19 @@ fill_background <- function(tbl,
                      stack = TRUE)
 }
 
+#' write_title
+#'
+#' Writes the title and the subtitle to the workbook.
+#'
+#' @param tbl table created with basicTables::bt
+#' @param workbook Excel workbook created with openxlsx::createWorkbook()
+#' @param sheet name of the sheet to which the table should be written to
+#' @param locations list with overview of row and col locations for different table elements
+#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles).
+#' The styles element also allows applying custom styles to parts of the data shown in the
+#' table body.
+#' @import openxlsx
+#' @keywords internal
 write_title <- function(tbl,
                         workbook,
                         sheet,
@@ -113,10 +189,10 @@ write_title <- function(tbl,
                        rows = locations$row$start_row_title,
                        cols = locations$col$start_col_title,
                        stack = TRUE)
-    #openxlsx::mergeCells(wb = workbook,
-    #                     sheet = sheet,
-    #                     cols = start_col:(start_col + n_col - 1),
-    #                     rows = start_row)
+    openxlsx::mergeCells(wb = workbook,
+                         sheet = sheet,
+                         cols = locations$col$start_col_title:locations$col$end_col_title,
+                         rows = locations$row$start_row_title)
   }
 
   if(!is.null(tbl$subtitle)){
@@ -133,10 +209,10 @@ write_title <- function(tbl,
                        rows = locations$row$start_row_subtitle,
                        cols = locations$col$start_col_subtitle,
                        stack = TRUE)
-    #openxlsx::mergeCells(wb = workbook,
-    #                     sheet = sheet,
-    #                     cols = start_col:(start_col + n_col - 1),
-    #                     rows = start_row + 1)
+    openxlsx::mergeCells(wb = workbook,
+                         sheet = sheet,
+                         cols = locations$col$start_col_subtitle:locations$col$end_col_subtitle,
+                         rows = locations$row$start_row_subtitle)
   }
 
   if(!is.null(tbl$title) | !is.null(tbl$subtitle)){
@@ -150,7 +226,20 @@ write_title <- function(tbl,
   }
 }
 
+#' write_header
+#'
+#' Writes the header (column names and names for the rownames) to the workbook.
+#'
+#' @param workbook Excel workbook created with openxlsx::createWorkbook()
+#' @param sheet name of the sheet to which the table should be written to
+#' @param header header specification from bt table
+#' @param table_data data for rownames and the actual data for the body of the table
+#' @param locations list with overview of row and col locations for different table elements
+#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles).
+#' The styles element also allows applying custom styles to parts of the data shown in the
+#' table body.
 #' @import openxlsx
+#' @keywords internal
 write_header <- function(workbook,
                          sheet,
                          header,
@@ -192,6 +281,20 @@ write_header <- function(workbook,
 
 }
 
+#' write_header_entry
+#'
+#' Recursive function writing the header elements (column names and names for the rownames)
+#' to the workbook.
+#'
+#' @param workbook Excel workbook created with openxlsx::createWorkbook()
+#' @param sheet name of the sheet to which the table should be written to
+#' @param header_entry specific header enty to write to the workbook
+#' @param max_level the highest level of header entries
+#' @param start_row integer specifying row to write to
+#' @param start_col integer specifying column to write to
+#' @param header_style openxlsx style for the header
+#' @import openxlsx
+#' @keywords internal
 write_header_entry <- function(workbook,
                                sheet,
                                header_entry,
@@ -236,6 +339,20 @@ write_header_entry <- function(workbook,
   }
 }
 
+#' write_data
+#'
+#' Writes the data to the body of the workbook.
+#'
+#' @param workbook Excel workbook created with openxlsx::createWorkbook()
+#' @param sheet name of the sheet to which the table should be written to
+#' @param header header specification from bt table
+#' @param table_data data for rownames and the actual data for the body of the table
+#' @param locations list with overview of row and col locations for different table elements
+#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles).
+#' The styles element also allows applying custom styles to parts of the data shown in the
+#' table body.
+#' @import openxlsx
+#' @keywords internal
 write_data <- function(workbook,
                        sheet,
                        header,
@@ -252,6 +369,14 @@ write_data <- function(workbook,
                         startRow = locations$row$end_row_header + 1,
                         rowNames = FALSE,
                         colNames = FALSE)
+
+    if(styles$merge_rownames){
+      merge_rownames(workbook = workbook,
+                     sheet = sheet,
+                     table_data = table_data,
+                     locations = locations,
+                     styles = styles)
+    }
 
     # Separate row names and data with a vertical bar
     openxlsx::addStyle(wb = workbook,
@@ -286,8 +411,41 @@ write_data <- function(workbook,
                      rows = locations$row$start_row_footnote - 1,
                      cols = locations$col$start_col_footnote:locations$col$end_col_footnot,
                      stack = TRUE)
+
+  # Apply custom styles
+  if(!is.null(styles$cell_styles)){
+    for(sty in styles$cell_styles){
+      if(any(!sty$colnames %in% colnames(table_data$col_data)))
+        stop("Could not find the following elemnts in the data: ",
+             paste0(sty$colnames[!sty$colnames %in% colnames(table_data$col_data)], collapse = ", "),
+             ".")
+      if(any(sty$rows > nrow(table_data$col_data)))
+        stop("Trying to style a row outside of the range of the data.")
+
+      openxlsx::addStyle(wb = workbook,
+                         sheet = sheet,
+                         style = sty$style,
+                         rows = locations$row$start_row_data + sty$rows - 1,
+                         cols = locations$col$start_col_header_rhs + which(colnames(table_data$col_data) %in% sty$colnames) - 1,
+                         stack = sty$stack,
+                         gridExpand = sty$gridExpand)
+    }
+  }
 }
 
+#' write_footnote
+#'
+#' Writes the footnote to the workbook.
+#'
+#' @param tbl table created with basicTables::bt
+#' @param workbook Excel workbook created with openxlsx::createWorkbook()
+#' @param sheet name of the sheet to which the table should be written to
+#' @param locations list with overview of row and col locations for different table elements
+#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles).
+#' The styles element also allows applying custom styles to parts of the data shown in the
+#' table body.
+#' @import openxlsx
+#' @keywords internal
 write_footnote <- function(tbl,
                            workbook,
                            sheet,
@@ -310,8 +468,66 @@ write_footnote <- function(tbl,
                      rows = locations$row$start_row_footnote,
                      cols = locations$col$start_col_footnote,
                      stack = TRUE)
-  # openxlsx::mergeCells(wb = workbook,
-  #                      sheet = sheet,
-  #                      cols = start_col:(start_col + n_col - 1),
-  #                      rows = start_row)
+  openxlsx::mergeCells(wb = workbook,
+                       sheet = sheet,
+                       cols = locations$col$start_col_footnote:locations$col$end_col_footnote,
+                       rows = locations$row$start_row_footnote)
+}
+
+#' merge_rownames
+#'
+#' Merges consecutive rownames that are identical into a common cell.
+#'
+#' @param workbook Excel workbook created with openxlsx::createWorkbook()
+#' @param sheet name of the sheet to which the table should be written to
+#' @param table_data data for rownames and the actual data for the body of the table
+#' @param locations list with overview of row and col locations for different table elements
+#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles).
+#' The styles element also allows applying custom styles to parts of the data shown in the
+#' table body.
+#' @import openxlsx
+#' @keywords internal
+merge_rownames <- function(workbook,
+                           sheet,
+                           table_data,
+                           locations,
+                           styles){
+  for(i in 1:ncol(table_data$row_data)){
+    current_element <- NULL
+    to_merege <- NULL
+    for(j in 1:nrow(table_data$row_data)){
+      if(is.null(current_element) || (current_element != table_data$row_data[j, i])){
+        if(!is.null(to_merege) && length(to_merege) > 1){
+          openxlsx::addStyle(wb = workbook,
+                             sheet = sheet,
+                             style = styles$merged_rownames_style,
+                             rows = locations$row$end_row_header + to_merege,
+                             cols = locations$col$start_col_header_lhs + i - 1,
+                             stack = TRUE)
+
+          openxlsx::mergeCells(wb = workbook,
+                               sheet = sheet,
+                               cols = locations$col$start_col_header_lhs + i - 1,
+                               rows = locations$row$end_row_header + to_merege)
+        }
+        current_element <- table_data$row_data[j, i]
+        to_merege <- j
+        next
+      }
+      to_merege <- c(to_merege, j)
+    }
+    if(!is.null(to_merege) && length(to_merege) > 1){
+      openxlsx::addStyle(wb = workbook,
+                         sheet = sheet,
+                         style = styles$merged_rownames_style,
+                         rows = locations$row$end_row_header + to_merege,
+                         cols = locations$col$start_col_header_lhs + i - 1,
+                         stack = TRUE)
+
+      openxlsx::mergeCells(wb = workbook,
+                           sheet = sheet,
+                           cols = locations$col$start_col_header_lhs + i - 1,
+                           rows = locations$row$end_row_header + to_merege)
+    }
+  }
 }
