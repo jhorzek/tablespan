@@ -67,13 +67,42 @@ write_header <- function(workbook,
                          start_col,
                          header_style){
 
-  # TODO: Add header for row names
+
+
+  if(!is.null(header$lhs)){
+
+    max_level <- max(header$lhs$level, header$rhs$level)
+
+    write_header_entry(workbook = workbook,
+                       sheet = sheet,
+                       header_entry = header$lhs,
+                       max_level = max_level,
+                       start_row = start_row,
+                       start_col = start_col,
+                       header_style = header_style)
+
+    # Separate row names and data with a vertical bar
+    sty <- openxlsx::createStyle(border = "Right",
+                                 borderColour = openxlsx_getOp("borderColour", "black"),
+                                 borderStyle = openxlsx_getOp("borderStyle", "double"))
+    openxlsx::addStyle(wb = workbook,
+                       sheet = sheet,
+                       style = sty,
+                       rows = (start_row):(start_row + max(header$lhs$level, header$rhs$level)),
+                       cols = start_col + header$lhs$width - 1,
+                       stack = TRUE)
+
+    start_data_col <- start_col + header$lhs$width
+  }else{
+    max_level <- header$rhs$level
+    start_data_col <- start_col
+  }
   write_header_entry(workbook = workbook,
                      sheet = sheet,
                      header_entry = header$rhs,
-                     max_level = header$rhs$level,
+                     max_level = max_level,
                      start_row = start_row,
-                     start_col = start_col,
+                     start_col = start_data_col,
                      header_style = header_style)
 
 }
@@ -104,7 +133,8 @@ write_header_entry <- function(workbook,
                        style = header_style,
                        rows = start_row + (max_level - header_entry$level) - 1,
                        cols = start_col:(start_col + header_entry$width - 1),
-                       gridExpand = TRUE)
+                       gridExpand = TRUE,
+                       stack = TRUE)
   }
 
   # entries may have sub-entries, that also have to be written down
@@ -129,14 +159,41 @@ write_data <- function(workbook,
                        start_row,
                        start_col,
                        header_style){
-  # TODO: Add row name skip
-  # We need to skip as many columns as there are row name elements
-  start_data_col <- start_col
 
-  # TODO: Write row names
+  if(!is.null(header$lhs)){
+    # We need to skip as many rows as there are levels to our header
+    start_data_row <- start_row + max(header$lhs$level, header$rhs$level) - 1
+  }else{
+    start_data_row <- start_row + header$rhs$level - 1
+  }
 
-  # We need to skip as many rows as there are levels to our header
-  start_data_row <- start_row + header$rhs$level - 1
+  if(!is.null(header$lhs)){
+    # Row names
+    openxlsx::writeData(wb = workbook,
+                        sheet = sheet,
+                        x = table_data$row_data,
+                        startCol = start_col,
+                        startRow = start_data_row,
+                        rowNames = FALSE,
+                        colNames = FALSE)
+
+    # Separate row names and data with a vertical bar
+    sty <- openxlsx::createStyle(border = "Right",
+                                 borderColour = openxlsx_getOp("borderColour", "black"),
+                                 borderStyle = openxlsx_getOp("borderStyle", "double"))
+    openxlsx::addStyle(wb = workbook,
+                       sheet = sheet,
+                       style = sty,
+                       rows = start_data_row:(start_data_row + nrow(table_data$row_data) - 1),
+                       cols = start_col + ncol(table_data$row_data) - 1,
+                       stack = TRUE)
+
+    # We need to skip as many columns as there are row name elements
+    start_data_col <- start_col + ncol(table_data$row_data)
+
+  }else{
+    start_data_col <- start_col
+  }
 
   openxlsx::writeData(wb = workbook,
                       sheet = sheet,
@@ -145,5 +202,4 @@ write_data <- function(workbook,
                       startRow = start_data_row,
                       rowNames = FALSE,
                       colNames = FALSE)
-
 }

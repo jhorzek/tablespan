@@ -3,3 +3,4 @@
 export(bt)
 export(write_bt)
 import(openxlsx)
+importFrom(methods,is)

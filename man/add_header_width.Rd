@@ -31,7 +31,7 @@ deparsed <- basicTables:::deparse_formula(formula =
  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 str(deparsed)
 
-deparsed <- add_header_width(deparsed$rhs)
+deparsed <- basicTables:::add_header_width(deparsed$rhs)
 str(deparsed)
 deparsed$width
 }

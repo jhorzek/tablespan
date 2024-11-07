@@ -18,8 +18,17 @@
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
 deparse_formula <- function(formula){
-  lhs <- deparse_formula_partial(formula_partial = formula[[2]])
-  rhs <- deparse_formula_partial(formula_partial = formula[[3]])
+  if(formula[[2]] == "1"){
+    lhs <- NULL
+  }else{
+    lhs <- deparse_formula_partial(formula_partial = formula[[2]])
+  }
+
+  if(formula[[3]] == "1"){
+    stop("Missing right hand side of formula.")
+  }else{
+    rhs <- deparse_formula_partial(formula_partial = formula[[3]])
+  }
 
   return(list(lhs = lhs,
               rhs = rhs))
@@ -39,6 +48,7 @@ deparse_formula <- function(formula){
 #' @param deparsed this function is a recursive function and makes use of the deparsed list.
 #' Don't change this manually.
 #' @returns a nested list with formula elements
+#' @importFrom methods is
 #' @keywords internal
 #' @examples
 #' library(basicTables)
@@ -61,8 +71,22 @@ deparse_formula_partial <- function(formula_partial,
   if(length(formula_partial) == 1){
     deparsed$entries <- c(deparsed$entries,
                           list(list(name = as.character(formula_partial),
+                                    item_name = as.character(formula_partial),
                                     entries = NULL)))
     return(deparsed)
+  }
+
+  if((formula_partial[[1]] == ":")){
+    if((length(formula_partial[[2]]) == 1) & (length(formula_partial[[3]]) == 1)){
+      deparsed$entries <- c(deparsed$entries,
+                            list(list(name = as.character(formula_partial[[2]]),
+                                      item_name = as.character(formula_partial[[3]]),
+                                      entries = NULL)))
+      return(deparsed)
+    }else{
+      stop(paste0("Renaming with ", as.character(formula_partial) ,
+                  " is not allowed. Both sides of the colon must be single names (e.g., a:b)."))
+    }
   }
 
   if(formula_partial[[1]] == "+"){
@@ -79,6 +103,11 @@ deparse_formula_partial <- function(formula_partial,
                                         deparsed)
     return(deparsed)
   }else if(formula_partial[[1]] == "("){
+    # Check if there is a name for the current spanner
+    try_name <- try(formula_partial[[2]][[1]] != "=", silent = TRUE)
+    if(is(try_name, "try-error") | try_name){
+      stop("The following spanner has not name: ", formula_partial, ".")
+    }
     # In case of a brace, we have to go one step deeper
     deparsed$entries <- c(deparsed$entries,
                           list(deparse_formula_partial(formula_partial[[2]],
@@ -105,11 +134,11 @@ deparse_formula_partial <- function(formula_partial,
 #' str(deparsed)
 #' basicTables:::get_variables(deparsed)
 get_variables <- function(deparsed_formula){
-  row_variables <- get_variables_from_list(deparsed_formula_element = deparsed_formula$lhs)
-
-  if(all(row_variables == "1")){
+  if(is.null(deparsed_formula$lhs)){
     # no row variable
     row_variables <- NULL
+  }else{
+    row_variables <- get_variables_from_list(deparsed_formula_element = deparsed_formula$lhs)
   }
 
   col_variables <- get_variables_from_list(deparsed_formula_element = deparsed_formula$rhs)
@@ -138,7 +167,7 @@ get_variables <- function(deparsed_formula){
 #' basicTables:::get_variables_from_list(deparsed$lhs)
 get_variables_from_list <- function(deparsed_formula_element, variables = c()){
   if(is.null(deparsed_formula_element$entries)){
-    variables <- c(variables, deparsed_formula_element$name)
+    variables <- c(variables, deparsed_formula_element$item_name)
     return(variables)
   }else{
     for(entry in deparsed_formula_element$entries)
