@@ -60,7 +60,10 @@
 #'
 #' @param data data set
 #' @param formula formula to create table
-#' @returns Object of class BT with header info, data, and footer info.
+#' @param title string specifying the title of the table
+#' @param subtitle string specifying the subtitle of the table
+#' @param footnote string specifying the footnote of the table
+#' @returns Object of class BT with title, subtitle, header info, data, and footnote.
 #' @export
 #' @examples
 #' data("iris")
@@ -73,7 +76,10 @@
 #'
 #' # saveWorkbook(wb, "iris.xlsx")
 bt <- function(data,
-               formula){
+               formula,
+               title = NULL,
+               subtitle = NULL,
+               footnote = NULL){
 
   deparsed <- deparse_formula(formula)
 
@@ -89,11 +95,11 @@ bt <- function(data,
 
   header <- construct_header(deparsed)
 
-  footer <- NULL # construct_footer()
-
-  bt_result <- list(header = header,
+  bt_result <- list(title = title,
+                    subtitle = subtitle,
+                    header = header,
                     table_data = table_data,
-                    footer = footer)
+                    footnote = footnote)
   class(bt_result) <- "BT"
   return(bt_result)
 }
@@ -139,9 +145,9 @@ construct_header <- function(deparsed){
 #' wide each entry in the header must be (i.e., how many cells it will get in
 #' the Excel output), we have to get the number of root elements each parent element
 #' spans. For example, in the following table, x spans two elements x1 and x2:
-#'
+#' \preformatted{
 #' |    x    |
-#' | x1 | x2 |
+#' | x1 | x2 |}
 #'
 #' add_header_width adds the span to each element in a table header.
 #'
@@ -182,8 +188,9 @@ add_header_width <- function(parsed_partial){
 #' parent element. For example, in the following table, x is on level 2, but x1,
 #' x2, y1, and y2 are at level 1:
 #'
+#' \preformatted{
 #' |    x    |
-#' | x1 | x2 | y1 | y2
+#' | x1 | x2 | y1 | y2}
 #'
 #' add_header_level adds the level to each element in a table header.
 #'

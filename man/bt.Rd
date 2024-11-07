@@ -4,15 +4,21 @@
 \alias{bt}
 \title{bt}
 \usage{
-bt(data, formula)
+bt(data, formula, title = NULL, subtitle = NULL, footnote = NULL)
 }
 \arguments{
 \item{data}{data set}
 
 \item{formula}{formula to create table}
+
+\item{title}{string specifying the title of the table}
+
+\item{subtitle}{string specifying the subtitle of the table}
+
+\item{footnote}{string specifying the footnote of the table}
 }
 \value{
-Object of class BT with header info, data, and footer info.
+Object of class BT with title, subtitle, header info, data, and footnote.
 }
 \description{
 Create a basic table using a data set and a formula to describe the headers.

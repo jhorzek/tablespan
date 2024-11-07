@@ -20,8 +20,9 @@ parent element. For example, in the following table, x is on level 2, but x1,
 x2, y1, and y2 are at level 1:
 }
 \details{
+\preformatted{
 |    x    |
-| x1 | x2 | y1 | y2
+| x1 | x2 | y1 | y2}
 
 add_header_level adds the level to each element in a table header.
 }

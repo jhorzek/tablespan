@@ -18,11 +18,11 @@ basicTables represents headers as (highly) nested lists. To determine how
 wide each entry in the header must be (i.e., how many cells it will get in
 the Excel output), we have to get the number of root elements each parent element
 spans. For example, in the following table, x spans two elements x1 and x2:
+\preformatted{
+|    x    |
+| x1 | x2 |}
 }
 \details{
-|    x    |
-| x1 | x2 |
-
 add_header_width adds the span to each element in a table header.
 }
 \examples{

@@ -10,9 +10,7 @@ write_bt(
   sheet = "BasicTable",
   start_row = 1,
   start_col = 1,
-  header_style = openxlsx::createStyle(fontSize = 14, halign = "center", border =
-    "Bottom", borderColour = openxlsx_getOp("borderColour", "black"), borderStyle =
-    openxlsx_getOp("borderStyle", "double"), textDecoration = "bold")
+  styles = bt_styles()
 )
 }
 \arguments{
@@ -26,7 +24,7 @@ write_bt(
 
 \item{start_col}{column at which to start the table}
 
-\item{header_style}{openxlsx style for the header}
+\item{styles}{openxlsx style for the different table elements (see ?basicTables::bt_styles)}
 }
 \description{
 Write a basic table to an excel workbook.
