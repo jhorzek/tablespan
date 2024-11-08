@@ -94,7 +94,7 @@ R. They include redundant information as the spanner `Horsepower`
 already tells us that the `mean_hp` and `sd_hp` are the mean and
 standard deviation for horsepower - we can drop the `_hp` part.
 
-basicTables can rename variables when exporting to R with
+basicTables can rename variables when exporting to .xlsx with
 `new_name:old_name`. For example,
 `cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` renames `mean_hp` to
 `Mean` and `sd_hp` to `SD`:

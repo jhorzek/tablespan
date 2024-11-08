@@ -267,8 +267,23 @@ write_header <- function(workbook,
                        cols = locations$col$end_col_header_lhs,
                        stack = TRUE)
 
+    # add vertical line at left of table
+    openxlsx::addStyle(wb = workbook,
+                       sheet = sheet,
+                       style = styles$vline_style,
+                       rows = locations$row$start_row_header:locations$row$end_row_data,
+                       cols = locations$col$start_col_header_lhs - 1,
+                       stack = TRUE)
+
   }else{
     max_level <- header$rhs$level
+    # add vertical line at left of table
+    openxlsx::addStyle(wb = workbook,
+                       sheet = sheet,
+                       style = styles$vline_style,
+                       rows = locations$row$start_row_header:locations$row$end_row_data,
+                       cols = locations$col$start_col_header_rhs - 1,
+                       stack = TRUE)
   }
 
   write_header_entry(workbook = workbook,
