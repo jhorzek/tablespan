@@ -385,6 +385,19 @@ write_data <- function(workbook,
                         rowNames = FALSE,
                         colNames = FALSE)
 
+    for(sty in styles$data_styles){
+      for(j in seq_len(ncol(table_data$row_data))){
+        if(sty$test(table_data$row_data[[j]])){
+          openxlsx::addStyle(wb = workbook,
+                             sheet = sheet,
+                             style = sty$style,
+                             rows = (locations$row$end_row_header + 1) : (locations$row$start_row_footnote - 1),
+                             cols = locations$col$start_col_header_lhs + j - 1,
+                             stack = TRUE)
+        }
+      }
+    }
+
     if(styles$merge_rownames){
       merge_rownames(workbook = workbook,
                      sheet = sheet,
@@ -411,6 +424,18 @@ write_data <- function(workbook,
                       rowNames = FALSE,
                       colNames = FALSE)
 
+  for(sty in styles$data_styles){
+    for(j in seq_len(ncol(table_data$col_data))){
+      if(sty$test(table_data$col_data[[j]])){
+        openxlsx::addStyle(wb = workbook,
+                           sheet = sheet,
+                           style = sty$style,
+                           rows = (locations$row$end_row_header + 1) : (locations$row$start_row_footnote - 1),
+                           cols = locations$col$start_col_header_rhs + j - 1,
+                           stack = TRUE)
+      }
+    }
+  }
   # Separate data and outside of table with a vertical bar (right hand side of the table)
   openxlsx::addStyle(wb = workbook,
                      sheet = sheet,

@@ -13,6 +13,12 @@
 #' @param merge_rownames boolean: Should adjacent rows with identical names be merged?
 #' @param merged_rownames_style style applied to the merged rownames
 #' @param footnote_style style applied to the table footnote
+#' @param data_styles styles applied to the columns in the data set based on their
+#' classes (e.g., numeric, character, etc.). data_styles must be a list of lists.
+#' Each inner list must have two elements: a "test" that is used to determine the
+#' class of a data colum (e.g., is.double) and a style that is then applied to
+#' the columns where the test returns TRUE. Note that styles will be applied in the
+#' order of the list, meaning that a later style may overwrite an earlier style.
 #' @param cell_styles an optional list with styles for selected cells in the
 #' data frame.
 #' @importFrom openxlsx createStyle
@@ -44,6 +50,10 @@ bt_styles <- function(
     merged_rownames_style = createStyle(valign = "top"),
     footnote_style = openxlsx::createStyle(fontSize = 11,
                                            halign = "left"),
+    data_styles = list("double" = list(test = is.double,
+                                       style = createStyle(numFmt = "0.00")),
+                       "integer" = list(test = is.integer,
+                                        style = createStyle(numFmt = "0"))),
     cell_styles = NULL){
 
   if(!is.null(cell_styles)){
@@ -60,6 +70,7 @@ bt_styles <- function(
               merge_rownames = merge_rownames,
               merged_rownames_style = merged_rownames_style,
               footnote_style = footnote_style,
+              data_styles = data_styles,
               cell_styles = cell_styles))
 }
 

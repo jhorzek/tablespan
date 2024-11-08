@@ -23,6 +23,8 @@ bt_styles(
   merge_rownames = TRUE,
   merged_rownames_style = createStyle(valign = "top"),
   footnote_style = openxlsx::createStyle(fontSize = 11, halign = "left"),
+  data_styles = list(double = list(test = is.double, style = createStyle(numFmt =
+    "0.00")), integer = list(test = is.integer, style = createStyle(numFmt = "0"))),
   cell_styles = NULL
 )
 }
@@ -46,6 +48,13 @@ the style for the lines under spanners is defined in the title_style.}
 \item{merged_rownames_style}{style applied to the merged rownames}
 
 \item{footnote_style}{style applied to the table footnote}
+
+\item{data_styles}{styles applied to the columns in the data set based on their
+classes (e.g., numeric, character, etc.). data_styles must be a list of lists.
+Each inner list must have two elements: a "test" that is used to determine the
+class of a data colum (e.g., is.double) and a style that is then applied to
+the columns where the test returns TRUE. Note that styles will be applied in the
+order of the list, meaning that a later style may overwrite an earlier style.}
 
 \item{cell_styles}{an optional list with styles for selected cells in the
 data frame.}
