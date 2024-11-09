@@ -6,10 +6,10 @@
 \usage{
 bt_styles(
   background_style = openxlsx::createStyle(fgFill = "#ffffff"),
-  hline_style = openxlsx::createStyle(border = "Bottom", borderColour =
+  hline_style = openxlsx::createStyle(border = "Top", borderColour =
     openxlsx::openxlsx_getOp("borderColour", "black"), borderStyle =
     openxlsx::openxlsx_getOp("borderStyle", "double")),
-  vline_style = openxlsx::createStyle(border = "Right", borderColour =
+  vline_style = openxlsx::createStyle(border = "Left", borderColour =
     openxlsx::openxlsx_getOp("borderColour", "black"), borderStyle =
     openxlsx::openxlsx_getOp("borderStyle", "double")),
   title_style = openxlsx::createStyle(fontSize = 14, halign = "left", textDecoration =
@@ -23,8 +23,7 @@ bt_styles(
   merge_rownames = TRUE,
   merged_rownames_style = createStyle(valign = "top"),
   footnote_style = openxlsx::createStyle(fontSize = 11, halign = "left"),
-  data_styles = list(double = list(test = is.double, style = createStyle(numFmt =
-    "0.00")), integer = list(test = is.integer, style = createStyle(numFmt = "0"))),
+  data_styles = create_data_styles(),
   cell_styles = NULL
 )
 }

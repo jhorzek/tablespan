@@ -28,10 +28,10 @@
 #' bt_styles()
 bt_styles <- function(
     background_style = openxlsx::createStyle(fgFill = "#ffffff"),
-    hline_style = openxlsx::createStyle(border = "Bottom",
+    hline_style = openxlsx::createStyle(border = "Top",
                                         borderColour = openxlsx::openxlsx_getOp("borderColour", "black"),
                                         borderStyle = openxlsx::openxlsx_getOp("borderStyle", "double")),
-    vline_style = openxlsx::createStyle(border = "Right",
+    vline_style = openxlsx::createStyle(border = "Left",
                                         borderColour = openxlsx::openxlsx_getOp("borderColour", "black"),
                                         borderStyle = openxlsx::openxlsx_getOp("borderStyle", "double")),
     title_style = openxlsx::createStyle(fontSize = 14,
@@ -50,10 +50,7 @@ bt_styles <- function(
     merged_rownames_style = createStyle(valign = "top"),
     footnote_style = openxlsx::createStyle(fontSize = 11,
                                            halign = "left"),
-    data_styles = list("double" = list(test = is.double,
-                                       style = createStyle(numFmt = "0.00")),
-                       "integer" = list(test = is.integer,
-                                        style = createStyle(numFmt = "0"))),
+    data_styles = create_data_styles(),
     cell_styles = NULL){
 
   if(!is.null(cell_styles)){
@@ -122,4 +119,37 @@ cell_style <- function(rows,
               style = style,
               gridExpand = gridExpand,
               stack = stack))
+}
+
+
+#' create_data_styles
+#'
+#' This function sets some defaults for data_styles. See ?bt_styles.
+#'
+#' Styles are applied to the columns in the data set based on their
+#' classes (e.g., numeric, character, etc.). data_styles must be a list of lists.
+#' Each inner list must have two elements: a "test" that is used to determine the
+#' class of a data colum (e.g., is.double) and a style that is then applied to
+#' the columns where the test returns TRUE. Note that styles will be applied in the
+#' order of the list, meaning that a later style may overwrite an earlier style.
+#'
+#' @param double style for columns of type double
+#' @param integer style for columns of type integer
+#' @param ... add further styles
+#' @returns a list of lists with styles
+#' @import openxlsx
+#' @export
+#' @examples
+#' library(basicTables)
+#' # Make all booleans bold:
+#' create_data_styles(boolean = list(test = is.logical,
+#'                    style = openxlsx::createStyle(textDecoration = "bold")))
+create_data_styles <- function(double = list(test = is.double,
+                                             style = openxlsx::createStyle(numFmt = "0.00")),
+                               integer = list(test = is.integer,
+                                              style = openxlsx::createStyle(numFmt = "0")),
+                               ...){
+  return(list(double = double,
+              integer = integer,
+              ...))
 }

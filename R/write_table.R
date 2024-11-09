@@ -91,6 +91,12 @@ write_bt <- function(tbl,
                   locations = locations,
                   styles = styles)
 
+  create_outlines(tbl = tbl,
+                  workbook = workbook,
+                  sheet = sheet,
+                  locations = locations,
+                  styles = styles)
+
   write_title(tbl = tbl,
               workbook = workbook,
               sheet = sheet,
@@ -156,6 +162,79 @@ fill_background <- function(tbl,
                      stack = TRUE)
 }
 
+#' create_outlines
+#'
+#' Adds vertical and horizontal bars to the table.
+#'
+#' @param tbl table created with basicTables::bt
+#' @param workbook Excel workbook created with openxlsx::createWorkbook()
+#' @param sheet name of the sheet to which the table should be written to
+#' @param locations list with overview of row and col locations for different table elements
+#' @param styles openxlsx style for the different table elements (see ?basicTables::bt_styles).
+#' The styles element also allows applying custom styles to parts of the data shown in the
+#' table body.
+#' @import openxlsx
+#' @keywords internal
+create_outlines <- function(tbl,
+                            workbook,
+                            sheet,
+                            locations,
+                            styles){
+  if(!is.null(tbl$header$lhs)){
+    left_most <- locations$col$start_col_header_lhs
+  }else{
+    left_most <- locations$col$start_col_header_rhs
+  }
+
+  # top line
+  openxlsx::addStyle(wb = workbook,
+                     sheet = sheet,
+                     style = styles$hline_style,
+                     rows = locations$row$start_row_header,
+                     cols = left_most:locations$col$end_col_header_rhs,
+                     stack = TRUE)
+
+  # line between header and data
+  openxlsx::addStyle(wb = workbook,
+                     sheet = sheet,
+                     style = styles$hline_style,
+                     rows = locations$row$end_row_header + 1,
+                     cols = left_most:locations$col$end_col_header_rhs,
+                     stack = TRUE)
+
+  # bottom line
+  openxlsx::addStyle(wb = workbook,
+                     sheet = sheet,
+                     style = styles$hline_style,
+                     rows = locations$row$end_row_data + 1,
+                     cols = left_most:locations$col$end_col_header_rhs,
+                     stack = TRUE)
+
+  # left line
+  openxlsx::addStyle(wb = workbook,
+                     sheet = sheet,
+                     style = styles$vline_style,
+                     rows = locations$row$start_row_header:locations$row$end_row_data,
+                     cols = left_most,
+                     stack = TRUE)
+
+  # right line
+  openxlsx::addStyle(wb = workbook,
+                     sheet = sheet,
+                     style = styles$vline_style,
+                     rows = locations$row$start_row_header:locations$row$end_row_data,
+                     cols = locations$col$end_col_header_rhs + 1,
+                     stack = TRUE)
+
+  # row name separator
+  openxlsx::addStyle(wb = workbook,
+                     sheet = sheet,
+                     style = styles$vline_style,
+                     rows = locations$row$start_row_header:locations$row$end_row_data,
+                     cols = locations$col$start_col_header_rhs,
+                     stack = TRUE)
+}
+
 #' write_title
 #'
 #' Writes the title and the subtitle to the workbook.
@@ -214,16 +293,6 @@ write_title <- function(tbl,
                          cols = locations$col$start_col_subtitle:locations$col$end_col_subtitle,
                          rows = locations$row$start_row_subtitle)
   }
-
-  if(!is.null(tbl$title) | !is.null(tbl$subtitle)){
-    # Add line below table
-    openxlsx::addStyle(wb = workbook,
-                       sheet = sheet,
-                       style = styles$hline_style,
-                       rows = locations$row$start_row_title + !is.null(tbl$subtitle),
-                       cols = locations$col$start_col_title:locations$col$end_col_title,
-                       stack = TRUE)
-  }
 }
 
 #' write_header
@@ -259,31 +328,8 @@ write_header <- function(workbook,
                        start_col = locations$col$start_col_header_lhs,
                        header_style = styles$header_style)
 
-    # Separate row names and data with a vertical bar
-    openxlsx::addStyle(wb = workbook,
-                       sheet = sheet,
-                       style = styles$vline_style,
-                       rows = locations$row$start_row_header:locations$row$end_row_header,
-                       cols = locations$col$end_col_header_lhs,
-                       stack = TRUE)
-
-    # add vertical line at left of table
-    openxlsx::addStyle(wb = workbook,
-                       sheet = sheet,
-                       style = styles$vline_style,
-                       rows = locations$row$start_row_header:locations$row$end_row_data,
-                       cols = locations$col$start_col_header_lhs - 1,
-                       stack = TRUE)
-
   }else{
     max_level <- header$rhs$level
-    # add vertical line at left of table
-    openxlsx::addStyle(wb = workbook,
-                       sheet = sheet,
-                       style = styles$vline_style,
-                       rows = locations$row$start_row_header:locations$row$end_row_data,
-                       cols = locations$col$start_col_header_rhs - 1,
-                       stack = TRUE)
   }
 
   write_header_entry(workbook = workbook,
@@ -405,15 +451,6 @@ write_data <- function(workbook,
                      locations = locations,
                      styles = styles)
     }
-
-    # Separate row names and data with a vertical bar
-    openxlsx::addStyle(wb = workbook,
-                       sheet = sheet,
-                       style = styles$vline_style,
-                       rows = (locations$row$end_row_header + 1) : (locations$row$start_row_footnote - 1),
-                       cols = locations$col$end_col_header_lhs,
-                       stack = TRUE)
-
   }
 
   openxlsx::writeData(wb = workbook,
@@ -436,21 +473,6 @@ write_data <- function(workbook,
       }
     }
   }
-  # Separate data and outside of table with a vertical bar (right hand side of the table)
-  openxlsx::addStyle(wb = workbook,
-                     sheet = sheet,
-                     style = styles$vline_style,
-                     rows = (locations$row$end_row_header + 1) : (locations$row$start_row_footnote - 1),
-                     cols = locations$col$end_col_header_rhs,
-                     stack = TRUE)
-
-  # Add line below table
-  openxlsx::addStyle(wb = workbook,
-                     sheet = sheet,
-                     style = styles$hline_style,
-                     rows = locations$row$start_row_footnote - 1,
-                     cols = locations$col$start_col_footnote:locations$col$end_col_footnot,
-                     stack = TRUE)
 
   # Apply custom styles
   if(!is.null(styles$cell_styles)){

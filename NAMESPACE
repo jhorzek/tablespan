@@ -3,6 +3,7 @@
 export(bt)
 export(bt_styles)
 export(cell_style)
+export(create_data_styles)
 export(write_bt)
 import(openxlsx)
 importFrom(methods,is)
