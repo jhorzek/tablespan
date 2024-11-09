@@ -7,7 +7,7 @@
 get_locations(tbl, start_row, start_col)
 }
 \arguments{
-\item{tbl}{table created with basicTables::bt}
+\item{tbl}{table created with tabelle::tabelle}
 
 \item{start_row}{row index at which the table will start}
 

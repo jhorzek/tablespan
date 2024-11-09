@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(basicTables)
+library(tabelle)
 
-test_check("basicTables")
+test_check("tabelle")

@@ -8,7 +8,7 @@ get_variables_from_list(deparsed_formula_element, variables = c())
 }
 \arguments{
 \item{deparsed_formula_element}{left or right hand side of the result from
-basicTables:::deparse_formula}
+tabelle:::deparse_formula}
 
 \item{variables}{the function is recursive and fills the variable vector}
 }
@@ -17,13 +17,13 @@ a vector with the names of the variables
 }
 \description{
 Extracts the variable names from the left or right hand side of a
-deparsed formula (see ?basicTables:::deparse_formula).
+deparsed formula (see ?tabelle:::deparse_formula).
 }
 \examples{
-library(basicTables)
-deparsed <- basicTables:::deparse_formula(formula =
+library(tabelle)
+deparsed <- tabelle:::deparse_formula(formula =
  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 str(deparsed)
-basicTables:::get_variables_from_list(deparsed$lhs)
+tabelle:::get_variables_from_list(deparsed$lhs)
 }
 \keyword{internal}

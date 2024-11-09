@@ -1,5 +1,5 @@
 test_that("cars", {
-  library(basicTables)
+  library(tabelle)
   library(testthat)
   library(dplyr)
   library(openxlsx)
@@ -14,16 +14,16 @@ test_that("cars", {
               mean_wt = mean(wt),
               sd_wt = sd(wt))
 
-  tbl <- bt(data = summarized_table,
-            formula = Cylinder:cyl + Engine:vs ~
-              N +
-              (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-              (`Weight` = Mean:mean_wt + SD:sd_wt),
-            title = "Motor Trend Car Road Tests",
-            subtitle = "A table created with basicTables",
-            footnote = "Data from the infamous mtcars data set.")
+  tbl <- tabelle(data = summarized_table,
+                 formula = Cylinder:cyl + Engine:vs ~
+                   N +
+                   (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                   (`Weight` = Mean:mean_wt + SD:sd_wt),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tabelle",
+                 footnote = "Data from the infamous mtcars data set.")
 
-  wb <- write_bt(tbl = tbl)
+  wb <- write_tab(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars.xlsx"))
@@ -42,7 +42,7 @@ test_that("cars", {
 })
 
 test_that("cars-offset", {
-  library(basicTables)
+  library(tabelle)
   library(testthat)
   library(dplyr)
   library(openxlsx)
@@ -57,16 +57,16 @@ test_that("cars-offset", {
               mean_wt = mean(wt),
               sd_wt = sd(wt))
 
-  tbl <- bt(data = summarized_table,
-            formula = Cylinder:cyl + Engine:vs ~
-              N +
-              (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-              (`Weight` = Mean:mean_wt + SD:sd_wt),
-            title = "Motor Trend Car Road Tests",
-            subtitle = "A table created with basicTables",
-            footnote = "Data from the infamous mtcars data set.")
+  tbl <- tabelle(data = summarized_table,
+                 formula = Cylinder:cyl + Engine:vs ~
+                   N +
+                   (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                   (`Weight` = Mean:mean_wt + SD:sd_wt),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tabelle",
+                 footnote = "Data from the infamous mtcars data set.")
 
-  wb <- write_bt(tbl = tbl, start_row = 3, start_col = 5)
+  wb <- write_tab(tbl = tbl, start_row = 3, start_col = 5)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_offset.xlsx"))
@@ -85,7 +85,7 @@ test_that("cars-offset", {
 })
 
 test_that("cars-cell_styles", {
-  library(basicTables)
+  library(tabelle)
   library(testthat)
   library(dplyr)
   library(openxlsx)
@@ -100,23 +100,23 @@ test_that("cars-cell_styles", {
               mean_wt = mean(wt),
               sd_wt = sd(wt))
 
-  tbl <- bt(data = summarized_table,
-            formula = Cylinder:cyl + Engine:vs ~
-              N +
-              (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-              (`Weight` = Mean:mean_wt + SD:sd_wt),
-            title = "Motor Trend Car Road Tests",
-            subtitle = "A table created with basicTables",
-            footnote = "Data from the infamous mtcars data set.")
+  tbl <- tabelle(data = summarized_table,
+                 formula = Cylinder:cyl + Engine:vs ~
+                   N +
+                   (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                   (`Weight` = Mean:mean_wt + SD:sd_wt),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tabelle",
+                 footnote = "Data from the infamous mtcars data set.")
 
   bold <- openxlsx::createStyle(textDecoration = "bold")
-  wb <- write_bt(tbl = tbl,
-                 styles = bt_styles(cell_styles = list(cell_style(rows = 2:3,
-                                                                  colnames = "mean_hp",
-                                                                  style = bold),
-                                                       cell_style(rows = 1,
-                                                                  colnames = c("mean_wt", "sd_wt"),
-                                                                  style = bold))))
+  wb <- write_tab(tbl = tbl,
+                  styles = tab_styles(cell_styles = list(cell_style(rows = 2:3,
+                                                                    colnames = "mean_hp",
+                                                                    style = bold),
+                                                         cell_style(rows = 1,
+                                                                    colnames = c("mean_wt", "sd_wt"),
+                                                                    style = bold))))
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_cell_styles.xlsx"))
@@ -135,7 +135,7 @@ test_that("cars-cell_styles", {
 })
 
 test_that("cars-data_styles", {
-  library(basicTables)
+  library(tabelle)
   library(testthat)
   library(dplyr)
   library(openxlsx)
@@ -150,20 +150,20 @@ test_that("cars-data_styles", {
               mean_wt = mean(wt),
               sd_wt = sd(wt))
 
-  tbl <- bt(data = summarized_table,
-            formula = Cylinder:cyl + Engine:vs ~
-              N +
-              (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-              (`Weight` = Mean:mean_wt + SD:sd_wt),
-            title = "Motor Trend Car Road Tests",
-            subtitle = "A table created with basicTables",
-            footnote = "Data from the infamous mtcars data set.")
+  tbl <- tabelle(data = summarized_table,
+                 formula = Cylinder:cyl + Engine:vs ~
+                   N +
+                   (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                   (`Weight` = Mean:mean_wt + SD:sd_wt),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tabelle",
+                 footnote = "Data from the infamous mtcars data set.")
 
   # custom data type styles
   bold <- openxlsx::createStyle(textDecoration = "bold")
-  wb <- write_bt(tbl = tbl,
-                 styles = bt_styles(data_styles = create_data_styles(double = list(test = is.double,
-                                                                                   style = bold))))
+  wb <- write_tab(tbl = tbl,
+                  styles = tab_styles(data_styles = create_data_styles(double = list(test = is.double,
+                                                                                     style = bold))))
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_data_styles.xlsx"))
@@ -182,7 +182,7 @@ test_that("cars-data_styles", {
 })
 
 test_that("cars-additional_spanners", {
-  library(basicTables)
+  library(tabelle)
   library(testthat)
   library(dplyr)
   library(openxlsx)
@@ -197,16 +197,16 @@ test_that("cars-additional_spanners", {
               mean_wt = mean(wt),
               sd_wt = sd(wt))
 
-  tbl <- bt(data = summarized_table,
-            formula = Cylinder:cyl + Engine:vs ~
-              (Results = N +
-                 (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
-                 (`Weight` = Mean:mean_wt + SD:sd_wt)),
-            title = "Motor Trend Car Road Tests",
-            subtitle = "A table created with basicTables",
-            footnote = "Data from the infamous mtcars data set.")
+  tbl <- tabelle(data = summarized_table,
+                 formula = Cylinder:cyl + Engine:vs ~
+                   (Results = N +
+                      (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                      (`Weight` = Mean:mean_wt + SD:sd_wt)),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tabelle",
+                 footnote = "Data from the infamous mtcars data set.")
 
-  wb <- write_bt(tbl = tbl)
+  wb <- write_tab(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_additional_spanners.xlsx"))
@@ -225,7 +225,7 @@ test_that("cars-additional_spanners", {
 })
 
 test_that("cars-no_row_names", {
-  library(basicTables)
+  library(tabelle)
   library(testthat)
   library(dplyr)
   library(openxlsx)
@@ -241,16 +241,16 @@ test_that("cars-no_row_names", {
               sd_wt = sd(wt))
 
   # no row names
-  tbl <- bt(data = summarized_table,
-            formula = 1 ~
-              (Results = N +
-                 (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
-                 (`Weight` = Mean:mean_wt + SD:sd_wt)),
-            title = "Motor Trend Car Road Tests",
-            subtitle = "A table created with basicTables",
-            footnote = "Data from the infamous mtcars data set.")
+  tbl <- tabelle(data = summarized_table,
+                 formula = 1 ~
+                   (Results = N +
+                      (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                      (`Weight` = Mean:mean_wt + SD:sd_wt)),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tabelle",
+                 footnote = "Data from the infamous mtcars data set.")
 
-  wb <- write_bt(tbl = tbl)
+  wb <- write_tab(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_no_row_names.xlsx"))
@@ -269,7 +269,7 @@ test_that("cars-no_row_names", {
 })
 
 test_that("cars-no_titles", {
-  library(basicTables)
+  library(tabelle)
   library(testthat)
   library(dplyr)
   library(openxlsx)
@@ -285,14 +285,14 @@ test_that("cars-no_titles", {
               sd_wt = sd(wt))
 
   # no titles
-  tbl <- bt(data = summarized_table,
-            formula = 1 ~
-              (Results = N +
-                 (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
-                 (`Weight` = Mean:mean_wt + SD:sd_wt)),
-            footnote = "Data from the infamous mtcars data set.")
+  tbl <- tabelle(data = summarized_table,
+                 formula = 1 ~
+                   (Results = N +
+                      (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                      (`Weight` = Mean:mean_wt + SD:sd_wt)),
+                 footnote = "Data from the infamous mtcars data set.")
 
-  wb <- write_bt(tbl = tbl)
+  wb <- write_tab(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_no_titles.xlsx"))
@@ -311,7 +311,7 @@ test_that("cars-no_titles", {
 })
 
 test_that("cars-no_titles_no_footnotes", {
-  library(basicTables)
+  library(tabelle)
   library(testthat)
   library(dplyr)
   library(openxlsx)
@@ -327,13 +327,13 @@ test_that("cars-no_titles_no_footnotes", {
               sd_wt = sd(wt))
 
   # no titles, no footnote
-  tbl <- bt(data = summarized_table,
-            formula = 1 ~
-              (Results = N +
-                 (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
-                 (`Weight` = Mean:mean_wt + SD:sd_wt)))
+  tbl <- tabelle(data = summarized_table,
+                 formula = 1 ~
+                   (Results = N +
+                      (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                      (`Weight` = Mean:mean_wt + SD:sd_wt)))
 
-  wb <- write_bt(tbl = tbl)
+  wb <- write_tab(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_no_titles_no_footnote.xlsx"))

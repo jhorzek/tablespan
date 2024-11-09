@@ -7,7 +7,7 @@
 create_outlines(tbl, workbook, sheet, locations, styles)
 }
 \arguments{
-\item{tbl}{table created with basicTables::bt}
+\item{tbl}{table created with tabelle::tabelle}
 
 \item{workbook}{Excel workbook created with openxlsx::createWorkbook()}
 
@@ -15,7 +15,7 @@ create_outlines(tbl, workbook, sheet, locations, styles)
 
 \item{locations}{list with overview of row and col locations for different table elements}
 
-\item{styles}{openxlsx style for the different table elements (see ?basicTables::bt_styles).
+\item{styles}{openxlsx style for the different table elements (see ?tabelle::tab_styles).
 The styles element also allows applying custom styles to parts of the data shown in the
 table body.}
 }

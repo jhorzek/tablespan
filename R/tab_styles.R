@@ -1,4 +1,4 @@
-#' bt_styles
+#' tab_styles
 #'
 #' Define styles for different elements of the table.
 #'
@@ -25,8 +25,8 @@
 #' @returns a list with styles
 #' @export
 #' @examples
-#' bt_styles()
-bt_styles <- function(
+#' tab_styles()
+tab_styles <- function(
     background_style = openxlsx::createStyle(fgFill = "#ffffff"),
     hline_style = openxlsx::createStyle(border = "Top",
                                         borderColour = openxlsx::openxlsx_getOp("borderColour", "black"),
@@ -84,10 +84,10 @@ bt_styles <- function(
 #' @importFrom methods is
 #' @export
 #' @examples
-#' library(basicTables)
+#' library(tabelle)
 #' data("iris")
 #'
-#' tbl <- bt(data = iris[iris$Species == "setosa", ],
+#' tbl <- tabelle(data = iris[iris$Species == "setosa", ],
 #'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
 #'             (Petal = (Width = Petal.Length) + Petal.Width))
 #'
@@ -97,8 +97,8 @@ bt_styles <- function(
 #' # the rows 9-10 of the Petal.Width column.
 #' bold <- openxlsx::createStyle(textDecoration = "bold")
 #'
-#' wb <- write_bt(tbl = tbl,
-#'                styles = bt_styles(cell_styles = list(cell_style(rows = 1:5,
+#' wb <- write_tab(tbl = tbl,
+#'                styles = tab_styles(cell_styles = list(cell_style(rows = 1:5,
 #'                                                                 colnames = "Sepal.Length",
 #'                                                                 style = bold),
 #'                                                      cell_style(rows = 9:10,
@@ -124,7 +124,7 @@ cell_style <- function(rows,
 
 #' create_data_styles
 #'
-#' This function sets some defaults for data_styles. See ?bt_styles.
+#' This function sets some defaults for data_styles. See ?tab_styles
 #'
 #' Styles are applied to the columns in the data set based on their
 #' classes (e.g., numeric, character, etc.). data_styles must be a list of lists.
@@ -140,7 +140,7 @@ cell_style <- function(rows,
 #' @import openxlsx
 #' @export
 #' @examples
-#' library(basicTables)
+#' library(tabelle)
 #' # Make all booleans bold:
 #' create_data_styles(boolean = list(test = is.logical,
 #'                    style = openxlsx::createStyle(textDecoration = "bold")))

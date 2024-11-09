@@ -11,13 +11,13 @@ write_data(workbook, sheet, header, table_data, locations, styles)
 
 \item{sheet}{name of the sheet to which the table should be written to}
 
-\item{header}{header specification from bt table}
+\item{header}{header specification from tabelle table}
 
 \item{table_data}{data for rownames and the actual data for the body of the table}
 
 \item{locations}{list with overview of row and col locations for different table elements}
 
-\item{styles}{openxlsx style for the different table elements (see ?basicTables::bt_styles).
+\item{styles}{openxlsx style for the different table elements (see ?tabelle::tab_styles).
 The styles element also allows applying custom styles to parts of the data shown in the
 table body.}
 }

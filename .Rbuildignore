@@ -4,3 +4,4 @@
 ^\.github$
 ^README\.Rmd$
 ^R/create_test_files\.R$
+^.covrignore$
