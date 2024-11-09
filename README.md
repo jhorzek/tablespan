@@ -68,10 +68,18 @@ For example, `cyl ~ mean_hp + sd_hp` defines a table with `cyl` as the
 row names and `mean_hp` and `sd_hp` as columns. The output in Excel will
 be similar to the following:
 
-    |cyl | mean_hp | sd_hp|
-    |:---|---------------:|
-    |4   | 91          NA |
-    |4   | 81.8      21.9 |
+``` r
+library(basicTables)
+bt(data = summarized_table,
+          formula = cyl ~ mean_hp + sd_hp)
+#>                         
+#>  | cyl | mean_hp sd_hp |
+#>  | --- - ------- ----- |
+#>  | 4   | 91            |
+#>  | 4   | 81.8    21.87 |
+#>  | 6   | 131.67  37.53 |
+#>  | ... | ...     ...   |
+```
 
 Note that the row names (`cyl`) are in a separate block to the left.
 
@@ -79,11 +87,18 @@ Spanners are defined using braces and spanner names. For example, the
 following defines a spanner for `mean_hp` and `sd_hp` with the name
 `Horsepower`: `cyl ~ (Horsepower = mean_hp + sd_hp)`.
 
-    |    |    Horsepower  |
-    |cyl | mean_hp | sd_hp|
-    |:---|---------------:|
-    |4   | 91          NA |
-    |4   | 81.8      21.9 |
+``` r
+bt(data = summarized_table,
+          formula = cyl ~ (Horsepower = mean_hp + sd_hp))
+#>                            
+#>  |     | Horsepower       |
+#>  | cyl | mean_hp    sd_hp |
+#>  | --- - ---------- ----- |
+#>  | 4   | 91               |
+#>  | 4   | 81.8       21.87 |
+#>  | 6   | 131.67     37.53 |
+#>  | ... | ...        ...   |
+```
 
 Spanners can also be nested (e.g.,
 `cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))`.
@@ -99,11 +114,18 @@ basicTables can rename variables when exporting to .xlsx with
 `cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` renames `mean_hp` to
 `Mean` and `sd_hp` to `SD`:
 
-    |    |    Horsepower  |
-    |cyl | Mean   | SD    |
-    |:---|---------------:|
-    |4   | 91          NA |
-    |4   | 81.8      21.9 |
+``` r
+bt(data = summarized_table,
+          formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+#>                            
+#>  |     | Horsepower       |
+#>  | cyl | Mean       SD    |
+#>  | --- - ---------- ----- |
+#>  | 4   | 91               |
+#>  | 4   | 81.8       21.87 |
+#>  | 6   | 131.67     37.53 |
+#>  | ... | ...        ...   |
+```
 
 The combination of row names, spanners, and renaming of variables allows
 creating the full table as follows:
@@ -117,10 +139,28 @@ tbl <- bt(data = summarized_table,
           title = "Motor Trend Car Road Tests",
           subtitle = "A table created with basicTables",
           footnote = "Data from the infamous mtcars data set.")
+tbl
+#> Motor Trend Car Road Tests
+#> A table created with basicTables
+#>                                                         
+#>  |                 |     Horse Power       Weight      |
+#>  | Cylinder Engine | N   Mean        SD    Mean   SD   |
+#>  | -------- ------ - --  ----------- ----- ------ ---- |
+#>  | 4        0      | 1   91                2.14        |
+#>  | 4        1      | 10  81.8        21.87 2.3    0.6  |
+#>  | 6        0      | 3   131.67      37.53 2.76   0.13 |
+#>  | ...      ...    | ... ...         ...   ...    ...  |
+#> Data from the infamous mtcars data set.
+```
 
+This table can now be translated to an xlsx table with
+[openxlsx](https://ycphs.github.io/openxlsx/):
+
+``` r
+# write_bt creates an openxlsx workbook
 wb <- write_bt(tbl = tbl)
 
-# Save the excel table:
+# Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
 #                        file = "cars.xlsx", overwrite = TRUE)
 ```
@@ -137,11 +177,18 @@ Using `1` on the left hand side of the formula creates a table without
 row names. For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)`
 defines
 
-    |    Horsepower  |
-    | Mean   | SD    |
-    |---------------:|
-    | 91          NA |
-    | 81.8      21.9 |
+``` r
+bt(data = summarized_table,
+          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+#>                      
+#>  | Horsepower       |
+#>  | Mean       SD    |
+#>  | ---------- ----- |
+#>  | 91               |
+#>  | 81.8       21.87 |
+#>  | 131.67     37.53 |
+#>  | ...        ...   |
+```
 
 ## References
 
@@ -153,3 +200,6 @@ defines
   package version 0.9.31, <https://gdemin.github.io/expss/>.
 - tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R
   package version 0.9.31, <https://dmurdoch.github.io/tables/>.
+- openxlsx: Schauberger P, Walker A (2023). *openxlsx: Read, Write and
+  Edit xlsx Files*. R package version 4.2.5.2,
+  <https://CRAN.R-project.org/package=openxlsx>.
