@@ -1,11 +1,11 @@
 Package: basicTables
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Create basic xlsx tables with R
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Jannik H. Orzek
+Maintainer: Jannik H. Orzek <jannik.orzek@mailbox.org>
+Description: basicTables provides a "good enough" approach to creating xlsx tables
+  in R.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
