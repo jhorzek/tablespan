@@ -7,19 +7,19 @@
 get_variables(deparsed_formula)
 }
 \arguments{
-\item{deparsed_formula}{result from basicTables:::deparse_formula}
+\item{deparsed_formula}{result from tabelle:::deparse_formula}
 }
 \value{
 a list with the names of the variables that build the rows and columns
 }
 \description{
-Extracts the variable names from a deparsed formula (see ?basicTables:::deparse_formula).
+Extracts the variable names from a deparsed formula (see ?tabelle:::deparse_formula).
 }
 \examples{
-library(basicTables)
-deparsed <- basicTables:::deparse_formula(formula =
+library(tabelle)
+deparsed <- tabelle:::deparse_formula(formula =
  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 str(deparsed)
-basicTables:::get_variables(deparsed)
+tabelle:::get_variables(deparsed)
 }
 \keyword{internal}

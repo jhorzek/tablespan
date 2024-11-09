@@ -1,6 +1,6 @@
-#' print.BT
+#' print.TABELLE
 #'
-#' @param x result from bt
+#' @param x result from tabelle
 #' @param digits number of digits to round doubles to
 #' @param n number of rows to print
 #' @param ... additional arguments passed to prmatrix
@@ -9,11 +9,11 @@
 #' @export
 #' @examples
 #' data("iris")
-#' tbl <- bt(data = iris[iris$Species == "setosa", ],
+#' tbl <- tabelle(data = iris[iris$Species == "setosa", ],
 #'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
 #'             (Petal = Petal.Length + Petal.Width))
 #' print(tbl)
-print.BT <- function(x, digits = 2, n = 3, ...){
+print.TABELLE <- function(x, digits = 2, n = 3, ...){
   if(!is.null(x$header$lhs)){
     max_level <- max(x$header$lhs$level, x$header$rhs$level)
     max_col <- x$header$lhs$width + x$header$rhs$width

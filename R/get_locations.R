@@ -1,7 +1,7 @@
 #' get_locations
 #'
 #' Provides row and column indices for the table elements.
-#' @param tbl table created with basicTables::bt
+#' @param tbl table created with tabelle::tabelle
 #' @param start_row row index at which the table will start
 #' @param start_col column index at which the table will start
 #' @returns list with locations

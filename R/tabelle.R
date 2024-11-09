@@ -1,16 +1,16 @@
-#' bt
+#' tabelle
 #'
 #' Create a basic table using a data set and a formula to describe the headers.
 #'
-#' Basic tables creates, as the name suggests, very basic tables. In general, \code{bt}
+#' Basic tables creates, as the name suggests, very basic tables. In general, \code{tabelle}
 #' will not create summaries for you or transform your data in any shape or form.
 #' Instead, the idea is that you provide an already summarized data frame (e.g.,
 #' from dplyr's summary function) and just need some nested headers when writing
 #' it to Excel.
 #'
-#' Following the \code{tibble} approach, \code{bt} assumes that all items that you may
+#' Following the \code{tibble} approach, \code{tabelle} assumes that all items that you may
 #' want to use as row names are just columns in your data set (see example). That
-#' is, \code{bt} will allow you to pick some of your items as row names and then just
+#' is, \code{tabelle} will allow you to pick some of your items as row names and then just
 #' write them in a separate section to the left of the data.
 #'
 #' The table headers are defined with a basic formula approach. For example,
@@ -63,23 +63,23 @@
 #' @param title string specifying the title of the table
 #' @param subtitle string specifying the subtitle of the table
 #' @param footnote string specifying the footnote of the table
-#' @returns Object of class BT with title, subtitle, header info, data, and footnote.
+#' @returns Object of class TABELLE with title, subtitle, header info, data, and footnote.
 #' @export
 #' @examples
 #' data("iris")
-#' tbl <- bt(data = iris[iris$Species == "setosa", ],
+#' tbl <- tabelle(data = iris[iris$Species == "setosa", ],
 #'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
 #'                     (Petal = Petal.Length + Petal.Width))
 #'
 #' # Create Excel table:
-#' wb <- write_bt(tbl = tbl)
+#' wb <- write_tab(tbl = tbl)
 #'
 #' # saveWorkbook(wb, "iris.xlsx")
-bt <- function(data,
-               formula,
-               title = NULL,
-               subtitle = NULL,
-               footnote = NULL){
+tabelle <- function(data,
+                    formula,
+                    title = NULL,
+                    subtitle = NULL,
+                    footnote = NULL){
 
   deparsed <- deparse_formula(formula)
 
@@ -100,7 +100,7 @@ bt <- function(data,
                     header = header,
                     table_data = table_data,
                     footnote = footnote)
-  class(bt_result) <- "BT"
+  class(bt_result) <- "TABELLE"
   return(bt_result)
 }
 
@@ -170,7 +170,7 @@ construct_header <- function(deparsed){
 
 #' add_header_width
 #'
-#' basicTables represents headers as (highly) nested lists. To determine how
+#' tabelle represents headers as (highly) nested lists. To determine how
 #' wide each entry in the header must be (i.e., how many cells it will get in
 #' the Excel output), we have to get the number of root elements each parent element
 #' spans. For example, in the following table, x spans two elements x1 and x2:
@@ -185,12 +185,12 @@ construct_header <- function(deparsed){
 #' @returns the parsed_partial with additional width fields
 #' @keywords internal
 #' @examples
-#' library(basicTables)
-#' deparsed <- basicTables:::deparse_formula(formula =
+#' library(tabelle)
+#' deparsed <- tabelle:::deparse_formula(formula =
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
 #'
-#' deparsed <- basicTables:::add_header_width(deparsed$rhs)
+#' deparsed <- tabelle:::add_header_width(deparsed$rhs)
 #' str(deparsed)
 #' deparsed$width
 add_header_width <- function(parsed_partial){
@@ -212,7 +212,7 @@ add_header_width <- function(parsed_partial){
 
 #' add_header_level
 #'
-#' basicTables represents headers as (highly) nested lists. To determine the level
+#' tabelle represents headers as (highly) nested lists. To determine the level
 #' at which each entry resides, we have to get the number of root elements below each
 #' parent element. For example, in the following table, x is on level 2, but x1,
 #' x2, y1, and y2 are at level 1:
@@ -228,12 +228,12 @@ add_header_width <- function(parsed_partial){
 #' @returns the parsed_partial with additional level fields
 #' @keywords internal
 #' @examples
-#' library(basicTables)
-#' deparsed <- basicTables:::deparse_formula(formula =
+#' library(tabelle)
+#' deparsed <- tabelle:::deparse_formula(formula =
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
 #'
-#' deparsed <- basicTables:::add_header_level(deparsed$rhs)
+#' deparsed <- tabelle:::add_header_level(deparsed$rhs)
 #' str(deparsed)
 #' deparsed$level
 add_header_level <- function(parsed_partial){

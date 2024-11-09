@@ -1,8 +1,8 @@
 test_that("Deparsing table formula", {
   library(testthat)
-  library(basicTables)
+  library(tabelle)
   formula <- (`Row Name` = `New item name`:`Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3` + (`Sub Banner` = `Column 4` + `Column 5`))
-  deparsed <- basicTables:::deparse_formula(formula)
+  deparsed <- tabelle:::deparse_formula(formula)
 
   lhs <- list(
     name = "_BASE_LEVEL_",

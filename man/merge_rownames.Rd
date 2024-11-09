@@ -15,7 +15,7 @@ merge_rownames(workbook, sheet, table_data, locations, styles)
 
 \item{locations}{list with overview of row and col locations for different table elements}
 
-\item{styles}{openxlsx style for the different table elements (see ?basicTables::bt_styles).
+\item{styles}{openxlsx style for the different table elements (see ?tabelle::tab_styles).
 The styles element also allows applying custom styles to parts of the data shown in the
 table body.}
 }

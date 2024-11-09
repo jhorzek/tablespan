@@ -12,27 +12,26 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 library(dplyr)
-library(basicTables)
+library(tabelle)
 ```
 
-# basicTables
+# tabelle
 
 > Create mediocre Excel tables in R.
 
-As implied by the name, the objective of `basicTables` is to provide a "good enough" 
+The objective of `tabelle` is to provide a "good enough" 
 approach to creating tables in R. The main use case is to quickly
 share tables using the .xlsx format without much hassle.
 
-Due to the limited approach, basicTables is a lot less sophisticated than the
-awesome packages [gt](https://gt.rstudio.com/) (great tables, by which the name is inspired),
-[tables](https://dmurdoch.github.io/tables/), or [expss](https://gdemin.github.io/expss/#Introduction).
-The main advantage of basicTables is its simplicity and its focus on creating 
+Due to the limited approach, tabelle is a lot less sophisticated than the
+awesome packages [gt](https://gt.rstudio.com/), or [expss](https://gdemin.github.io/expss/#Introduction).
+The main advantage of tabelle is its simplicity and its focus on creating 
 .xslx tables.
 
 ## Example
 
-basicTables assumes that you already have a perfectly summarized table
-that you now want to share using .xlsx. That is, basicTables will not create any
+tabelle assumes that you already have a perfectly summarized table
+that you now want to share using .xlsx. That is, tabelle will not create any
 crosstables, compute percentages or similar. It mostly adds column names with
 spanners, combines rownames, and writes the result to .xlsx files.
 
@@ -63,16 +62,16 @@ weight (`wt`) variables. The result should look something like this:
 |                   |                         |
 ```
 
-In basicTables, the table headers are defined with a formula approach inspired by
+In tabelle, the table headers are defined with a formula approach inspired by
 the [tables](https://dmurdoch.github.io/tables/) package. For example,
 `cyl ~ mean_hp + sd_hp` defines a table with `cyl` as the
 row names and `mean_hp` and `sd_hp` as columns. The output in Excel will
 be similar to the following:
 
 ```{r}
-library(basicTables)
-bt(data = summarized_table,
-          formula = cyl ~ mean_hp + sd_hp)
+library(tabelle)
+tabelle(data = summarized_table,
+        formula = cyl ~ mean_hp + sd_hp)
 ```
 
 Note that the row names (`cyl`) are in a separate block to the left.
@@ -82,8 +81,8 @@ following defines a spanner for `mean_hp` and `sd_hp` with the name `Horsepower`
 `cyl ~ (Horsepower = mean_hp + sd_hp)`.
 
 ```{r}
-bt(data = summarized_table,
-          formula = cyl ~ (Horsepower = mean_hp + sd_hp))
+tabelle(data = summarized_table,
+        formula = cyl ~ (Horsepower = mean_hp + sd_hp))
 ```
 
 Spanners can also be nested (e.g., `cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))`.
@@ -94,35 +93,35 @@ They include redundant information as the spanner `Horsepower` already tells us
 that the `mean_hp` and `sd_hp` are the mean and standard deviation for horsepower - 
 we can drop the `_hp` part. 
 
-basicTables can rename variables when exporting to .xlsx with `new_name:old_name`.
+tabelle can rename variables when exporting to .xlsx with `new_name:old_name`.
 For example, `cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` renames `mean_hp` to
 `Mean` and `sd_hp` to `SD`:
 
 ```{r}
-bt(data = summarized_table,
-          formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+tabelle(data = summarized_table,
+        formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
 ```
 
 The combination of row names, spanners, and renaming of variables allows creating
 the full table as follows:
 
 ```{r}
-tbl <- bt(data = summarized_table,
-          formula = Cylinder:cyl + Engine:vs ~
-            N +
-            (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-            (`Weight` = Mean:mean_wt + SD:sd_wt),
-          title = "Motor Trend Car Road Tests",
-          subtitle = "A table created with basicTables",
-          footnote = "Data from the infamous mtcars data set.")
+tbl <- tabelle(data = summarized_table,
+               formula = Cylinder:cyl + Engine:vs ~
+                 N +
+                 (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                 (`Weight` = Mean:mean_wt + SD:sd_wt),
+               title = "Motor Trend Car Road Tests",
+               subtitle = "A table created with tabelle",
+               footnote = "Data from the infamous mtcars data set.")
 tbl
 ```
 
 This table can now be translated to an xlsx table with [openxlsx](https://ycphs.github.io/openxlsx/):
 
 ```{r}
-# write_bt creates an openxlsx workbook
-wb <- write_bt(tbl = tbl)
+# write_tab creates an openxlsx workbook
+wb <- write_tab(tbl = tbl)
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
@@ -141,8 +140,8 @@ Using `1` on the left hand side of the formula creates a table without row names
 For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` defines
 
 ```{r}
-bt(data = summarized_table,
-          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+tabelle(data = summarized_table,
+        formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
 ```
 
 ## References
@@ -151,4 +150,4 @@ bt(data = summarized_table,
 - expss: Gregory D et al. (2024). expss: Tables with Labels in R. R package version 0.9.31, https://gdemin.github.io/expss/. 
 - tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R package version 0.9.31, https://dmurdoch.github.io/tables/. 
 - openxlsx: Schauberger P, Walker A (2023). _openxlsx: Read, Write and Edit xlsx Files_. R package version 4.2.5.2,
-  <https://CRAN.R-project.org/package=openxlsx>.
+<https://CRAN.R-project.org/package=openxlsx>.
