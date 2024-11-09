@@ -478,7 +478,7 @@ write_data <- function(workbook,
   if(!is.null(styles$cell_styles)){
     for(sty in styles$cell_styles){
       if(any(!sty$colnames %in% colnames(table_data$col_data)))
-        stop("Could not find the following elemnts in the data: ",
+        stop("Tryping to style an element that was not found in the data: ",
              paste0(sty$colnames[!sty$colnames %in% colnames(table_data$col_data)], collapse = ", "),
              ".")
       if(any(sty$rows > nrow(table_data$col_data)))
@@ -556,40 +556,40 @@ merge_rownames <- function(workbook,
                            styles){
   for(i in 1:ncol(table_data$row_data)){
     current_element <- NULL
-    to_merege <- NULL
+    to_merge <- NULL
     for(j in 1:nrow(table_data$row_data)){
       if(is.null(current_element) || (current_element != table_data$row_data[j, i])){
-        if(!is.null(to_merege) && length(to_merege) > 1){
+        if(!is.null(to_merge) && length(to_merge) > 1){
           openxlsx::addStyle(wb = workbook,
                              sheet = sheet,
                              style = styles$merged_rownames_style,
-                             rows = locations$row$end_row_header + to_merege,
+                             rows = locations$row$end_row_header + to_merge,
                              cols = locations$col$start_col_header_lhs + i - 1,
                              stack = TRUE)
 
           openxlsx::mergeCells(wb = workbook,
                                sheet = sheet,
                                cols = locations$col$start_col_header_lhs + i - 1,
-                               rows = locations$row$end_row_header + to_merege)
+                               rows = locations$row$end_row_header + to_merge)
         }
         current_element <- table_data$row_data[j, i]
-        to_merege <- j
+        to_merge <- j
         next
       }
-      to_merege <- c(to_merege, j)
+      to_merge <- c(to_merge, j)
     }
-    if(!is.null(to_merege) && length(to_merege) > 1){
+    if(!is.null(to_merge) && length(to_merge) > 1){
       openxlsx::addStyle(wb = workbook,
                          sheet = sheet,
                          style = styles$merged_rownames_style,
-                         rows = locations$row$end_row_header + to_merege,
+                         rows = locations$row$end_row_header + to_merge,
                          cols = locations$col$start_col_header_lhs + i - 1,
                          stack = TRUE)
 
       openxlsx::mergeCells(wb = workbook,
                            sheet = sheet,
                            cols = locations$col$start_col_header_lhs + i - 1,
-                           rows = locations$row$end_row_header + to_merege)
+                           rows = locations$row$end_row_header + to_merge)
     }
   }
 }

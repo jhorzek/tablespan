@@ -115,7 +115,7 @@ deparse_formula_partial <- function(formula_partial,
                                                             entries = list()))))
     return(deparsed)
   }else{
-    stop(paste0("Unknown symbol detected: ", formula_partial))
+    stop(paste0("Unknown symbol detected: ", paste0(as.character(formula_partial), collapse = "")))
   }
 }
 
