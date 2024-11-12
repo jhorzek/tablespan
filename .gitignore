@@ -4,3 +4,4 @@
 .Ruserdata
 *.xlsx
 !tests/testthat/xlsx_files/*.xlsx
+docs
