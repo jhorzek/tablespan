@@ -1,4 +1,6 @@
-url: https://jhorzek.github.io/tabelle/
+url: https://jhorzek.github.io/tablespan/
 template:
   bootstrap: 5
+  params:
+    bootswatch: pulse
 

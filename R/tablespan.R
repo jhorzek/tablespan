@@ -1,21 +1,21 @@
-#' tabelle
+#' tablespan
 #'
-#' Create a basic table using a data set and a formula to describe the headers.
+#' Create table tops (headers) using a formula approach.
 #'
-#' Basic tables creates, as the name suggests, very basic tables. In general, \code{tabelle}
-#' will not create summaries for you or transform your data in any shape or form.
-#' Instead, the idea is that you provide an already summarized data frame (e.g.,
-#' from dplyr's summary function) and just need some nested headers when writing
-#' it to Excel.
+#' \code{tablespan} provides a formula based approach to adding headers and spanners
+#' to an existing data.frame. The objective is to provide an easy to use, but good
+#' enough approach to building and exporting tables.
 #'
-#' Following the \code{tibble} approach, \code{tabelle} assumes that all items that you may
+#' \code{tablespan} will not create summaries for you or transform your data in any shape or form.
+#'
+#' Following the \code{tibble} approach, \code{tablespan} assumes that all items that you may
 #' want to use as row names are just columns in your data set (see example). That
-#' is, \code{tabelle} will allow you to pick some of your items as row names and then just
+#' is, \code{tablespan} will allow you to pick some of your items as row names and then just
 #' write them in a separate section to the left of the data.
 #'
 #' The table headers are defined with a basic formula approach. For example,
 #' \code{Species ~ Sepal.Length + Sepal.Width} defines a table with Species as the
-#' row names and Sepal.Length and Sepal.Width as columns. The output in Excel will
+#' row names and Sepal.Length and Sepal.Width as columns. The output will
 #' be similar to the following:
 #' \preformatted{
 #' |Species | Sepal.Length  Sepal.Width|
@@ -29,7 +29,7 @@
 #'
 #' \code{Species ~ (Sepal = Sepal.Length + Sepal.Width) + (Petal = Sepal.Length + Sepal.Width)}
 #'
-#' This will result in an Excel output similar to:
+#' This will result in an output similar to:
 #' \preformatted{
 #' |        |           Sepal          |          Petal           |
 #' |Species | Sepal.Length| Sepal.Width| Petal.Length| Petal.Width|
@@ -38,11 +38,12 @@
 #'
 #' You can also nest spanners (e.g., \code{Species ~ (Sepal = (Length = Sepal.Length) + (Width = Sepal.Width))}.
 #'
-#' In the example above, there is some redundant information: For example, if we have the spanner
-#' label "Sepal", we don't need the "Sepal." part of "Sepal.Length". To remove this
-#' redundancy, you can rename the item in the header using \code{new_name:old_name}.
+#' When exporting tables, you may want to rename some of you columns. For example,
+#' you may want to rename Sepal.Length and Petal.Length to Lenght and Sepal.Width and
+#' Petal.Width to Width. With \code{tablespan}, you can rename the item in the header
+#' using \code{new_name:old_name}.
 #' For example, \code{Species ~ (Sepal = Length:Sepal.Length + Width:Sepal.Width) + (Petal = Length:Sepal.Length + Width:Sepal.Width)}
-#' defines as table similar to the following:
+#' defines a table similar to the following:
 #' \preformatted{
 #' |        |      Sepal     |      Petal     |
 #' |Species | Length | Width | Length | Width |
@@ -63,23 +64,23 @@
 #' @param title string specifying the title of the table
 #' @param subtitle string specifying the subtitle of the table
 #' @param footnote string specifying the footnote of the table
-#' @returns Object of class TABELLE with title, subtitle, header info, data, and footnote.
+#' @returns Object of class Tabletop with title, subtitle, header info, data, and footnote.
 #' @export
 #' @examples
 #' data("iris")
-#' tbl <- tabelle(data = iris[iris$Species == "setosa", ],
+#' tbl <- tablespan(data = iris[iris$Species == "setosa", ],
 #'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
 #'                     (Petal = Petal.Length + Petal.Width))
 #'
 #' # Create Excel table:
-#' wb <- write_tab(tbl = tbl)
+#' wb <- to_excel(tbl = tbl)
 #'
 #' # saveWorkbook(wb, "iris.xlsx")
-tabelle <- function(data,
-                    formula,
-                    title = NULL,
-                    subtitle = NULL,
-                    footnote = NULL){
+tablespan <- function(data,
+                     formula,
+                     title = NULL,
+                     subtitle = NULL,
+                     footnote = NULL){
 
   deparsed <- deparse_formula(formula)
 
@@ -100,7 +101,7 @@ tabelle <- function(data,
                     header = header,
                     table_data = table_data,
                     footnote = footnote)
-  class(bt_result) <- "TABELLE"
+  class(bt_result) <- "Tablespan"
   return(bt_result)
 }
 
@@ -170,9 +171,9 @@ construct_header <- function(deparsed){
 
 #' add_header_width
 #'
-#' tabelle represents headers as (highly) nested lists. To determine how
+#' tablespan represents headers as (highly) nested lists. To determine how
 #' wide each entry in the header must be (i.e., how many cells it will get in
-#' the Excel output), we have to get the number of root elements each parent element
+#' the output), we have to get the number of root elements each parent element
 #' spans. For example, in the following table, x spans two elements x1 and x2:
 #' \preformatted{
 #' |    x    |
@@ -185,12 +186,12 @@ construct_header <- function(deparsed){
 #' @returns the parsed_partial with additional width fields
 #' @keywords internal
 #' @examples
-#' library(tabelle)
-#' deparsed <- tabelle:::deparse_formula(formula =
+#' library(tablespan)
+#' deparsed <- tablespan:::deparse_formula(formula =
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
 #'
-#' deparsed <- tabelle:::add_header_width(deparsed$rhs)
+#' deparsed <- tablespan:::add_header_width(deparsed$rhs)
 #' str(deparsed)
 #' deparsed$width
 add_header_width <- function(parsed_partial){
@@ -212,7 +213,7 @@ add_header_width <- function(parsed_partial){
 
 #' add_header_level
 #'
-#' tabelle represents headers as (highly) nested lists. To determine the level
+#' tablespan represents headers as (highly) nested lists. To determine the level
 #' at which each entry resides, we have to get the number of root elements below each
 #' parent element. For example, in the following table, x is on level 2, but x1,
 #' x2, y1, and y2 are at level 1:
@@ -228,12 +229,12 @@ add_header_width <- function(parsed_partial){
 #' @returns the parsed_partial with additional level fields
 #' @keywords internal
 #' @examples
-#' library(tabelle)
-#' deparsed <- tabelle:::deparse_formula(formula =
+#' library(tablespan)
+#' deparsed <- tablespan:::deparse_formula(formula =
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
 #'
-#' deparsed <- tabelle:::add_header_level(deparsed$rhs)
+#' deparsed <- tablespan:::add_header_level(deparsed$rhs)
 #' str(deparsed)
 #' deparsed$level
 add_header_level <- function(parsed_partial){

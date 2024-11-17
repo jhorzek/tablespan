@@ -1,10 +1,10 @@
-Package: tabelle
+Package: tablespan
 Type: Package
 Title: Create basic xlsx tables with R
 Version: 0.1.0
 Author: Jannik H. Orzek
 Maintainer: Jannik H. Orzek <jannik.orzek@mailbox.org>
-Description: tabelle provides a "good enough" approach to creating xlsx tables
+Description: tablespan provides a "good enough" approach to creating xlsx tables
   in R.
 License: GPL (>= 3)
 Encoding: UTF-8
@@ -18,4 +18,4 @@ Imports:
     methods,
     openxlsx,
     utils
-URL: https://jhorzek.github.io/tabelle/
+URL: https://jhorzek.github.io/tablespan/

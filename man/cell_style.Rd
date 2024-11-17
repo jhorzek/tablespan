@@ -24,10 +24,10 @@ existing styles (FALSE)}
 cell_style
 }
 \examples{
-library(tabelle)
+library(tablespan)
 data("iris")
 
-tbl <- tabelle(data = iris[iris$Species == "setosa", ],
+tbl <- tablespan(data = iris[iris$Species == "setosa", ],
           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
             (Petal = (Width = Petal.Length) + Petal.Width))
 
@@ -37,7 +37,7 @@ tbl <- tabelle(data = iris[iris$Species == "setosa", ],
 # the rows 9-10 of the Petal.Width column.
 bold <- openxlsx::createStyle(textDecoration = "bold")
 
-wb <- write_tab(tbl = tbl,
+wb <- to_excel(tbl = tbl,
                styles = tab_styles(cell_styles = list(cell_style(rows = 1:5,
                                                                 colnames = "Sepal.Length",
                                                                 style = bold),

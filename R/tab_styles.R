@@ -84,10 +84,10 @@ tab_styles <- function(
 #' @importFrom methods is
 #' @export
 #' @examples
-#' library(tabelle)
+#' library(tablespan)
 #' data("iris")
 #'
-#' tbl <- tabelle(data = iris[iris$Species == "setosa", ],
+#' tbl <- tablespan(data = iris[iris$Species == "setosa", ],
 #'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
 #'             (Petal = (Width = Petal.Length) + Petal.Width))
 #'
@@ -97,7 +97,7 @@ tab_styles <- function(
 #' # the rows 9-10 of the Petal.Width column.
 #' bold <- openxlsx::createStyle(textDecoration = "bold")
 #'
-#' wb <- write_tab(tbl = tbl,
+#' wb <- to_excel(tbl = tbl,
 #'                styles = tab_styles(cell_styles = list(cell_style(rows = 1:5,
 #'                                                                 colnames = "Sepal.Length",
 #'                                                                 style = bold),
@@ -140,7 +140,7 @@ cell_style <- function(rows,
 #' @import openxlsx
 #' @export
 #' @examples
-#' library(tabelle)
+#' library(tablespan)
 #' # Make all booleans bold:
 #' create_data_styles(boolean = list(test = is.logical,
 #'                    style = openxlsx::createStyle(textDecoration = "bold")))

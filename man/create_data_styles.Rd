@@ -32,7 +32,7 @@ the columns where the test returns TRUE. Note that styles will be applied in the
 order of the list, meaning that a later style may overwrite an earlier style.
 }
 \examples{
-library(tabelle)
+library(tablespan)
 # Make all booleans bold:
 create_data_styles(boolean = list(test = is.logical,
                    style = openxlsx::createStyle(textDecoration = "bold")))
