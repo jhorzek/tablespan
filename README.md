@@ -224,7 +224,7 @@ While `tablespan` provides limited styling options, some elements can be
 adjusted. For example, we may want to print some elements in bold or
 format numbers differently. In `tablespan`, styling happens when
 translating the table to an `openxlsx` workbook with `to_excel`. To this
-end, `tablespan` provides a \`style
+end, `tablespan` provides a \`styles’ argument.
 
 #### Formatting Cells
 
