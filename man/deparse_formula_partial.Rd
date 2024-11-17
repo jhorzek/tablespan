@@ -29,11 +29,11 @@ grammar:
 3) plus signs combine columns
 }
 \examples{
-library(tabelle)
+library(tablespan)
 formula <- (`Row Name` = `Row 1` + `Row 2`) ~
   `Column 1` + (`Column Banner` = `Column 2` + `Column 3`)
 
-deparsed <- tabelle:::deparse_formula_partial(formula_partial = formula[[2]])
+deparsed <- tablespan:::deparse_formula_partial(formula_partial = formula[[2]])
 str(deparsed)
 }
 \keyword{internal}

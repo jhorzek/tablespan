@@ -7,19 +7,19 @@
 get_variables(deparsed_formula)
 }
 \arguments{
-\item{deparsed_formula}{result from tabelle:::deparse_formula}
+\item{deparsed_formula}{result from tablespan:::deparse_formula}
 }
 \value{
 a list with the names of the variables that build the rows and columns
 }
 \description{
-Extracts the variable names from a deparsed formula (see ?tabelle:::deparse_formula).
+Extracts the variable names from a deparsed formula (see ?tablespan:::deparse_formula).
 }
 \examples{
-library(tabelle)
-deparsed <- tabelle:::deparse_formula(formula =
+library(tablespan)
+deparsed <- tablespan:::deparse_formula(formula =
  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 str(deparsed)
-tabelle:::get_variables(deparsed)
+tablespan:::get_variables(deparsed)
 }
 \keyword{internal}

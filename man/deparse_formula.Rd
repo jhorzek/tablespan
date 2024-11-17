@@ -24,8 +24,8 @@ grammar:
 3) plus signs combine columns
 }
 \examples{
-library(tabelle)
-deparsed <- tabelle:::deparse_formula(formula =
+library(tablespan)
+deparsed <- tablespan:::deparse_formula(formula =
  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 str(deparsed)
 }

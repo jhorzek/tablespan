@@ -7,7 +7,7 @@
 get_locations(tbl, start_row, start_col)
 }
 \arguments{
-\item{tbl}{table created with tabelle::tabelle}
+\item{tbl}{table created with tablespan::tablespan}
 
 \item{start_row}{row index at which the table will start}
 

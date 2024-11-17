@@ -1,26 +1,26 @@
-#' write_tab
+#' to_excel
 #'
-#' Write a tabelle table to an excel workbook.
+#' Write a tablespan table to an excel workbook.
 #'
-#' @param tbl table created with tabelle::tabelle
+#' @param tbl table created with tablespan::tablespan
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param start_row row at which to start the table
 #' @param start_col column at which to start the table
-#' @param styles openxlsx style for the different table elements (see ?tabelle::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
 #' @export
 #' @examples
-#' library(tabelle)
+#' library(tablespan)
 #' data("iris")
 #'
-#' tbl <- tabelle(data = iris[iris$Species == "setosa", ],
+#' tbl <- tablespan(data = iris[iris$Species == "setosa", ],
 #'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
 #'             (Petal = (Width = Petal.Length) + Petal.Width))
 #'
-#' wb <- write_tab(tbl = tbl)
+#' wb <- to_excel(tbl = tbl)
 #'
 #' # saveWorkbook(wb, "iris.xlsx")
 #'
@@ -29,7 +29,7 @@
 #' # the rows 9-10 of the Petal.Width column.
 #' bold <- openxlsx::createStyle(textDecoration = "bold")
 #'
-#' wb <- write_tab(tbl = tbl,
+#' wb <- to_excel(tbl = tbl,
 #'                styles = tab_styles(cell_styles = list(cell_style(rows = 1:5,
 #'                                                                 colnames = "Sepal.Length",
 #'                                                                 style = bold),
@@ -38,7 +38,7 @@
 #'                                                                 style = bold))))
 #' # saveWorkbook(wb, "iris.xlsx")
 #'
-#' # The main use case for tabelle is when you already have a summarized table
+#' # The main use case for tablespan is when you already have a summarized table
 #' # that you now want to share using xlsx. The following shows an example using
 #' # the dplyr package:
 #' if (require("dplyr")) {
@@ -54,27 +54,27 @@
 #' # Now, we want to create a table, where we show the grouping variables
 #' # as row names and also create spanners for the horse power (hp) and the
 #' # weight (wt) variables:
-#' tbl <- tabelle(data = summarized_table,
+#' tbl <- tablespan(data = summarized_table,
 #'           formula = Cylinder:cyl + Engine:vs ~
 #'             N +
 #'             (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
 #'             (`Weight` = Mean:mean_wt + SD:sd_wt),
 #'           title = "Motor Trend Car Road Tests",
-#'           subtitle = "A table created with tabelle",
+#'           subtitle = "A table created with tablespan",
 #'           footnote = "Data from the infamous mtcars data set.")
 #'
-#' wb <- write_tab(tbl = tbl)
+#' wb <- to_excel(tbl = tbl)
 #'
 #' # Create the excel table:
 #' # openxlsx::saveWorkbook(wb,
 #' #                        file = "cars.xlsx", overwrite = TRUE)
 #' }
-write_tab <- function(tbl,
-                      workbook = openxlsx::createWorkbook(),
-                      sheet = "BasicTable",
-                      start_row = 1,
-                      start_col = 1,
-                      styles = tab_styles()){
+to_excel <- function(tbl,
+                     workbook = openxlsx::createWorkbook(),
+                     sheet = "BasicTable",
+                     start_row = 1,
+                     start_col = 1,
+                     styles = tab_styles()){
 
   if(is.character(sheet) && !(sheet %in% workbook$sheet_names)){
     openxlsx::addWorksheet(sheetName = sheet,
@@ -130,11 +130,11 @@ write_tab <- function(tbl,
 #'
 #' Fills the background of the table.
 #'
-#' @param tbl table created with tabelle::tabelle
+#' @param tbl table created with tablespan::tablespan
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tabelle::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -166,11 +166,11 @@ fill_background <- function(tbl,
 #'
 #' Adds vertical and horizontal bars to the table.
 #'
-#' @param tbl table created with tabelle::tabelle
+#' @param tbl table created with tablespan::tablespan
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tabelle::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -239,11 +239,11 @@ create_outlines <- function(tbl,
 #'
 #' Writes the title and the subtitle to the workbook.
 #'
-#' @param tbl table created with tabelle::tabelle
+#' @param tbl table created with tablespan::tablespan
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tabelle::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -301,10 +301,10 @@ write_title <- function(tbl,
 #'
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
-#' @param header header specification from tabelle table
+#' @param header header specification from tablespan table
 #' @param table_data data for rownames and the actual data for the body of the table
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tabelle::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -406,10 +406,10 @@ write_header_entry <- function(workbook,
 #'
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
-#' @param header header specification from tabelle table
+#' @param header header specification from tablespan table
 #' @param table_data data for rownames and the actual data for the body of the table
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tabelle::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -499,11 +499,11 @@ write_data <- function(workbook,
 #'
 #' Writes the footnote to the workbook.
 #'
-#' @param tbl table created with tabelle::tabelle
+#' @param tbl table created with tablespan::tablespan
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tabelle::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -544,7 +544,7 @@ write_footnote <- function(tbl,
 #' @param sheet name of the sheet to which the table should be written to
 #' @param table_data data for rownames and the actual data for the body of the table
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tabelle::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx

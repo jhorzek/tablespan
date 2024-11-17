@@ -1,36 +1,36 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# tabelle
+# tablespan
 
-> Create satisficing Excel tables in R.
+> Create satisficing tables in R the formula way.
 
-The objective of `tabelle` is to provide a “good enough” approach to
+The objective of `tablespan` is to provide a “good enough” approach to
 creating tables in R.
 
-Due to the limited approach, `tabelle` is a lot less sophisticated than
-the awesome packages [`gt`](https://gt.rstudio.com/), or
+Due to the limited approach, `tablespan` is a lot less sophisticated
+than the awesome packages [`gt`](https://gt.rstudio.com/), or
 [`expss`](https://gdemin.github.io/expss/#Introduction). The main
-advantage of `tabelle` is its simplicity and its focus on creating .xslx
-tables.
+advantage of `tablespan` is its simplicity and its focus on creating
+tables with a single formula (heavily inspired by
+[`tables`](https://dmurdoch.github.io/tables/)).
 
 ## Installation
 
-`tabelle` is not yet available from CRAN. To install from GitHub, run
+`tablespan` is not yet available from CRAN. To install from GitHub, run
 the following lines:
 
 ``` r
 library(remotes)
-remotes::install_github("jhorzek/tabelle")
+remotes::install_github("jhorzek/tablespan")
 ```
 
 ## Introduction
 
-`tabelle` assumes that you already have a perfectly summarized table
-that you now want to share using .xlsx. That is, `tabelle` will not
-create any crosstables, compute percentages or similar. It mostly adds
-column names with spanners, combines rownames, and writes the result to
-.xlsx files.
+`tablespan` assumes that you already have a perfectly summarized table
+that you now want to share. All you need are some **table** headers with
+**spanners** without investing much time into making it look perfect.
+This is what `tablespan` was designed for.
 
 Let’s assume we want to share the following table:
 
@@ -69,16 +69,18 @@ weight (`wt`) variables. The result should look something like this:
     | -------- | ------ | ----- | --- | ---- | -- |
     |                   |                         |
 
-In `tabelle`, the table headers are defined with a formula approach
+### Creating a Basic Table
+
+In `tablespan`, the table headers are defined with a formula approach
 inspired by the [`tables`](https://dmurdoch.github.io/tables/) package.
 For example, `cyl ~ mean_hp + sd_hp` defines a table with `cyl` as the
-row names and `mean_hp` and `sd_hp` as columns. The output in Excel will
-be similar to the following:
+row names and `mean_hp` and `sd_hp` as columns. The output will look as
+follows:
 
 ``` r
-library(tabelle)
-tabelle(data = summarized_table,
-        formula = cyl ~ mean_hp + sd_hp)
+library(tablespan)
+tablespan(data = summarized_table,
+         formula = cyl ~ mean_hp + sd_hp)
 #>                         
 #>  | cyl | mean_hp sd_hp |
 #>  | --- - ------- ----- |
@@ -90,13 +92,15 @@ tabelle(data = summarized_table,
 
 Note that the row names (`cyl`) are in a separate block to the left.
 
+### Adding Spanners
+
 Spanners are defined using braces and spanner names. For example, the
 following defines a spanner for `mean_hp` and `sd_hp` with the name
 `Horsepower`: `cyl ~ (Horsepower = mean_hp + sd_hp)`.
 
 ``` r
-tabelle(data = summarized_table,
-        formula = cyl ~ (Horsepower = mean_hp + sd_hp))
+tablespan(data = summarized_table,
+         formula = cyl ~ (Horsepower = mean_hp + sd_hp))
 #>                            
 #>  |     | Horsepower       |
 #>  | cyl | mean_hp    sd_hp |
@@ -111,8 +115,8 @@ Spanners can also be nested (e.g.,
 `cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))`.
 
 ``` r
-tabelle(data = summarized_table,
-        formula = cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp)))
+tablespan(data = summarized_table,
+         formula = cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp)))
 #>                            
 #>  |     | Horsepower       |
 #>  |     | Mean       SD    |
@@ -124,16 +128,19 @@ tabelle(data = summarized_table,
 #>  | ... | ...        ...   |
 ```
 
-Often, we may want to replace the technical names (e.g., `mean_hp` and
-`sd_hp`) used in `R` when exporting to .xlsx. In the example above, we
-may want to replace `mean_hp` and `sd_hp` with “Mean” and “SD”. In
-`tabelle` renaming variables is achieved with `new_name:old_name`. For
-example, `cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` renames
-`mean_hp` to `Mean` and `sd_hp` to `SD`:
+### Renaming Columns
+
+Variable names in an R `data.frame` are often very technical (e.g.,
+`mean_hp` and `sd_hp`). When sharing the table, we may want to replace
+those names. In the example above, we may want to replace `mean_hp` and
+`sd_hp` with “Mean” and “SD”. In `tablespan` renaming variables is
+achieved with `new_name:old_name`. For example,
+`cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` renames `mean_hp` to
+`Mean` and `sd_hp` to `SD`:
 
 ``` r
-tabelle(data = summarized_table,
-        formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+tablespan(data = summarized_table,
+         formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
 #>                            
 #>  |     | Horsepower       |
 #>  | cyl | Mean       SD    |
@@ -144,21 +151,23 @@ tabelle(data = summarized_table,
 #>  | ... | ...        ...   |
 ```
 
+### Creating the Full Table
+
 The combination of row names, spanners, and renaming of variables allows
 creating the full table as follows:
 
 ``` r
-tbl <- tabelle(data = summarized_table,
-               formula = Cylinder:cyl + Engine:vs ~
-                 N +
-                 (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-                 (`Weight` = Mean:mean_wt + SD:sd_wt),
-               title = "Motor Trend Car Road Tests",
-               subtitle = "A table created with tabelle",
-               footnote = "Data from the infamous mtcars data set.")
+tbl <- tablespan(data = summarized_table,
+                formula = Cylinder:cyl + Engine:vs ~
+                  N +
+                  (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                  (`Weight` = Mean:mean_wt + SD:sd_wt),
+                title = "Motor Trend Car Road Tests",
+                subtitle = "A table created with tablespan",
+                footnote = "Data from the infamous mtcars data set.")
 tbl
 #> Motor Trend Car Road Tests
-#> A table created with tabelle
+#> A table created with tablespan
 #>                                                         
 #>  |                 |     Horse Power       Weight      |
 #>  | Cylinder Engine | N   Mean        SD    Mean   SD   |
@@ -170,12 +179,14 @@ tbl
 #> Data from the infamous mtcars data set.
 ```
 
-This table can now be translated to an xlsx table with
+### Exporting to Excel
+
+The table above can now be translated to an xlsx table with
 [openxlsx](https://ycphs.github.io/openxlsx/):
 
 ``` r
-# write_tab creates an openxlsx workbook
-wb <- write_tab(tbl = tbl)
+# to_excel creates an openxlsx workbook
+wb <- to_excel(tbl = tbl)
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
@@ -184,7 +195,7 @@ wb <- write_tab(tbl = tbl)
 
 The result looks as follows:
 
-![](man/figures/basicTables_example_cars.png)
+![](man/figures/tablespan_example_cars.png)
 
 ## Additional Settings
 
@@ -195,8 +206,8 @@ row names. For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)`
 defines
 
 ``` r
-tabelle(data = summarized_table,
-        formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+tablespan(data = summarized_table,
+         formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
 #>                      
 #>  | Horsepower       |
 #>  | Mean       SD    |
@@ -209,11 +220,11 @@ tabelle(data = summarized_table,
 
 ### Styling
 
-While `tabelle` provides limited styling options, some elements can be
+While `tablespan` provides limited styling options, some elements can be
 adjusted. For example, we may want to print some elements in bold or
-format numbers differently. In `tabelle`, styling happens when
-translating the table to an `openxlsx` workbook with `write_tab`. To
-this end, `tabelle` provides a \`style
+format numbers differently. In `tablespan`, styling happens when
+translating the table to an `openxlsx` workbook with `to_excel`. To this
+end, `tablespan` provides a \`style
 
 #### Formatting Cells
 
@@ -225,7 +236,7 @@ printed in bold. To this end, we first create a new style object using
 bold <- openxlsx::createStyle(textDecoration = "bold")
 ```
 
-Next, we create a cell style with `tabelle`:
+Next, we create a cell style with `tablespan`:
 
 ``` r
 hp_ge_100 <- cell_style(rows = which(summarized_table$mean_hp >= 100), 
@@ -237,38 +248,40 @@ hp_ge_100 <- cell_style(rows = which(summarized_table$mean_hp >= 100),
 Note that we specify the indices of the rows that we want to be in bold
 and the column name of the item.
 
-Finally, we pass this style as part of a list to `write_tab`:
+Finally, we pass this style as part of a list to `to_excel`:
 
 ``` r
-# write_tab creates an openxlsx workbook
-wb <- write_tab(tbl = tbl, styles = tab_styles(cell_styles = list(hp_ge_100)))
+# to_excel creates an openxlsx workbook
+wb <- to_excel(tbl = tbl, 
+               styles = tab_styles(cell_styles = list(hp_ge_100)))
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
 #                        file = "cars.xlsx", overwrite = TRUE)
 ```
 
-![](man/figures/basicTables_example_cars_styled.png)
+![](man/figures/tablespan_example_cars_styled.png)
 
 #### Formatting Data Types
 
-`tabelle` also allows formatting specific data types. Let’s assume that
-we want to round all doubles to 3 instead of the default four digits. To
-this end, we use the `create_data_styles` function, where we specify (1)
-a function that checks for the data type we want to style (here
-`is.double`) and (2) a style for all columns that match that style:
+`tablespan` also allows formatting specific data types. Let’s assume
+that we want to round all doubles to 3 instead of the default four
+digits. To this end, we use the `create_data_styles` function, where we
+specify (1) a function that checks for the data type we want to style
+(here `is.double`) and (2) a style for all columns that match that
+style:
 
 ``` r
 double_style <- create_data_styles(double = list(test = is.double, 
                                                  style = openxlsx::createStyle(numFmt = "0.000")))
-wb <- write_tab(tbl = tbl, styles = tab_styles(data_styles = double_style))
+wb <- to_excel(tbl = tbl, styles = tab_styles(data_styles = double_style))
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
 #                        file = "cars.xlsx", overwrite = TRUE)
 ```
 
-![](man/figures/basicTables_example_cars_styled_data.png)
+![](man/figures/tablespan_example_cars_styled_data.png)
 
 ## References
 

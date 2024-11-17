@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(tabelle)
+library(tablespan)
 
-test_check("tabelle")
+test_check("tablespan")

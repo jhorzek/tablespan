@@ -1,6 +1,6 @@
-#' print.TABELLE
+#' print.Tablespan
 #'
-#' @param x result from tabelle
+#' @param x result from tablespan
 #' @param digits number of digits to round doubles to
 #' @param n number of rows to print
 #' @param ... additional arguments passed to prmatrix
@@ -9,11 +9,11 @@
 #' @export
 #' @examples
 #' data("iris")
-#' tbl <- tabelle(data = iris[iris$Species == "setosa", ],
+#' tbl <- tablespan(data = iris[iris$Species == "setosa", ],
 #'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
 #'             (Petal = Petal.Length + Petal.Width))
 #' print(tbl)
-print.TABELLE <- function(x, digits = 2, n = 3, ...){
+print.Tablespan <- function(x, digits = 2, n = 3, ...){
   if(!is.null(x$header$lhs)){
     max_level <- max(x$header$lhs$level, x$header$rhs$level)
     max_col <- x$header$lhs$width + x$header$rhs$width
@@ -105,7 +105,6 @@ print.TABELLE <- function(x, digits = 2, n = 3, ...){
 #' @keywords internal
 print_insert_header_entries <- function(header_partial, max_level, column_offset, header_table){
   if(header_partial$name != "_BASE_LEVEL_"){
-    #browser()
     header_table[max_level - header_partial$level, column_offset] <- header_partial$name
   }
   if(!is.null(header_partial$entries)){

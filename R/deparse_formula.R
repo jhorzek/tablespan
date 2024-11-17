@@ -13,8 +13,8 @@
 #' @returns nested lists for the left hand side and right hand side of the formula
 #' @keywords internal
 #' @examples
-#' library(tabelle)
-#' deparsed <- tabelle:::deparse_formula(formula =
+#' library(tablespan)
+#' deparsed <- tablespan:::deparse_formula(formula =
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
 deparse_formula <- function(formula){
@@ -51,11 +51,11 @@ deparse_formula <- function(formula){
 #' @importFrom methods is
 #' @keywords internal
 #' @examples
-#' library(tabelle)
+#' library(tablespan)
 #' formula <- (`Row Name` = `Row 1` + `Row 2`) ~
 #'   `Column 1` + (`Column Banner` = `Column 2` + `Column 3`)
 #'
-#' deparsed <- tabelle:::deparse_formula_partial(formula_partial = formula[[2]])
+#' deparsed <- tablespan:::deparse_formula_partial(formula_partial = formula[[2]])
 #' str(deparsed)
 deparse_formula_partial <- function(formula_partial,
                                     deparsed = list(name = "_BASE_LEVEL_", entries = list())){
@@ -122,17 +122,17 @@ deparse_formula_partial <- function(formula_partial,
 
 #' get_variables
 #'
-#' Extracts the variable names from a deparsed formula (see ?tabelle:::deparse_formula).
+#' Extracts the variable names from a deparsed formula (see ?tablespan:::deparse_formula).
 #'
-#' @param deparsed_formula result from tabelle:::deparse_formula
+#' @param deparsed_formula result from tablespan:::deparse_formula
 #' @returns a list with the names of the variables that build the rows and columns
 #' @keywords internal
 #' @examples
-#' library(tabelle)
-#' deparsed <- tabelle:::deparse_formula(formula =
+#' library(tablespan)
+#' deparsed <- tablespan:::deparse_formula(formula =
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
-#' tabelle:::get_variables(deparsed)
+#' tablespan:::get_variables(deparsed)
 get_variables <- function(deparsed_formula){
   if(is.null(deparsed_formula$lhs)){
     # no row variable
@@ -152,19 +152,19 @@ get_variables <- function(deparsed_formula){
 #' get_variables_from_list
 #'
 #' Extracts the variable names from the left or right hand side of a
-#' deparsed formula (see ?tabelle:::deparse_formula).
+#' deparsed formula (see ?tablespan:::deparse_formula).
 #'
 #' @param deparsed_formula_element left or right hand side of the result from
-#' tabelle:::deparse_formula
+#' tablespan:::deparse_formula
 #' @param variables the function is recursive and fills the variable vector
 #' @returns a vector with the names of the variables
 #' @keywords internal
 #' @examples
-#' library(tabelle)
-#' deparsed <- tabelle:::deparse_formula(formula =
+#' library(tablespan)
+#' deparsed <- tablespan:::deparse_formula(formula =
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
-#' tabelle:::get_variables_from_list(deparsed$lhs)
+#' tablespan:::get_variables_from_list(deparsed$lhs)
 get_variables_from_list <- function(deparsed_formula_element, variables = c()){
   if(is.null(deparsed_formula_element$entries)){
     variables <- c(variables, deparsed_formula_element$item_name)
