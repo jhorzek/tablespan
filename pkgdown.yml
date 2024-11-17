@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-11-17T19:06Z
+last_built: 2024-11-17T19:14Z
 urls:
   reference: https://jhorzek.github.io/tablespan/reference
   article: https://jhorzek.github.io/tablespan/articles
