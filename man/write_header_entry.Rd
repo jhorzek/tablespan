@@ -11,7 +11,8 @@ write_header_entry(
   max_level,
   start_row,
   start_col,
-  header_style
+  header_style,
+  vline_style
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ write_header_entry(
 \item{start_col}{integer specifying column to write to}
 
 \item{header_style}{openxlsx style for the header}
+
+\item{vline_style}{openxlsx style for the vertical lines in the header}
 }
 \description{
 Recursive function writing the header elements (column names and names for the rownames)

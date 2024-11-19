@@ -350,3 +350,48 @@ test_that("cars-no_titles_no_footnotes", {
   testthat::expect_true(all.equal(wb$worksheets,  wb_compare$worksheets))
 
 })
+
+
+test_that("cars-table_with_higher_spanner_left_right", {
+  library(tablespan)
+  library(testthat)
+  library(dplyr)
+  library(openxlsx)
+
+  comp_file_dir <- paste0(testthat::test_path(), "/xlsx_files/")
+
+  summarized_table <- mtcars |>
+    group_by(cyl, vs) |>
+    summarise(N = n(),
+              mean_hp = mean(hp),
+              sd_hp = sd(hp),
+              mean_wt = mean(wt),
+              sd_wt = sd(wt))
+
+  # Spanner where we need additional lines
+  tbl <- tablespan(data = summarized_table,
+                   formula = Cylinder:cyl + Engine:vs ~
+                     (Results = N +
+                        (`Inner result` = (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                           (`Weight` = Mean:mean_wt + SD:sd_wt))),
+                   title = "Motor Trend Car Road Tests",
+                   subtitle = "A table created with tablespan",
+                   footnote = "Data from the infamous mtcars data set.")
+
+  wb <- to_excel(tbl = tbl)
+
+  # Compare just the data
+  xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_additional_spanners_left_right.xlsx"))
+  testthat::expect_true(all.equal(openxlsx::read.xlsx(wb), xlsx_compare))
+
+  # to compare workbooks, we have to write and reload the xlsx file
+  tmp_dir <- tempdir()
+  openxlsx::saveWorkbook(wb,
+                         file = paste0(tmp_dir, "/cars_test.xlsx"),
+                         overwrite = TRUE)
+
+  wb <- openxlsx::loadWorkbook(file = paste0(tmp_dir, "/cars_test.xlsx"))
+  wb_compare <- openxlsx::loadWorkbook(file = paste0(comp_file_dir, "cars_additional_spanners_left_right.xlsx"))
+  testthat::expect_true(all.equal(wb$worksheets,  wb_compare$worksheets))
+
+})
