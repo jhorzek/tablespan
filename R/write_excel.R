@@ -326,7 +326,8 @@ write_header <- function(workbook,
                        max_level = max_level,
                        start_row = locations$row$start_row_header,
                        start_col = locations$col$start_col_header_lhs,
-                       header_style = styles$header_style)
+                       header_style = styles$header_style,
+                       vline_style = styles$vline_style)
 
   }else{
     max_level <- header$rhs$level
@@ -338,7 +339,8 @@ write_header <- function(workbook,
                      max_level = max_level,
                      start_row = locations$row$start_row_header,
                      start_col = locations$col$start_col_header_rhs,
-                     header_style = styles$header_style)
+                     header_style = styles$header_style,
+                     vline_style = styles$vline_style)
 
 }
 
@@ -354,6 +356,7 @@ write_header <- function(workbook,
 #' @param start_row integer specifying row to write to
 #' @param start_col integer specifying column to write to
 #' @param header_style openxlsx style for the header
+#' @param vline_style openxlsx style for the vertical lines in the header
 #' @import openxlsx
 #' @keywords internal
 write_header_entry <- function(workbook,
@@ -362,7 +365,8 @@ write_header_entry <- function(workbook,
                                max_level,
                                start_row,
                                start_col,
-                               header_style){
+                               header_style,
+                               vline_style){
 
   # write current entry name into table
   if(header_entry$name != "_BASE_LEVEL_"){
@@ -384,6 +388,23 @@ write_header_entry <- function(workbook,
                        cols = start_col:(start_col + header_entry$width - 1),
                        gridExpand = TRUE,
                        stack = TRUE)
+
+    # add vertical line to the left
+    openxlsx::addStyle(wb = workbook,
+                       sheet = sheet,
+                       style = vline_style,
+                       rows = (start_row + (max_level - header_entry$level) - 1):(start_row + max_level - 2),
+                       cols = start_col,
+                       gridExpand = TRUE,
+                       stack = TRUE)
+    # add vertical line to the right
+    openxlsx::addStyle(wb = workbook,
+                       sheet = sheet,
+                       style = vline_style,
+                       rows = (start_row + (max_level - header_entry$level) - 1):(start_row + max_level - 2),
+                       cols = (start_col + header_entry$width),
+                       gridExpand = TRUE,
+                       stack = TRUE)
   }
 
   # entries may have sub-entries, that also have to be written down
@@ -395,7 +416,8 @@ write_header_entry <- function(workbook,
                        max_level = max_level,
                        start_row = start_row,
                        start_col = start_col_entry,
-                       header_style = header_style)
+                       header_style = header_style,
+                       vline_style = vline_style)
     start_col_entry <- start_col_entry + entry$width
   }
 }
