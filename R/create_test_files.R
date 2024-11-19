@@ -15,13 +15,13 @@ create_test_files_cars <- function(){
               sd_wt = sd(wt))
 
   tbl <- tablespan(data = summarized_table,
-                  formula = Cylinder:cyl + Engine:vs ~
-                    N +
-                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-                  title = "Motor Trend Car Road Tests",
-                  subtitle = "A table created with tablespan",
-                  footnote = "Data from the infamous mtcars data set.")
+                   formula = Cylinder:cyl + Engine:vs ~
+                     N +
+                     (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                     (`Weight` = Mean:mean_wt + SD:sd_wt),
+                   title = "Motor Trend Car Road Tests",
+                   subtitle = "A table created with tablespan",
+                   footnote = "Data from the infamous mtcars data set.")
 
   wb <- to_excel(tbl = tbl)
 
@@ -59,13 +59,13 @@ create_test_files_cars <- function(){
 
   # Additional spanners
   tbl <- tablespan(data = summarized_table,
-                  formula = Cylinder:cyl + Engine:vs ~
-                    (Results = N +
-                       (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
-                       (`Weight` = Mean:mean_wt + SD:sd_wt)),
-                  title = "Motor Trend Car Road Tests",
-                  subtitle = "A table created with tablespan",
-                  footnote = "Data from the infamous mtcars data set.")
+                   formula = Cylinder:cyl + Engine:vs ~
+                     (Results = N +
+                        (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                        (`Weight` = Mean:mean_wt + SD:sd_wt)),
+                   title = "Motor Trend Car Road Tests",
+                   subtitle = "A table created with tablespan",
+                   footnote = "Data from the infamous mtcars data set.")
 
   wb <- to_excel(tbl = tbl)
 
@@ -73,15 +73,31 @@ create_test_files_cars <- function(){
                          file = paste0(target_dir, "cars_additional_spanners.xlsx"),
                          overwrite = TRUE)
 
+  # Spanner where we need additional lines
+  tbl <- tablespan(data = summarized_table,
+                   formula = Cylinder:cyl + Engine:vs ~
+                     (Results = N +
+                        (`Inner result` = (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                           (`Weight` = Mean:mean_wt + SD:sd_wt))),
+                   title = "Motor Trend Car Road Tests",
+                   subtitle = "A table created with tablespan",
+                   footnote = "Data from the infamous mtcars data set.")
+
+  wb <- to_excel(tbl = tbl)
+
+  openxlsx::saveWorkbook(wb,
+                         file = paste0(target_dir, "cars_additional_spanners_left_right.xlsx"),
+                         overwrite = TRUE)
+
   # no row names
   tbl <- tablespan(data = summarized_table,
-                  formula = 1 ~
-                    (Results = N +
-                       (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
-                       (`Weight` = Mean:mean_wt + SD:sd_wt)),
-                  title = "Motor Trend Car Road Tests",
-                  subtitle = "A table created with tablespan",
-                  footnote = "Data from the infamous mtcars data set.")
+                   formula = 1 ~
+                     (Results = N +
+                        (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                        (`Weight` = Mean:mean_wt + SD:sd_wt)),
+                   title = "Motor Trend Car Road Tests",
+                   subtitle = "A table created with tablespan",
+                   footnote = "Data from the infamous mtcars data set.")
 
   wb <- to_excel(tbl = tbl)
 
@@ -90,11 +106,11 @@ create_test_files_cars <- function(){
                          overwrite = TRUE)
   # no titles
   tbl <- tablespan(data = summarized_table,
-                  formula = 1 ~
-                    (Results = N +
-                       (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
-                       (`Weight` = Mean:mean_wt + SD:sd_wt)),
-                  footnote = "Data from the infamous mtcars data set.")
+                   formula = 1 ~
+                     (Results = N +
+                        (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                        (`Weight` = Mean:mean_wt + SD:sd_wt)),
+                   footnote = "Data from the infamous mtcars data set.")
 
   wb <- to_excel(tbl = tbl)
 
@@ -104,10 +120,10 @@ create_test_files_cars <- function(){
 
   # no titles, no footnote
   tbl <- tablespan(data = summarized_table,
-                  formula = 1 ~
-                    (Results = N +
-                       (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
-                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
+                   formula = 1 ~
+                     (Results = N +
+                        (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
+                        (`Weight` = Mean:mean_wt + SD:sd_wt)))
 
   wb <- to_excel(tbl = tbl)
 
