@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Create basic xlsx tables with R • tablespan</title>
+<title>Create basic tables with R • tablespan</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Create basic xlsx tables with R">
-<meta name="description" content='tablespan provides a "good enough" approach to creating xlsx tables in R.'>
-<meta property="og:description" content='tablespan provides a "good enough" approach to creating xlsx tables in R.'>
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Create basic tables with R">
+<meta name="description" content='tablespan provides a "good enough" approach to creating xlsx, html and LaTeX tables in R leveraging openxlsx and gt.'>
+<meta property="og:description" content='tablespan provides a "good enough" approach to creating xlsx, html and LaTeX tables in R leveraging openxlsx and gt.'>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tablespan</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,18 @@
 <blockquote>
 <p>Create satisficing tables in R the formula way.</p>
 </blockquote>
-<p>The objective of <code>tablespan</code> is to provide a “good enough” approach to creating tables in R.</p>
-<p>Due to the limited approach, <code>tablespan</code> is a lot less sophisticated than the awesome packages <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>, or <a href="https://gdemin.github.io/expss/#Introduction" class="external-link"><code>expss</code></a>. The main advantage of <code>tablespan</code> is its simplicity and its focus on creating tables with a single formula (heavily inspired by <a href="https://dmurdoch.github.io/tables/" class="external-link"><code>tables</code></a>).</p>
+<p>The objective of <code>tablespan</code> is to provide a “good enough” approach to creating tables in R with simple formulas (inspired by <a href="https://dmurdoch.github.io/tables/" class="external-link"><code>tables</code></a>). To this end, <code>tablespan</code> builds on the awesome packages <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> and <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>.</p>
+<p>Tables created with <code>tablespan</code> can be exported to:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Excel</strong> (using <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a>)</li>
+<li>
+<strong>HTML</strong> (using <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>)</li>
+<li>
+<strong>LaTeX</strong> (using <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>)</li>
+<li>
+<strong>RTF</strong> (using <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>)</li>
+</ol>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -101,7 +111,7 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jhorzek.github.io/tablespan/">tablespan</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>         formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         </span></span>
 <span><span class="co">#&gt;  | cyl | mean_hp sd_hp |</span></span>
 <span><span class="co">#&gt;  | --- - ------- ----- |</span></span>
@@ -117,7 +127,7 @@
 <p>Spanners are defined using braces and spanner names. For example, the following defines a spanner for <code>mean_hp</code> and <code>sd_hp</code> with the name <code>Horsepower</code>: <code>cyl ~ (Horsepower = mean_hp + sd_hp)</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>         formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | cyl | mean_hp    sd_hp |</span></span>
@@ -129,7 +139,7 @@
 <p>Spanners can also be nested (e.g., <code>cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>         formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="op">(</span><span class="va">Mean</span> <span class="op">=</span> <span class="va">mean_hp</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">SD</span>  <span class="op">=</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="op">(</span><span class="va">Mean</span> <span class="op">=</span> <span class="va">mean_hp</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">SD</span>  <span class="op">=</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  |     | Mean       SD    |</span></span>
@@ -146,7 +156,7 @@
 <p>Variable names in an R <code>data.frame</code> are often very technical (e.g., <code>mean_hp</code> and <code>sd_hp</code>). When sharing the table, we may want to replace those names. In the example above, we may want to replace <code>mean_hp</code> and <code>sd_hp</code> with “Mean” and “SD”. In <code>tablespan</code> renaming variables is achieved with <code>new_name:old_name</code>. For example, <code>cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)</code> renames <code>mean_hp</code> to <code>Mean</code> and <code>sd_hp</code> to <code>SD</code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>         formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | cyl | Mean       SD    |</span></span>
@@ -161,14 +171,28 @@
 </h3>
 <p>The combination of row names, spanners, and renaming of variables allows creating the full table as follows:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>                formula <span class="op">=</span> <span class="va">Cylinder</span><span class="op">:</span><span class="va">cyl</span> <span class="op">+</span> <span class="va">Engine</span><span class="op">:</span><span class="va">vs</span> <span class="op">~</span></span>
-<span>                  <span class="va">N</span> <span class="op">+</span></span>
-<span>                  <span class="op">(</span><span class="va">`Horse Power`</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span> <span class="op">+</span></span>
-<span>                  <span class="op">(</span><span class="va">`Weight`</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_wt</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_wt</span><span class="op">)</span>,</span>
-<span>                title <span class="op">=</span> <span class="st">"Motor Trend Car Road Tests"</span>,</span>
-<span>                subtitle <span class="op">=</span> <span class="st">"A table created with tablespan"</span>,</span>
-<span>                footnote <span class="op">=</span> <span class="st">"Data from the infamous mtcars data set."</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jhorzek.github.io/tablespan/">tablespan</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mtcars"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">summarized_table</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>            mean_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
+<span>            sd_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
+<span>            mean_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
+<span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span></span>
+<span><span class="co">#&gt; argument.</span></span>
+<span></span>
+<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
+<span>                 formula <span class="op">=</span> <span class="va">Cylinder</span><span class="op">:</span><span class="va">cyl</span> <span class="op">+</span> <span class="va">Engine</span><span class="op">:</span><span class="va">vs</span> <span class="op">~</span></span>
+<span>                   <span class="va">N</span> <span class="op">+</span></span>
+<span>                   <span class="op">(</span><span class="va">`Horse Power`</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span> <span class="op">+</span></span>
+<span>                   <span class="op">(</span><span class="va">`Weight`</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_wt</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_wt</span><span class="op">)</span>,</span>
+<span>                 title <span class="op">=</span> <span class="st">"Motor Trend Car Road Tests"</span>,</span>
+<span>                 subtitle <span class="op">=</span> <span class="st">"A table created with tablespan"</span>,</span>
+<span>                 footnote <span class="op">=</span> <span class="st">"Data from the infamous mtcars data set."</span><span class="op">)</span></span>
 <span><span class="va">tbl</span></span>
 <span><span class="co">#&gt; Motor Trend Car Road Tests</span></span>
 <span><span class="co">#&gt; A table created with tablespan</span></span>
@@ -182,31 +206,1223 @@
 <span><span class="co">#&gt;  | ...      ...    | ... ...         ...   ...    ...  |</span></span>
 <span><span class="co">#&gt; Data from the infamous mtcars data set.</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="exporting-to-excel">Exporting to Excel<a class="anchor" aria-label="anchor" href="#exporting-to-excel"></a>
-</h3>
-<p>The table above can now be translated to an xlsx table with <a href="https://ycphs.github.io/openxlsx/" class="external-link">openxlsx</a>:</p>
+</div>
+<div class="section level2">
+<h2 id="exporting-to-excel">Exporting to Excel<a class="anchor" aria-label="anchor" href="#exporting-to-excel"></a>
+</h2>
+<p>Tables created with <code>tablespan</code> can now be translated to xlsx tables with <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> using the <code>to_excel</code> function:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># to_excel creates an openxlsx workbook</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_excel.html">to_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Save the workbook as an xlsx file:</span></span>
 <span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
-<span><span class="co">#                        file = "cars.xlsx", overwrite = TRUE)</span></span></code></pre></div>
-<p>The result looks as follows:</p>
+<span><span class="co">#                        file = "cars.xlsx", </span></span>
+<span><span class="co">#                        overwrite = TRUE)</span></span></code></pre></div>
 <p><img src="reference/figures/tablespan_example_cars.png"></p>
+<div class="section level3">
+<h3 id="styling">Styling<a class="anchor" aria-label="anchor" href="#styling"></a>
+</h3>
+<p>While <code>tablespan</code> provides limited styling options, some elements can be adjusted. For example, we may want to print some elements in bold or format numbers differently. In <code>tablespan</code>, styling happens when translating the table to an <code>openxlsx</code> workbook with <code>to_excel</code>. To this end, <code>tablespan</code> provides a <code>styles</code> argument.</p>
+<div class="section level4">
+<h4 id="formatting-cells">Formatting Cells<a class="anchor" aria-label="anchor" href="#formatting-cells"></a>
+</h4>
+<p>Let’s assume we want all <code>mean_hp</code> values with a value <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\geq 100</annotation></semantics></math> to be printed in bold. To this end, we first create a new style object using <code>openxlsx</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bold</span> <span class="op">&lt;-</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createStyle.html" class="external-link">createStyle</a></span><span class="op">(</span>textDecoration <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span></code></pre></div>
+<p>Next, we create a cell style with <code>tablespan</code>:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hp_ge_100</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cell_style.html">cell_style</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">summarized_table</span><span class="op">$</span><span class="va">mean_hp</span> <span class="op">&gt;=</span> <span class="fl">100</span><span class="op">)</span>, </span>
+<span>                        colnames <span class="op">=</span> <span class="st">"mean_hp"</span>, </span>
+<span>                        style <span class="op">=</span> <span class="va">bold</span>,</span>
+<span>                        gridExpand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>Note that we specify the indices of the rows that we want to be in bold and the column name of the item.</p>
+<p>Finally, we pass this style as part of a list to <code>to_excel</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># to_excel creates an openxlsx workbook</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_excel.html">to_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, </span>
+<span>               styles <span class="op">=</span> <span class="fu"><a href="reference/tbl_styles.html">tbl_styles</a></span><span class="op">(</span>cell_styles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">hp_ge_100</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Save the workbook as an xlsx file:</span></span>
+<span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
+<span><span class="co">#                        file = "cars.xlsx", </span></span>
+<span><span class="co">#                        overwrite = TRUE)</span></span></code></pre></div>
+<p><img src="reference/figures/tablespan_example_cars_styled.png"></p>
+</div>
+<div class="section level4">
+<h4 id="formatting-data-types">Formatting Data Types<a class="anchor" aria-label="anchor" href="#formatting-data-types"></a>
+</h4>
+<p><code>tablespan</code> also allows formatting specific data types. Let’s assume that we want to round all doubles to 3 instead of the default four digits. To this end, we use the <code>create_data_styles</code> function, where we specify (1) a function that checks for the data type we want to style (here <code>is.double</code>) and (2) a style for all columns that match that style:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">double_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_data_styles.html">create_data_styles</a></span><span class="op">(</span>double <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>test <span class="op">=</span> <span class="va">is.double</span>, </span>
+<span>                                                 style <span class="op">=</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createStyle.html" class="external-link">createStyle</a></span><span class="op">(</span>numFmt <span class="op">=</span> <span class="st">"0.000"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_excel.html">to_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, styles <span class="op">=</span> <span class="fu"><a href="reference/tbl_styles.html">tbl_styles</a></span><span class="op">(</span>data_styles <span class="op">=</span> <span class="va">double_style</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Save the workbook as an xlsx file:</span></span>
+<span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
+<span><span class="co">#                        file = "cars.xlsx", </span></span>
+<span><span class="co">#                        overwrite = TRUE)</span></span></code></pre></div>
+<p><img src="reference/figures/tablespan_example_cars_styled_data.png"></p>
+</div>
 </div>
 </div>
 <div class="section level2">
-<h2 id="additional-settings">Additional Settings<a class="anchor" aria-label="anchor" href="#additional-settings"></a>
+<h2 id="exporting-to-html-latex-and-rtf">Exporting to HTML, LaTeX, and RTF<a class="anchor" aria-label="anchor" href="#exporting-to-html-latex-and-rtf"></a>
 </h2>
-<div class="section level3">
-<h3 id="tables-without-row-names">Tables without row names<a class="anchor" aria-label="anchor" href="#tables-without-row-names"></a>
-</h3>
+<p>Tables created with <code>tablespan</code> can also be exported to <code>gt</code> which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call <code>to_gt</code> on our table:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Translate to gt:</span></span>
+<span><span class="va">gt_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_gt.html">to_gt</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
+<span><span class="va">gt_tbl</span></span></code></pre></div>
+<div id="xqtlmdudbw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xqtlmdudbw table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+&#10;#xqtlmdudbw thead, #xqtlmdudbw tbody, #xqtlmdudbw tfoot, #xqtlmdudbw tr, #xqtlmdudbw td, #xqtlmdudbw th {
+  border-style: none;
+}
+&#10;#xqtlmdudbw p {
+  margin: 0;
+  padding: 0;
+}
+&#10;#xqtlmdudbw .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+&#10;#xqtlmdudbw .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+&#10;#xqtlmdudbw .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+&#10;#xqtlmdudbw .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+&#10;#xqtlmdudbw .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+&#10;#xqtlmdudbw .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+&#10;#xqtlmdudbw .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+&#10;#xqtlmdudbw .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+&#10;#xqtlmdudbw .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+&#10;#xqtlmdudbw .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+&#10;#xqtlmdudbw .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+&#10;#xqtlmdudbw .gt_from_md > :first-child {
+  margin-top: 0;
+}
+&#10;#xqtlmdudbw .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+&#10;#xqtlmdudbw .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+&#10;#xqtlmdudbw .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#xqtlmdudbw .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+&#10;#xqtlmdudbw .gt_row_group_first td {
+  border-top-width: 2px;
+}
+&#10;#xqtlmdudbw .gt_row_group_first th {
+  border-top-width: 2px;
+}
+&#10;#xqtlmdudbw .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#xqtlmdudbw .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+&#10;#xqtlmdudbw .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#xqtlmdudbw .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+&#10;#xqtlmdudbw .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#xqtlmdudbw .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#xqtlmdudbw .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#xqtlmdudbw .gt_left {
+  text-align: left;
+}
+&#10;#xqtlmdudbw .gt_center {
+  text-align: center;
+}
+&#10;#xqtlmdudbw .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+&#10;#xqtlmdudbw .gt_font_normal {
+  font-weight: normal;
+}
+&#10;#xqtlmdudbw .gt_font_bold {
+  font-weight: bold;
+}
+&#10;#xqtlmdudbw .gt_font_italic {
+  font-style: italic;
+}
+&#10;#xqtlmdudbw .gt_super {
+  font-size: 65%;
+}
+&#10;#xqtlmdudbw .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+&#10;#xqtlmdudbw .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+&#10;#xqtlmdudbw .gt_indent_1 {
+  text-indent: 5px;
+}
+&#10;#xqtlmdudbw .gt_indent_2 {
+  text-indent: 10px;
+}
+&#10;#xqtlmdudbw .gt_indent_3 {
+  text-indent: 15px;
+}
+&#10;#xqtlmdudbw .gt_indent_4 {
+  text-indent: 20px;
+}
+&#10;#xqtlmdudbw .gt_indent_5 {
+  text-indent: 25px;
+}
+&#10;#xqtlmdudbw .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+&#10;#xqtlmdudbw div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading">
+<td colspan="7" class="gt_heading gt_title gt_font_normal" style>
+Motor Trend Car Road Tests
+</td>
+</tr>
+<tr class="gt_heading">
+<td colspan="7" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>
+A table created with tablespan
+</td>
+</tr>
+<tr class="gt_col_headings gt_spanner_row">
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="2" colspan="1" scope="col" id="cyl">
+Cylinder
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="2" colspan="1" scope="col" id="vs">
+Engine
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="2" colspan="1" scope="col" id="N">
+N
+</th>
+<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="Horse Power">
+<div class="gt_column_spanner">
+Horse Power
+</div>
+</th>
+<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="Weight">
+<div class="gt_column_spanner">
+Weight
+</div>
+</th>
+</tr>
+<tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="mean_hp">
+Mean
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="sd_hp">
+SD
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="mean_wt">
+Mean
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="sd_wt">
+SD
+</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr>
+<td headers="cyl" class="gt_row gt_right">
+4 
+</td>
+<td headers="vs" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+0 
+</td>
+<td headers="N" class="gt_row gt_right">
+ 1 
+</td>
+<td headers="mean_hp" class="gt_row gt_right">
+ 91    
+</td>
+<td headers="sd_hp" class="gt_row gt_right">
+<br>
+</td>
+<td headers="mean_wt" class="gt_row gt_right">
+2.14 
+</td>
+<td headers="sd_wt" class="gt_row gt_right">
+<br>
+</td>
+</tr>
+<tr>
+<td headers="cyl" class="gt_row gt_right">
+4 
+</td>
+<td headers="vs" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+1 
+</td>
+<td headers="N" class="gt_row gt_right">
+10 
+</td>
+<td headers="mean_hp" class="gt_row gt_right">
+ 81.8  
+</td>
+<td headers="sd_hp" class="gt_row gt_right">
+21.872
+</td>
+<td headers="mean_wt" class="gt_row gt_right">
+2.3  
+</td>
+<td headers="sd_wt" class="gt_row gt_right">
+0.598
+</td>
+</tr>
+<tr>
+<td headers="cyl" class="gt_row gt_right">
+6 
+</td>
+<td headers="vs" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+0 
+</td>
+<td headers="N" class="gt_row gt_right">
+ 3 
+</td>
+<td headers="mean_hp" class="gt_row gt_right">
+131.667
+</td>
+<td headers="sd_hp" class="gt_row gt_right">
+37.528
+</td>
+<td headers="mean_wt" class="gt_row gt_right">
+2.755
+</td>
+<td headers="sd_wt" class="gt_row gt_right">
+0.128
+</td>
+</tr>
+<tr>
+<td headers="cyl" class="gt_row gt_right">
+6 
+</td>
+<td headers="vs" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+1 
+</td>
+<td headers="N" class="gt_row gt_right">
+ 4 
+</td>
+<td headers="mean_hp" class="gt_row gt_right">
+115.25 
+</td>
+<td headers="sd_hp" class="gt_row gt_right">
+ 9.179
+</td>
+<td headers="mean_wt" class="gt_row gt_right">
+3.389
+</td>
+<td headers="sd_wt" class="gt_row gt_right">
+0.116
+</td>
+</tr>
+<tr>
+<td headers="cyl" class="gt_row gt_right">
+8 
+</td>
+<td headers="vs" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+0 
+</td>
+<td headers="N" class="gt_row gt_right">
+14 
+</td>
+<td headers="mean_hp" class="gt_row gt_right">
+209.214
+</td>
+<td headers="sd_hp" class="gt_row gt_right">
+50.977
+</td>
+<td headers="mean_wt" class="gt_row gt_right">
+3.999
+</td>
+<td headers="sd_wt" class="gt_row gt_right">
+0.759
+</td>
+</tr>
+</tbody>
+<tfoot class="gt_footnotes"><tr>
+<td class="gt_footnote" colspan="7">
+Data from the infamous mtcars data set.
+</td>
+</tr></tfoot>
+</table>
+</div>
+<p>The <code>gt</code> package provides a wide range of functions to adapt the style of these tables. For instance, <code>opt_stylize</code> adds a pre-defined style to the entire table:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/opt_stylize.html" class="external-link">opt_stylize</a></span><span class="op">(</span>style <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>                  color <span class="op">=</span> <span class="st">'gray'</span><span class="op">)</span></span></code></pre></div>
+<div id="qgdrqwsgoy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qgdrqwsgoy table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+&#10;#qgdrqwsgoy thead, #qgdrqwsgoy tbody, #qgdrqwsgoy tfoot, #qgdrqwsgoy tr, #qgdrqwsgoy td, #qgdrqwsgoy th {
+  border-style: none;
+}
+&#10;#qgdrqwsgoy p {
+  margin: 0;
+  padding: 0;
+}
+&#10;#qgdrqwsgoy .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+&#10;#qgdrqwsgoy .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+&#10;#qgdrqwsgoy .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+&#10;#qgdrqwsgoy .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+&#10;#qgdrqwsgoy .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#qgdrqwsgoy .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#qgdrqwsgoy .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#qgdrqwsgoy .gt_col_heading {
+  color: #FFFFFF;
+  background-color: #5F5F5F;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+&#10;#qgdrqwsgoy .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: #5F5F5F;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+&#10;#qgdrqwsgoy .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+&#10;#qgdrqwsgoy .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+&#10;#qgdrqwsgoy .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+&#10;#qgdrqwsgoy .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+&#10;#qgdrqwsgoy .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+&#10;#qgdrqwsgoy .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  vertical-align: middle;
+}
+&#10;#qgdrqwsgoy .gt_from_md > :first-child {
+  margin-top: 0;
+}
+&#10;#qgdrqwsgoy .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+&#10;#qgdrqwsgoy .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: none;
+  border-top-width: 1px;
+  border-top-color: #D5D5D5;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D5D5D5;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D5D5D5;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+&#10;#qgdrqwsgoy .gt_stub {
+  color: #333333;
+  background-color: #D5D5D5;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D5D5D5;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#qgdrqwsgoy .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+&#10;#qgdrqwsgoy .gt_row_group_first td {
+  border-top-width: 2px;
+}
+&#10;#qgdrqwsgoy .gt_row_group_first th {
+  border-top-width: 2px;
+}
+&#10;#qgdrqwsgoy .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#qgdrqwsgoy .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #5F5F5F;
+}
+&#10;#qgdrqwsgoy .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+&#10;#qgdrqwsgoy .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#qgdrqwsgoy .gt_grand_summary_row {
+  color: #333333;
+  background-color: #D5D5D5;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#qgdrqwsgoy .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #5F5F5F;
+}
+&#10;#qgdrqwsgoy .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#qgdrqwsgoy .gt_striped {
+  background-color: #F4F4F4;
+}
+&#10;#qgdrqwsgoy .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#qgdrqwsgoy .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#qgdrqwsgoy .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#qgdrqwsgoy .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#qgdrqwsgoy .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#qgdrqwsgoy .gt_left {
+  text-align: left;
+}
+&#10;#qgdrqwsgoy .gt_center {
+  text-align: center;
+}
+&#10;#qgdrqwsgoy .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+&#10;#qgdrqwsgoy .gt_font_normal {
+  font-weight: normal;
+}
+&#10;#qgdrqwsgoy .gt_font_bold {
+  font-weight: bold;
+}
+&#10;#qgdrqwsgoy .gt_font_italic {
+  font-style: italic;
+}
+&#10;#qgdrqwsgoy .gt_super {
+  font-size: 65%;
+}
+&#10;#qgdrqwsgoy .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+&#10;#qgdrqwsgoy .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+&#10;#qgdrqwsgoy .gt_indent_1 {
+  text-indent: 5px;
+}
+&#10;#qgdrqwsgoy .gt_indent_2 {
+  text-indent: 10px;
+}
+&#10;#qgdrqwsgoy .gt_indent_3 {
+  text-indent: 15px;
+}
+&#10;#qgdrqwsgoy .gt_indent_4 {
+  text-indent: 20px;
+}
+&#10;#qgdrqwsgoy .gt_indent_5 {
+  text-indent: 25px;
+}
+&#10;#qgdrqwsgoy .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+&#10;#qgdrqwsgoy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading">
+<td colspan="7" class="gt_heading gt_title gt_font_normal" style>
+Motor Trend Car Road Tests
+</td>
+</tr>
+<tr class="gt_heading">
+<td colspan="7" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>
+A table created with tablespan
+</td>
+</tr>
+<tr class="gt_col_headings gt_spanner_row">
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="2" colspan="1" scope="col" id="cyl">
+Cylinder
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="2" colspan="1" scope="col" id="vs">
+Engine
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="2" colspan="1" scope="col" id="N">
+N
+</th>
+<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="Horse Power">
+<div class="gt_column_spanner">
+Horse Power
+</div>
+</th>
+<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="Weight">
+<div class="gt_column_spanner">
+Weight
+</div>
+</th>
+</tr>
+<tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="mean_hp">
+Mean
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="sd_hp">
+SD
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="mean_wt">
+Mean
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="sd_wt">
+SD
+</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr>
+<td headers="cyl" class="gt_row gt_right">
+4 
+</td>
+<td headers="vs" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+0 
+</td>
+<td headers="N" class="gt_row gt_right">
+ 1 
+</td>
+<td headers="mean_hp" class="gt_row gt_right">
+ 91    
+</td>
+<td headers="sd_hp" class="gt_row gt_right">
+<br>
+</td>
+<td headers="mean_wt" class="gt_row gt_right">
+2.14 
+</td>
+<td headers="sd_wt" class="gt_row gt_right">
+<br>
+</td>
+</tr>
+<tr>
+<td headers="cyl" class="gt_row gt_right gt_striped">
+4 
+</td>
+<td headers="vs" class="gt_row gt_right gt_striped" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+1 
+</td>
+<td headers="N" class="gt_row gt_right gt_striped">
+10 
+</td>
+<td headers="mean_hp" class="gt_row gt_right gt_striped">
+ 81.8  
+</td>
+<td headers="sd_hp" class="gt_row gt_right gt_striped">
+21.872
+</td>
+<td headers="mean_wt" class="gt_row gt_right gt_striped">
+2.3  
+</td>
+<td headers="sd_wt" class="gt_row gt_right gt_striped">
+0.598
+</td>
+</tr>
+<tr>
+<td headers="cyl" class="gt_row gt_right">
+6 
+</td>
+<td headers="vs" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+0 
+</td>
+<td headers="N" class="gt_row gt_right">
+ 3 
+</td>
+<td headers="mean_hp" class="gt_row gt_right">
+131.667
+</td>
+<td headers="sd_hp" class="gt_row gt_right">
+37.528
+</td>
+<td headers="mean_wt" class="gt_row gt_right">
+2.755
+</td>
+<td headers="sd_wt" class="gt_row gt_right">
+0.128
+</td>
+</tr>
+<tr>
+<td headers="cyl" class="gt_row gt_right gt_striped">
+6 
+</td>
+<td headers="vs" class="gt_row gt_right gt_striped" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+1 
+</td>
+<td headers="N" class="gt_row gt_right gt_striped">
+ 4 
+</td>
+<td headers="mean_hp" class="gt_row gt_right gt_striped">
+115.25 
+</td>
+<td headers="sd_hp" class="gt_row gt_right gt_striped">
+ 9.179
+</td>
+<td headers="mean_wt" class="gt_row gt_right gt_striped">
+3.389
+</td>
+<td headers="sd_wt" class="gt_row gt_right gt_striped">
+0.116
+</td>
+</tr>
+<tr>
+<td headers="cyl" class="gt_row gt_right">
+8 
+</td>
+<td headers="vs" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: solid; border-right-color: gray;">
+0 
+</td>
+<td headers="N" class="gt_row gt_right">
+14 
+</td>
+<td headers="mean_hp" class="gt_row gt_right">
+209.214
+</td>
+<td headers="sd_hp" class="gt_row gt_right">
+50.977
+</td>
+<td headers="mean_wt" class="gt_row gt_right">
+3.999
+</td>
+<td headers="sd_wt" class="gt_row gt_right">
+0.759
+</td>
+</tr>
+</tbody>
+<tfoot class="gt_footnotes"><tr>
+<td class="gt_footnote" colspan="7">
+Data from the infamous mtcars data set.
+</td>
+</tr></tfoot>
+</table>
+</div>
+</div>
+<div class="section level2">
+<h2 id="tables-without-row-names">Tables without row names<a class="anchor" aria-label="anchor" href="#tables-without-row-names"></a>
+</h2>
 <p>Using <code>1</code> on the left hand side of the formula creates a table without row names. For example, <code>1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)</code> defines</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>         formula <span class="op">=</span> <span class="fl">1</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="fl">1</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                      </span></span>
 <span><span class="co">#&gt;  | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | Mean       SD    |</span></span>
@@ -215,50 +1431,6 @@
 <span><span class="co">#&gt;  | 81.8       21.87 |</span></span>
 <span><span class="co">#&gt;  | 131.67     37.53 |</span></span>
 <span><span class="co">#&gt;  | ...        ...   |</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="styling">Styling<a class="anchor" aria-label="anchor" href="#styling"></a>
-</h3>
-<p>While <code>tablespan</code> provides limited styling options, some elements can be adjusted. For example, we may want to print some elements in bold or format numbers differently. In <code>tablespan</code>, styling happens when translating the table to an <code>openxlsx</code> workbook with <code>to_excel</code>. To this end, <code>tablespan</code> provides a `styles’ argument.</p>
-<div class="section level4">
-<h4 id="formatting-cells">Formatting Cells<a class="anchor" aria-label="anchor" href="#formatting-cells"></a>
-</h4>
-<p>Let’s assume we want all <code>mean_hp</code> values with a value <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\geq 100</annotation></semantics></math> to be printed in bold. To this end, we first create a new style object using <code>openxlsx</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bold</span> <span class="op">&lt;-</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createStyle.html" class="external-link">createStyle</a></span><span class="op">(</span>textDecoration <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span></code></pre></div>
-<p>Next, we create a cell style with <code>tablespan</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hp_ge_100</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cell_style.html">cell_style</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">summarized_table</span><span class="op">$</span><span class="va">mean_hp</span> <span class="op">&gt;=</span> <span class="fl">100</span><span class="op">)</span>, </span>
-<span>                        colnames <span class="op">=</span> <span class="st">"mean_hp"</span>, </span>
-<span>                        style <span class="op">=</span> <span class="va">bold</span>,</span>
-<span>                        gridExpand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>Note that we specify the indices of the rows that we want to be in bold and the column name of the item.</p>
-<p>Finally, we pass this style as part of a list to <code>to_excel</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># to_excel creates an openxlsx workbook</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_excel.html">to_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, </span>
-<span>               styles <span class="op">=</span> <span class="fu"><a href="reference/tab_styles.html">tab_styles</a></span><span class="op">(</span>cell_styles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">hp_ge_100</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Save the workbook as an xlsx file:</span></span>
-<span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
-<span><span class="co">#                        file = "cars.xlsx", overwrite = TRUE)</span></span></code></pre></div>
-<p><img src="reference/figures/tablespan_example_cars_styled.png"></p>
-</div>
-<div class="section level4">
-<h4 id="formatting-data-types">Formatting Data Types<a class="anchor" aria-label="anchor" href="#formatting-data-types"></a>
-</h4>
-<p><code>tablespan</code> also allows formatting specific data types. Let’s assume that we want to round all doubles to 3 instead of the default four digits. To this end, we use the <code>create_data_styles</code> function, where we specify (1) a function that checks for the data type we want to style (here <code>is.double</code>) and (2) a style for all columns that match that style:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">double_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_data_styles.html">create_data_styles</a></span><span class="op">(</span>double <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>test <span class="op">=</span> <span class="va">is.double</span>, </span>
-<span>                                                 style <span class="op">=</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createStyle.html" class="external-link">createStyle</a></span><span class="op">(</span>numFmt <span class="op">=</span> <span class="st">"0.000"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_excel.html">to_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, styles <span class="op">=</span> <span class="fu"><a href="reference/tab_styles.html">tab_styles</a></span><span class="op">(</span>data_styles <span class="op">=</span> <span class="va">double_style</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Save the workbook as an xlsx file:</span></span>
-<span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
-<span><span class="co">#                        file = "cars.xlsx", overwrite = TRUE)</span></span></code></pre></div>
-<p><img src="reference/figures/tablespan_example_cars_styled_data.png"></p>
-</div>
-</div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
