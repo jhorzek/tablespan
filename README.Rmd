@@ -233,20 +233,23 @@ wb <- to_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
 
 Tables created with `tablespan` can also be exported to `gt` which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call `to_gt` on our table:
 
-```{r}
+```{r, eval=FALSE}
 # Translate to gt:
 gt_tbl <- to_gt(tbl = tbl)
 gt_tbl
 ```
+![](man/figures/tablespan_example_gt_cars.png){width=50%}
 
 The `gt` package provides a wide range of functions to adapt the style of these 
 tables. For instance, `opt_stylize` adds a pre-defined style to the entire table:
 
-```{r}
+```{r, eval=FALSE}
 gt_tbl |> 
   gt::opt_stylize(style = 6,
                   color = 'gray')
 ```
+
+![](man/figures/tablespan_example_gt_cars_styled.png){width=50%}
 
 ## Tables without row names
 
