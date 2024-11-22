@@ -10,7 +10,7 @@ to_excel(
   sheet = "BasicTable",
   start_row = 1,
   start_col = 1,
-  styles = tab_styles()
+  styles = tbl_styles()
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ to_excel(
 
 \item{start_col}{column at which to start the table}
 
-\item{styles}{openxlsx style for the different table elements (see ?tablespan::tab_styles).
+\item{styles}{openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 The styles element also allows applying custom styles to parts of the data shown in the
 table body.}
 }
@@ -49,7 +49,7 @@ wb <- to_excel(tbl = tbl)
 bold <- openxlsx::createStyle(textDecoration = "bold")
 
 wb <- to_excel(tbl = tbl,
-               styles = tab_styles(cell_styles = list(cell_style(rows = 1:5,
+               styles = tbl_styles(cell_styles = list(cell_style(rows = 1:5,
                                                                 colnames = "Sepal.Length",
                                                                 style = bold),
                                                      cell_style(rows = 9:10,

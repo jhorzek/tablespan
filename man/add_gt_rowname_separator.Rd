@@ -4,13 +4,16 @@
 \alias{add_gt_rowname_separator}
 \title{add_gt_rowname_separator}
 \usage{
-add_gt_rowname_separator(gt_tbl, right_of)
+add_gt_rowname_separator(gt_tbl, right_of, separator_style)
 }
 \arguments{
 \item{gt_tbl}{great table}
 
 \item{right_of}{name of the last data column to the right of which the actual
 data starts}
+
+\item{separator_style}{style of the vertical line that separates the row names
+from the data.}
 }
 \description{
 Adds a vertical line between the row names part and the data of the table.

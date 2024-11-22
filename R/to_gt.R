@@ -10,6 +10,9 @@
 #' @param tbl table created with tablespan::tablespan
 #' @param groupname_col Provide column names to group data. See ?gt::gt for more
 #' details.
+#' @param separator_style style of the vertical line that separates the row names
+#' from the data.
+#' @param auto_format should the table be formatted automatically?
 #' @param ... additional arguments passed to gt::gt().
 #' @import gt
 #' @export
@@ -35,7 +38,11 @@
 #' gt_tbl <- to_gt(tbl)
 #' print(gt_tbl)
 to_gt <- function(tbl,
-                  groupname_col = FALSE,
+                  groupname_col = NULL,
+                  separator_style = gt::cell_borders(sides = c("right"),
+                                                     weight = gt::px(1),
+                                                     color = "gray"),
+                  auto_format = TRUE,
                   ...){
   if(!is.null(tbl$header$lhs)){
     data_set <- cbind(tbl$table_data$row_data,
@@ -55,8 +62,24 @@ to_gt <- function(tbl,
   if(!is.null(tbl$header$lhs)){
     rowname_headers <- colnames(tbl$table_data$row_data)
     gt_tbl <- add_gt_rowname_separator(gt_tbl = gt_tbl,
-                                       right_of = rowname_headers[length(rowname_headers)])
+                                       right_of = rowname_headers[length(rowname_headers)],
+                                       separator_style = separator_style)
   }
+
+  if(!is.null(tbl$title) | !is.null(tbl$subtitle))
+    gt_tbl <- add_gt_titles(gt_tbl,
+                            title = tbl$title,
+                            subtitle = tbl$subtitle)
+  if(!is.null(tbl$footnote))
+    gt_tbl <- add_gt_footnote(gt_tbl,
+                              footnote = tbl$footnote)
+  if(auto_format){
+    gt_tbl <- gt_tbl |>
+      gt::fmt_auto() |>
+      gt::sub_missing(missing_text = "")
+  }
+
+  return(gt_tbl)
 }
 
 #' flatten_table
@@ -188,14 +211,14 @@ add_gt_spanner_partial <- function(gt_tbl, tbl_partial){
   # Next, we iterate over the levels and add them to the gt:
   for(level in levels){
     for(parent_name in names(tbl_partial)){
-      if(parent_name == "_BASE_LEVEL_")
-        next
       parent <- tbl_partial[[parent_name]]
       if(parent$level == level){
         item_names <- parent$children_items[parent$children_items %in% colnames(gt_tbl$`_data`)]
         spanner_names <- parent$children_items[!parent$children_items %in% colnames(gt_tbl$`_data`)]
 
-        gt_tbl <- gt_tbl |>
+        # if we are at the base level, we do not add a spanner:
+        if(parent_name != "_BASE_LEVEL_")
+          gt_tbl <- gt_tbl |>
           gt::tab_spanner(label = parent_name,
                           columns = dplyr::all_of(item_names),
                           spanners = spanner_names)
@@ -222,13 +245,51 @@ add_gt_spanner_partial <- function(gt_tbl, tbl_partial){
 #' @param gt_tbl great table
 #' @param right_of name of the last data column to the right of which the actual
 #' data starts
+#' @param separator_style style of the vertical line that separates the row names
+#' from the data.
 #' @import gt
 #' @keywords internal
 add_gt_rowname_separator <- function(gt_tbl,
-                                     right_of){
+                                     right_of,
+                                     separator_style){
   gt_tbl <- gt_tbl |>
-    gt::tab_style(style = gt::cell_borders(sides = c("right"),
-                                           weight = gt::px(2)),
+    gt::tab_style(style = separator_style,
                   locations = gt::cells_body(columns = all_of(right_of)))
   return(gt_tbl)
+}
+
+#' add_gt_titles
+#'
+#' Add a title and subtitle to a gt table
+#' @param gt_tbl gt table
+#' @param title title text
+#' @param subtitle subtitle text
+#' @return gt
+#' @keywords internal
+#' @importFrom gt tab_header
+add_gt_titles <- function(gt_tbl,
+                          title,
+                          subtitle){
+  return(
+    gt_tbl |>
+      gt::tab_header(title = title,
+                     subtitle = subtitle) |>
+      gt::opt_align_table_header(align = c("left"))
+  )
+}
+
+#' add_gt_footnote
+#'
+#' Add a footnote to a gt table
+#' @param gt_tbl gt table
+#' @param footnote footnote text
+#' @return gt
+#' @keywords internal
+#' @importFrom gt tab_header
+add_gt_footnote <- function(gt_tbl,
+                            footnote){
+  return(
+    gt_tbl |>
+      gt::tab_footnote(footnote = footnote)
+  )
 }

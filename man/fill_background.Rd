@@ -15,7 +15,7 @@ fill_background(tbl, workbook, sheet, locations, styles)
 
 \item{locations}{list with overview of row and col locations for different table elements}
 
-\item{styles}{openxlsx style for the different table elements (see ?tablespan::tab_styles).
+\item{styles}{openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 The styles element also allows applying custom styles to parts of the data shown in the
 table body.}
 }

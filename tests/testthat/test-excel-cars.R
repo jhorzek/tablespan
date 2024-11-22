@@ -111,7 +111,7 @@ test_that("cars-cell_styles", {
 
   bold <- openxlsx::createStyle(textDecoration = "bold")
   wb <- to_excel(tbl = tbl,
-                 styles = tab_styles(cell_styles = list(cell_style(rows = 2:3,
+                 styles = tbl_styles(cell_styles = list(cell_style(rows = 2:3,
                                                                    colnames = "mean_hp",
                                                                    style = bold),
                                                         cell_style(rows = 1,
@@ -162,7 +162,7 @@ test_that("cars-data_styles", {
   # custom data type styles
   bold <- openxlsx::createStyle(textDecoration = "bold")
   wb <- to_excel(tbl = tbl,
-                 styles = tab_styles(data_styles = create_data_styles(double = list(test = is.double,
+                 styles = tbl_styles(data_styles = create_data_styles(double = list(test = is.double,
                                                                                     style = bold))))
 
   # Compare just the data

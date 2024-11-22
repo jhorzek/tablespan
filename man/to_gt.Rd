@@ -4,13 +4,25 @@
 \alias{to_gt}
 \title{to_gt}
 \usage{
-to_gt(tbl, groupname_col = FALSE, ...)
+to_gt(
+  tbl,
+  groupname_col = NULL,
+  separator_style = gt::cell_borders(sides = c("right"), weight = gt::px(1), color =
+    "gray"),
+  auto_format = TRUE,
+  ...
+)
 }
 \arguments{
 \item{tbl}{table created with tablespan::tablespan}
 
 \item{groupname_col}{Provide column names to group data. See ?gt::gt for more
 details.}
+
+\item{separator_style}{style of the vertical line that separates the row names
+from the data.}
+
+\item{auto_format}{should the table be formatted automatically?}
 
 \item{...}{additional arguments passed to gt::gt().}
 }

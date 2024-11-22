@@ -21,7 +21,7 @@ create_data_styles(
 a list of lists with styles
 }
 \description{
-This function sets some defaults for data_styles. See ?tab_styles
+This function sets some defaults for data_styles. See ?tbl_styles
 }
 \details{
 Styles are applied to the columns in the data set based on their

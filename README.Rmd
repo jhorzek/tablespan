@@ -19,12 +19,15 @@ library(tablespan)
 
 > Create satisficing tables in R the formula way.
 
-The objective of `tablespan` is to provide a "good enough" approach to creating tables in R.
+The objective of `tablespan` is to provide a "good enough" approach to creating tables in R with simple formulas (inspired by [`tables`](https://dmurdoch.github.io/tables/)). 
+To this end, `tablespan` builds on the awesome packages [`openxlsx`](https://ycphs.github.io/openxlsx/) and [`gt`](https://gt.rstudio.com/).
 
-Due to the limited approach, `tablespan` is a lot less sophisticated than the
-awesome packages [`gt`](https://gt.rstudio.com/), or [`expss`](https://gdemin.github.io/expss/#Introduction).
-The main advantage of `tablespan` is its simplicity and its focus on creating tables
-with a single formula (heavily inspired by [`tables`](https://dmurdoch.github.io/tables/)).
+Tables created with `tablespan` can be exported to:
+
+1. [Excel](#excel) (using [`openxlsx`](https://ycphs.github.io/openxlsx/))
+2. [HTML](#html) (using [`gt`](https://gt.rstudio.com/))
+3. [LaTeX](#html) (using [`gt`](https://gt.rstudio.com/))
+4. [RTF](#html) (using [`gt`](https://gt.rstudio.com/))
 
 ## Installation
 
@@ -81,7 +84,7 @@ row names and `mean_hp` and `sd_hp` as columns. The output will look as follows:
 ```{r}
 library(tablespan)
 tablespan(data = summarized_table,
-         formula = cyl ~ mean_hp + sd_hp)
+          formula = cyl ~ mean_hp + sd_hp)
 ```
 
 Note that the row names (`cyl`) are in a separate block to the left.
@@ -94,14 +97,14 @@ following defines a spanner for `mean_hp` and `sd_hp` with the name `Horsepower`
 
 ```{r}
 tablespan(data = summarized_table,
-         formula = cyl ~ (Horsepower = mean_hp + sd_hp))
+          formula = cyl ~ (Horsepower = mean_hp + sd_hp))
 ```
 
 Spanners can also be nested (e.g., `cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))`.
 
 ```{r}
 tablespan(data = summarized_table,
-         formula = cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp)))
+          formula = cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp)))
 ```
 
 ### Renaming Columns
@@ -115,7 +118,7 @@ For example, `cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` renames `mean_hp` to
 
 ```{r}
 tablespan(data = summarized_table,
-         formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+          formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
 ```
 
 ### Creating the Full Table
@@ -124,20 +127,32 @@ The combination of row names, spanners, and renaming of variables allows creatin
 the full table as follows:
 
 ```{r}
+library(dplyr)
+library(tablespan)
+data("mtcars")
+
+summarized_table <- mtcars |>
+  group_by(cyl, vs) |>
+  summarise(N = n(),
+            mean_hp = mean(hp),
+            sd_hp = sd(hp),
+            mean_wt = mean(wt),
+            sd_wt = sd(wt))
+
 tbl <- tablespan(data = summarized_table,
-                formula = Cylinder:cyl + Engine:vs ~
-                  N +
-                  (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-                  (`Weight` = Mean:mean_wt + SD:sd_wt),
-                title = "Motor Trend Car Road Tests",
-                subtitle = "A table created with tablespan",
-                footnote = "Data from the infamous mtcars data set.")
+                 formula = Cylinder:cyl + Engine:vs ~
+                   N +
+                   (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                   (`Weight` = Mean:mean_wt + SD:sd_wt),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tablespan",
+                 footnote = "Data from the infamous mtcars data set.")
 tbl
 ```
 
-### Exporting to Excel
+## Exporting to Excel {#excel}
 
-The table above can now be translated to an xlsx table with [openxlsx](https://ycphs.github.io/openxlsx/):
+Tables created with `tablespan` can now be translated to xlsx tables with [`openxlsx`](https://ycphs.github.io/openxlsx/) using the `to_excel` function:
 
 ```{r}
 # to_excel creates an openxlsx workbook
@@ -145,24 +160,11 @@ wb <- to_excel(tbl = tbl)
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
-#                        file = "cars.xlsx", overwrite = TRUE)
+#                        file = "cars.xlsx", 
+#                        overwrite = TRUE)
 ```
-
-The result looks as follows:
 
 ![](man/figures/tablespan_example_cars.png)
-
-## Additional Settings 
-
-### Tables without row names
-
-Using `1` on the left hand side of the formula creates a table without row names.
-For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` defines
-
-```{r}
-tablespan(data = summarized_table,
-         formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
-```
 
 ### Styling
 
@@ -197,11 +199,12 @@ Finally, we pass this style as part of a list to `to_excel`:
 ```{r}
 # to_excel creates an openxlsx workbook
 wb <- to_excel(tbl = tbl, 
-               styles = tab_styles(cell_styles = list(hp_ge_100)))
+               styles = tbl_styles(cell_styles = list(hp_ge_100)))
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
-#                        file = "cars.xlsx", overwrite = TRUE)
+#                        file = "cars.xlsx", 
+#                        overwrite = TRUE)
 ```
 
 ![](man/figures/tablespan_example_cars_styled.png)
@@ -216,13 +219,45 @@ function that checks for the data type we want to style (here `is.double`) and
 ```{r}
 double_style <- create_data_styles(double = list(test = is.double, 
                                                  style = openxlsx::createStyle(numFmt = "0.000")))
-wb <- to_excel(tbl = tbl, styles = tab_styles(data_styles = double_style))
+wb <- to_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
-#                        file = "cars.xlsx", overwrite = TRUE)
+#                        file = "cars.xlsx", 
+#                        overwrite = TRUE)
 ```
+
 ![](man/figures/tablespan_example_cars_styled_data.png)
+
+## Exporting to HTML, LaTeX, and RTF {#html}
+
+Tables created with `tablespan` can also be exported to `gt` which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call `to_gt` on our table:
+
+```{r}
+# Translate to gt:
+gt_tbl <- to_gt(tbl = tbl)
+gt_tbl
+```
+
+The `gt` package provides a wide range of functions to adapt the style of these 
+tables. For instance, `opt_stylize` adds a pre-defined style to the entire table:
+
+```{r}
+gt_tbl |> 
+  gt::opt_stylize(style = 6,
+                  color = 'gray')
+```
+
+## Tables without row names
+
+Using `1` on the left hand side of the formula creates a table without row names.
+For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` defines
+
+```{r}
+tablespan(data = summarized_table,
+          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+```
+
 
 ## References
 

@@ -39,7 +39,7 @@ create_test_files_cars <- function(){
   # custom cell styles
   bold <- openxlsx::createStyle(textDecoration = "bold")
   wb <- to_excel(tbl = tbl,
-                 styles = tab_styles(cell_styles = list(cell_style(rows = 2:3,
+                 styles = tbl_styles(cell_styles = list(cell_style(rows = 2:3,
                                                                    colnames = "mean_hp",
                                                                    style = bold),
                                                         cell_style(rows = 1,
@@ -51,7 +51,7 @@ create_test_files_cars <- function(){
 
   # custom data type styles
   wb <- to_excel(tbl = tbl,
-                 styles = tab_styles(data_styles = create_data_styles(double = list(test = is.double,
+                 styles = tbl_styles(data_styles = create_data_styles(double = list(test = is.double,
                                                                                     style = bold))))
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_data_styles.xlsx"),
