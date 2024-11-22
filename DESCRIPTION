@@ -11,11 +11,13 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 Suggests: 
-    dplyr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    dplyr,
+    gt,
     methods,
     openxlsx,
+    rlang,
     utils
 URL: https://jhorzek.github.io/tablespan/
