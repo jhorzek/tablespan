@@ -53,7 +53,7 @@ test_that("errors", {
 
   # incorrect specification of styles
   bold <- openxlsx::createStyle(textDecoration = "bold")
-  testthat::expect_error(tab_styles(cell_styles = bold))
+  testthat::expect_error(tbl_styles(cell_styles = bold))
   testthat::expect_error(to_excel(tbl = tbl, styles = bold))
 
   testthat::expect_error(cell_style(rows = "1",
@@ -78,12 +78,12 @@ test_that("errors", {
   bold <- openxlsx::createStyle(textDecoration = "bold")
 
   testthat::expect_error(to_excel(tbl = tbl,
-                                  styles = tab_styles(cell_styles = list(cell_style(rows = 30,
+                                  styles = tbl_styles(cell_styles = list(cell_style(rows = 30,
                                                                                     colnames = "mean_hp",
                                                                                     style = bold)))))
 
   testthat::expect_error(to_excel(tbl = tbl,
-                                  styles = tab_styles(cell_styles = list(cell_style(rows = 3,
+                                  styles = tbl_styles(cell_styles = list(cell_style(rows = 3,
                                                                                     colnames = "Unknown",
                                                                                     style = bold)))))
 })

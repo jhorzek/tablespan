@@ -38,7 +38,7 @@ tbl <- tablespan(data = iris[iris$Species == "setosa", ],
 bold <- openxlsx::createStyle(textDecoration = "bold")
 
 wb <- to_excel(tbl = tbl,
-               styles = tab_styles(cell_styles = list(cell_style(rows = 1:5,
+               styles = tbl_styles(cell_styles = list(cell_style(rows = 1:5,
                                                                 colnames = "Sepal.Length",
                                                                 style = bold),
                                                      cell_style(rows = 9:10,

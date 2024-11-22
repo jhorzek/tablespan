@@ -1,21 +1,23 @@
 Package: tablespan
 Type: Package
-Title: Create basic xlsx tables with R
-Version: 0.1.0
+Title: Create basic tables with R
+Version: 0.1.1
 Author: Jannik H. Orzek
 Maintainer: Jannik H. Orzek <jannik.orzek@mailbox.org>
-Description: tablespan provides a "good enough" approach to creating xlsx tables
-  in R.
+Description: tablespan provides a "good enough" approach to creating xlsx, html and LaTeX tables
+  in R leveraging openxlsx and gt.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 Suggests: 
-    dplyr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    dplyr,
+    gt,
     methods,
     openxlsx,
+    rlang,
     utils
 URL: https://jhorzek.github.io/tablespan/

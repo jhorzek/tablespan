@@ -1,4 +1,4 @@
-#' tab_styles
+#' tbl_styles
 #'
 #' Define styles for different elements of the table.
 #'
@@ -25,8 +25,8 @@
 #' @returns a list with styles
 #' @export
 #' @examples
-#' tab_styles()
-tab_styles <- function(
+#' tbl_styles()
+tbl_styles <- function(
     background_style = openxlsx::createStyle(fgFill = "#ffffff"),
     hline_style = openxlsx::createStyle(border = "Top",
                                         borderColour = openxlsx::openxlsx_getOp("borderColour", "black"),
@@ -98,7 +98,7 @@ tab_styles <- function(
 #' bold <- openxlsx::createStyle(textDecoration = "bold")
 #'
 #' wb <- to_excel(tbl = tbl,
-#'                styles = tab_styles(cell_styles = list(cell_style(rows = 1:5,
+#'                styles = tbl_styles(cell_styles = list(cell_style(rows = 1:5,
 #'                                                                 colnames = "Sepal.Length",
 #'                                                                 style = bold),
 #'                                                      cell_style(rows = 9:10,
@@ -124,7 +124,7 @@ cell_style <- function(rows,
 
 #' create_data_styles
 #'
-#' This function sets some defaults for data_styles. See ?tab_styles
+#' This function sets some defaults for data_styles. See ?tbl_styles
 #'
 #' Styles are applied to the columns in the data set based on their
 #' classes (e.g., numeric, character, etc.). data_styles must be a list of lists.

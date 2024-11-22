@@ -7,7 +7,7 @@
 #' @param sheet name of the sheet to which the table should be written to
 #' @param start_row row at which to start the table
 #' @param start_col column at which to start the table
-#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -30,7 +30,7 @@
 #' bold <- openxlsx::createStyle(textDecoration = "bold")
 #'
 #' wb <- to_excel(tbl = tbl,
-#'                styles = tab_styles(cell_styles = list(cell_style(rows = 1:5,
+#'                styles = tbl_styles(cell_styles = list(cell_style(rows = 1:5,
 #'                                                                 colnames = "Sepal.Length",
 #'                                                                 style = bold),
 #'                                                      cell_style(rows = 9:10,
@@ -74,7 +74,7 @@ to_excel <- function(tbl,
                      sheet = "BasicTable",
                      start_row = 1,
                      start_col = 1,
-                     styles = tab_styles()){
+                     styles = tbl_styles()){
 
   if(is.character(sheet) && !(sheet %in% workbook$sheet_names)){
     openxlsx::addWorksheet(sheetName = sheet,
@@ -134,7 +134,7 @@ to_excel <- function(tbl,
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -170,7 +170,7 @@ fill_background <- function(tbl,
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -243,7 +243,7 @@ create_outlines <- function(tbl,
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -304,7 +304,7 @@ write_title <- function(tbl,
 #' @param header header specification from tablespan table
 #' @param table_data data for rownames and the actual data for the body of the table
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -431,7 +431,7 @@ write_header_entry <- function(workbook,
 #' @param header header specification from tablespan table
 #' @param table_data data for rownames and the actual data for the body of the table
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -525,7 +525,7 @@ write_data <- function(workbook,
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
@@ -566,7 +566,7 @@ write_footnote <- function(tbl,
 #' @param sheet name of the sheet to which the table should be written to
 #' @param table_data data for rownames and the actual data for the body of the table
 #' @param locations list with overview of row and col locations for different table elements
-#' @param styles openxlsx style for the different table elements (see ?tablespan::tab_styles).
+#' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
