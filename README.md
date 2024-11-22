@@ -294,8 +294,9 @@ gt_tbl <- to_gt(tbl = tbl)
 gt_tbl
 ```
 
-<img src="man/figures/tablespan_example_gt_cars.png"
-style="width:50.0%" />
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%">
+</p>
 
 The `gt` package provides a wide range of functions to adapt the style
 of these tables. For instance, `opt_stylize` adds a pre-defined style to
@@ -307,8 +308,9 @@ gt_tbl |>
                   color = 'gray')
 ```
 
-<img src="man/figures/tablespan_example_gt_cars_styled.png"
-style="width:50.0%" />
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%">
+</p>
 
 ## Tables without row names
 

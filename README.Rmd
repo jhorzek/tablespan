@@ -238,7 +238,9 @@ Tables created with `tablespan` can also be exported to `gt` which allows saving
 gt_tbl <- to_gt(tbl = tbl)
 gt_tbl
 ```
-![](man/figures/tablespan_example_gt_cars.png){width=50%}
+<p align="center">
+    <img src="man/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%">
+</p>
 
 The `gt` package provides a wide range of functions to adapt the style of these 
 tables. For instance, `opt_stylize` adds a pre-defined style to the entire table:
@@ -249,7 +251,10 @@ gt_tbl |>
                   color = 'gray')
 ```
 
-![](man/figures/tablespan_example_gt_cars_styled.png){width=50%}
+<p align="center">
+    <img src="man/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%">
+</p>
+
 
 ## Tables without row names
 
