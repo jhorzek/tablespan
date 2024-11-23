@@ -1,6 +1,6 @@
 #' tablespan
 #'
-#' Create table tops (headers) using a formula approach.
+#' Create complex table spanners with a simple formula.
 #'
 #' \code{tablespan} provides a formula based approach to adding headers and spanners
 #' to an existing data.frame. The objective is to provide an easy to use, but good
@@ -39,7 +39,7 @@
 #' You can also nest spanners (e.g., \code{Species ~ (Sepal = (Length = Sepal.Length) + (Width = Sepal.Width))}.
 #'
 #' When exporting tables, you may want to rename some of you columns. For example,
-#' you may want to rename Sepal.Length and Petal.Length to Lenght and Sepal.Width and
+#' you may want to rename Sepal.Length and Petal.Length to Length and Sepal.Width and
 #' Petal.Width to Width. With \code{tablespan}, you can rename the item in the header
 #' using \code{new_name:old_name}.
 #' For example, \code{Species ~ (Sepal = Length:Sepal.Length + Width:Sepal.Width) + (Petal = Length:Sepal.Length + Width:Sepal.Width)}
@@ -59,6 +59,9 @@
 #' |-------:|------:|-------:|------:|
 #' |     5.1|    3.5|     1.4|    0.2|}
 #'
+#' Tables created with tablespan can be exported to Excel (using openxlsx),
+#' HTML (using gt), LaTeX (using gt), and RTF (unsing gt).
+#'
 #' @param data data set
 #' @param formula formula to create table
 #' @param title string specifying the title of the table
@@ -67,15 +70,40 @@
 #' @returns Object of class Tabletop with title, subtitle, header info, data, and footnote.
 #' @export
 #' @examples
-#' data("iris")
-#' tbl <- tablespan(data = iris[iris$Species == "setosa", ],
-#'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
-#'                     (Petal = Petal.Length + Petal.Width))
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
 #'
-#' # Create Excel table:
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl
+#'
+#' # Export as Excel table:
 #' wb <- to_excel(tbl = tbl)
 #'
-#' # saveWorkbook(wb, "iris.xlsx")
+#' # Save using openxlsx
+#' # openxlsx::saveWorkbook(wb, "iris.xlsx")
+#'
+#' # Export as gt:
+#' gt_tbl <- to_gt(tbl = tbl)
+#' gt_tbl
 tablespan <- function(data,
                      formula,
                      title = NULL,
