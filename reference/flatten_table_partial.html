@@ -40,7 +40,7 @@ left hand or right hand side of the table headers.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flatten_table_partial</span><span class="op">(</span><span class="va">tbl_partial</span>, flattened <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flatten_table_partial</span><span class="op">(</span><span class="va">tbl_partial</span>, id <span class="op">=</span> <span class="st">""</span>, flattened <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -49,6 +49,14 @@ left hand or right hand side of the table headers.</p>
 
 <dl><dt id="arg-tbl-partial">tbl_partial<a class="anchor" aria-label="anchor" href="#arg-tbl-partial"></a></dt>
 <dd><p>partial of a table header</p></dd>
+
+
+<dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
+<dd><p>unique id assigned to the current element. When creating a gt, we have
+to ensure that spanners have different ids. This can be problematic if multiple
+spanners have the same label. The id is created automatically and will contain
+all parents of the spanners as well to ensure that each spanner has a unique, but
+reproducible id.</p></dd>
 
 
 <dt id="arg-flattened">flattened<a class="anchor" aria-label="anchor" href="#arg-flattened"></a></dt>
@@ -79,21 +87,33 @@ left hand or right hand side of the table headers.</p>
 <span class="r-in"><span>                      <span class="op">(</span><span class="va">`Weight`</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_wt</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_wt</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">tablespan</span><span class="fu">:::</span><span class="fu">flatten_table_partial</span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">header</span><span class="op">$</span><span class="va">rhs</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _BASE_LEVEL_:List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ :List of 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ label         : chr "_BASE_LEVEL_"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id            : chr "__BASE_LEVEL_"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ level         : num 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children      : chr [1:2] "N" "Results"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children_ids  : chr [1:2] "__BASE_LEVEL__N" "__BASE_LEVEL__Results"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children_items: chr [1:2] "N" "Results"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Results     :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ :List of 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ label         : chr "Results"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id            : chr "__BASE_LEVEL__Results"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ level         : num 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children      : chr [1:2] "Horse Power" "Weight"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children_ids  : chr [1:2] "__BASE_LEVEL__Results_Horse Power" "__BASE_LEVEL__Results_Weight"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children_items: chr [1:2] "Horse Power" "Weight"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Horse Power :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ :List of 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ label         : chr "Horse Power"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id            : chr "__BASE_LEVEL__Results_Horse Power"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ level         : num 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children      : chr [1:2] "Mean" "SD"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children_ids  : chr [1:2] "__BASE_LEVEL__Results_Horse Power_Mean" "__BASE_LEVEL__Results_Horse Power_SD"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children_items: chr [1:2] "mean_hp" "sd_hp"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Weight      :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ :List of 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ label         : chr "Weight"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id            : chr "__BASE_LEVEL__Results_Weight"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ level         : num 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children      : chr [1:2] "Mean" "SD"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children_ids  : chr [1:2] "__BASE_LEVEL__Results_Weight_Mean" "__BASE_LEVEL__Results_Weight_SD"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ children_items: chr [1:2] "mean_wt" "sd_wt"</span>
 </code></pre></div>
     </div>

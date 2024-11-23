@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Create basic tables with R • tablespan</title>
+<title>Create satisficing Excel, HTML, and LaTeX tables using a simple formula • tablespan</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Create basic tables with R">
-<meta name="description" content='tablespan provides a "good enough" approach to creating xlsx, html and LaTeX tables in R leveraging openxlsx and gt.'>
-<meta property="og:description" content='tablespan provides a "good enough" approach to creating xlsx, html and LaTeX tables in R leveraging openxlsx and gt.'>
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Create satisficing Excel, HTML, and LaTeX tables using a simple formula">
+<meta name="description" content='tablespan provides a "good enough" approach to creating Excel, HTML, and LaTeX tables in R by leveraging openxlsx and gt.'>
+<meta property="og:description" content='tablespan provides a "good enough" approach to creating Excel, HTML, and LaTeX tables in R by leveraging openxlsx and gt.'>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -50,7 +50,7 @@
 <blockquote>
 <p>Create satisficing tables in R the formula way.</p>
 </blockquote>
-<p>The objective of <code>tablespan</code> is to provide a “good enough” approach to creating tables in R with simple formulas (inspired by <a href="https://dmurdoch.github.io/tables/" class="external-link"><code>tables</code></a>). To this end, <code>tablespan</code> builds on the awesome packages <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> and <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>.</p>
+<p>The objective of <code>tablespan</code> is to provide a “good enough” approach to creating tables in R with simple formulas (inspired by <a href="https://dmurdoch.github.io/tables/" class="external-link"><code>tables</code></a>). To this end, <code>tablespan</code> builds on the awesome packages <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> and <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>. You can think of <code>tablespan</code> as a simple wrapper around <code>openxlsx</code> and <code>gt</code>.</p>
 <p>Tables created with <code>tablespan</code> can be exported to:</p>
 <ol style="list-style-type: decimal">
 <li>
