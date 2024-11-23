@@ -1,11 +1,11 @@
 Package: tablespan
 Type: Package
-Title: Create basic tables with R
+Title: Create satisficing Excel, HTML, and LaTeX tables using a simple formula
 Version: 0.1.1
 Author: Jannik H. Orzek
 Maintainer: Jannik H. Orzek <jannik.orzek@mailbox.org>
-Description: tablespan provides a "good enough" approach to creating xlsx, html and LaTeX tables
-  in R leveraging openxlsx and gt.
+Description: tablespan provides a "good enough" approach to creating Excel, HTML, and LaTeX tables
+  in R by leveraging openxlsx and gt.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

@@ -10,7 +10,8 @@ creating tables in R with simple formulas (inspired by
 [`tables`](https://dmurdoch.github.io/tables/)). To this end,
 `tablespan` builds on the awesome packages
 [`openxlsx`](https://ycphs.github.io/openxlsx/) and
-[`gt`](https://gt.rstudio.com/).
+[`gt`](https://gt.rstudio.com/). You can think of `tablespan` as a
+simple wrapper around `openxlsx` and `gt`.
 
 Tables created with `tablespan` can be exported to:
 
