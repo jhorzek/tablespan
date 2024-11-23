@@ -263,11 +263,10 @@ wb <- to_excel(tbl = tbl,
 #### Formatting Data Types
 
 `tablespan` also allows formatting specific data types. Let’s assume
-that we want to round all doubles to 3 instead of the default four
-digits. To this end, we use the `create_data_styles` function, where we
-specify (1) a function that checks for the data type we want to style
-(here `is.double`) and (2) a style for all columns that match that
-style:
+that we want to round all doubles to 3 instead of the default 2 digits.
+To this end, we use the `create_data_styles` function, where we specify
+(1) a function that checks for the data type we want to style (here
+`is.double`) and (2) a style for all columns that match that style:
 
 ``` r
 double_style <- create_data_styles(double = list(test = is.double, 
