@@ -60,7 +60,7 @@ wb <- to_excel(tbl = tbl,
 # The main use case for tablespan is when you already have a summarized table
 # that you now want to share using xlsx. The following shows an example using
 # the dplyr package:
-if (require("dplyr")) {
+
 # First summarize the data:
 summarized_table <- mtcars |>
   group_by(cyl, vs) |>
@@ -87,5 +87,4 @@ wb <- to_excel(tbl = tbl)
 # Create the excel table:
 # openxlsx::saveWorkbook(wb,
 #                        file = "cars.xlsx", overwrite = TRUE)
-}
 }

@@ -54,5 +54,5 @@ tbl <- tablespan(data = summarized_table,
                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
 
 gt_tbl <- to_gt(tbl)
-print(gt_tbl)
+gt_tbl
 }

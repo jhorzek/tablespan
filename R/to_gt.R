@@ -36,7 +36,7 @@
 #'                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
 #'
 #' gt_tbl <- to_gt(tbl)
-#' print(gt_tbl)
+#' gt_tbl
 to_gt <- function(tbl,
                   groupname_col = NULL,
                   separator_style = gt::cell_borders(sides = c("right"),
