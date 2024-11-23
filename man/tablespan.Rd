@@ -35,8 +35,8 @@ want to use as row names are just columns in your data set (see example). That
 is, \code{tablespan} will allow you to pick some of your items as row names and then just
 write them in a separate section to the left of the data.
 
-The table headers are defined with a basic formula approach. For example,
-\code{Species ~ Sepal.Length + Sepal.Width} defines a table with Species as the
+The table headers are defined with a basic formula approach inspired by \code{tables}.
+For example, \code{Species ~ Sepal.Length + Sepal.Width} defines a table with Species as the
 row names and Sepal.Length and Sepal.Width as columns. The output will
 be similar to the following:
 \preformatted{
@@ -81,8 +81,16 @@ This defines as table similar to the following:
 |-------:|------:|-------:|------:|
 |     5.1|    3.5|     1.4|    0.2|}
 
-Tables created with tablespan can be exported to Excel (using openxlsx),
-HTML (using gt), LaTeX (using gt), and RTF (unsing gt).
+Tables created with \code{tablespan} can be exported to Excel (using \code{openxlsx}),
+HTML (using \code{gt}), LaTeX (using \code{gt}), and RTF (using \code{gt}).
+
+References:
+
+\itemize{
+ \item{gt: Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.11.1.9000, https://github.com/rstudio/gt, https://gt.rstudio.com.}
+ \item{tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R package version 0.9.31, https://dmurdoch.github.io/tables/.}
+ \item{openxlsx: Schauberger P, Walker A (2023). _openxlsx: Read, Write and Edit xlsx Files_. R package version 4.2.5.2, <https://CRAN.R-project.org/package=openxlsx>.}
+}
 }
 \examples{
 library(tablespan)
