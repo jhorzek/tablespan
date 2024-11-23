@@ -126,6 +126,11 @@ flatten_table <- function(tbl){
 #' Called by tablespan:::flatten_table. Recursive function that flattens the
 #' left hand or right hand side of the table headers.
 #' @param tbl_partial partial of a table header
+#' @param id unique id assigned to the current element. When creating a gt, we have
+#' to ensure that spanners have different ids. This can be problematic if multiple
+#' spanners have the same label. The id is created automatically and will contain
+#' all parents of the spanners as well to ensure that each spanner has a unique, but
+#' reproducible id.
 #' @param flattened list filled recursively
 #' @import gt
 #' @keywords internal
@@ -148,20 +153,24 @@ flatten_table <- function(tbl){
 #'                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
 #'                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
 #' str(tablespan:::flatten_table_partial(tbl$header$rhs))
-flatten_table_partial <- function(tbl_partial, flattened = list()){
+flatten_table_partial <- function(tbl_partial, id = "", flattened = list()){
   if(!is.null(tbl_partial$entries)){
-    children <- list(list(level = tbl_partial$level,
+    children <- list(list(label = tbl_partial$name,
+                          id = paste0(id, "_", tbl_partial$name),
+                          level = tbl_partial$level,
                           children = sapply(tbl_partial$entries,
                                             function(x) x$name),
+                          children_ids = sapply(tbl_partial$entries,
+                                                function(x) paste0(id, "_", tbl_partial$name, "_", x$name)),
                           # For items, tablespan can store a name that is different
                           # from the actual item label to allow for renaming
                           children_items = sapply(tbl_partial$entries,
                                                   function(x) if(!is.null(x$item_name)) {x$item_name}else{x$name})))
-    names(children) <- tbl_partial$name
     flattened <- c(flattened,
                    children)
     for(entry in tbl_partial$entries){
       flattened <- flatten_table_partial(tbl_partial = entry,
+                                         id = paste0(id, "_", tbl_partial$name),
                                          flattened = flattened)
     }
   }
@@ -210,18 +219,22 @@ add_gt_spanner_partial <- function(gt_tbl, tbl_partial){
 
   # Next, we iterate over the levels and add them to the gt:
   for(level in levels){
-    for(parent_name in names(tbl_partial)){
-      parent <- tbl_partial[[parent_name]]
+    for(parent_item in seq_along(tbl_partial)){
+      parent_name <- tbl_partial[[parent_item]]$label
+      parent <- tbl_partial[[parent_item]]
+
       if(parent$level == level){
+
         item_names <- parent$children_items[parent$children_items %in% colnames(gt_tbl$`_data`)]
-        spanner_names <- parent$children_items[!parent$children_items %in% colnames(gt_tbl$`_data`)]
+        spanner_ids <- parent$children_ids[!parent$children_items %in% colnames(gt_tbl$`_data`)]
 
         # if we are at the base level, we do not add a spanner:
         if(parent_name != "_BASE_LEVEL_")
           gt_tbl <- gt_tbl |>
           gt::tab_spanner(label = parent_name,
+                          id = parent$id,
                           columns = dplyr::all_of(item_names),
-                          spanners = spanner_names)
+                          spanners = spanner_ids)
 
         # If children_items and children don't match, we also need to rename elements
         to_rename <- which(parent$children_items != parent$children)

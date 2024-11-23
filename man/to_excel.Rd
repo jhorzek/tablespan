@@ -33,6 +33,7 @@ Write a tablespan table to an excel workbook.
 }
 \examples{
 library(tablespan)
+library(dplyr)
 data("iris")
 
 tbl <- tablespan(data = iris[iris$Species == "setosa", ],

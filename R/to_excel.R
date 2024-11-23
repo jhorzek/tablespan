@@ -14,6 +14,7 @@
 #' @export
 #' @examples
 #' library(tablespan)
+#' library(dplyr)
 #' data("iris")
 #'
 #' tbl <- tablespan(data = iris[iris$Species == "setosa", ],

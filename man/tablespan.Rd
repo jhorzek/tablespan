@@ -25,10 +25,9 @@ Create complex table spanners with a simple formula.
 }
 \details{
 \code{tablespan} provides a formula based approach to adding headers and spanners
-to an existing data.frame. The objective is to provide an easy to use, but good
-enough approach to building and exporting tables.
-
-\code{tablespan} will not create summaries for you or transform your data in any shape or form.
+to an existing data.frame. The objective is to provide a unified, easy to use, but good
+enough approach to building and exporting tables to Excel, HTML, and LaTeX. To this end,
+\code{tablespan} leverages the awesome packages \code{openxlsx} and \code{gt}.
 
 Following the \code{tibble} approach, \code{tablespan} assumes that all items that you may
 want to use as row names are just columns in your data set (see example). That
