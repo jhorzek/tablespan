@@ -4,10 +4,16 @@
 \alias{flatten_table_partial}
 \title{flatten_table_partial}
 \usage{
-flatten_table_partial(tbl_partial, flattened = list())
+flatten_table_partial(tbl_partial, id = "", flattened = list())
 }
 \arguments{
 \item{tbl_partial}{partial of a table header}
+
+\item{id}{unique id assigned to the current element. When creating a gt, we have
+to ensure that spanners have different ids. This can be problematic if multiple
+spanners have the same label. The id is created automatically and will contain
+all parents of the spanners as well to ensure that each spanner has a unique, but
+reproducible id.}
 
 \item{flattened}{list filled recursively}
 }
