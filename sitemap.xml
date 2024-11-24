@@ -10,6 +10,8 @@
 <url><loc>https://jhorzek.github.io/tablespan/reference/add_gt_titles.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/add_header_level.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/add_header_width.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/as_excel.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/as_gt.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/cell_style.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/check_variables.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/construct_header.html</loc></url>
@@ -31,8 +33,6 @@
 <url><loc>https://jhorzek.github.io/tablespan/reference/print_insert_header_entries.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/tablespan.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/tbl_styles.html</loc></url>
-<url><loc>https://jhorzek.github.io/tablespan/reference/to_excel.html</loc></url>
-<url><loc>https://jhorzek.github.io/tablespan/reference/to_gt.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/write_data.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/write_footnote.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/write_header.html</loc></url>

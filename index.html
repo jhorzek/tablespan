@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Create satisficing Excel, HTML, and LaTeX tables using a simple formula • tablespan</title>
+<title>Create satisficing Excel, HTML, LaTeX, and RTF tables using a simple formula • tablespan</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Create satisficing Excel, HTML, and LaTeX tables using a simple formula">
-<meta name="description" content='tablespan provides a "good enough" approach to creating Excel, HTML, and LaTeX tables in R by leveraging openxlsx and gt.'>
-<meta property="og:description" content='tablespan provides a "good enough" approach to creating Excel, HTML, and LaTeX tables in R by leveraging openxlsx and gt.'>
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Create satisficing Excel, HTML, LaTeX, and RTF tables using a simple formula">
+<meta name="description" content='tablespan provides a "good enough" approach to creating Excel, HTML, LaTeX, and RTF tables in R by leveraging openxlsx and gt.'>
+<meta property="og:description" content='tablespan provides a "good enough" approach to creating Excel, HTML, LaTeX, and RTF tables in R by leveraging openxlsx and gt.'>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -37,6 +37,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/jhorzek/tablespan/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -86,8 +87,8 @@
 <span>            sd_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
 <span>            mean_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
 <span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span></span>
-<span><span class="co">#&gt; argument.</span></span>
+<span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the</span></span>
+<span><span class="co">#&gt; `.groups` argument.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">summarized_table</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 5 × 7</span></span>
@@ -136,7 +137,7 @@
 <span><span class="co">#&gt;  | 4   | 81.8       21.87 |</span></span>
 <span><span class="co">#&gt;  | 6   | 131.67     37.53 |</span></span>
 <span><span class="co">#&gt;  | ... | ...        ...   |</span></span></code></pre></div>
-<p>Spanners can also be nested (e.g., <code>cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))</code>.</p>
+<p>Spanners can also be nested (e.g., <code>cyl ~ (Horsepower = (Mean = mean_hp) + (SD = sd_hp))</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="op">(</span><span class="va">Mean</span> <span class="op">=</span> <span class="va">mean_hp</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">SD</span>  <span class="op">=</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -182,8 +183,8 @@
 <span>            sd_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
 <span>            mean_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
 <span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span></span>
-<span><span class="co">#&gt; argument.</span></span>
+<span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the</span></span>
+<span><span class="co">#&gt; `.groups` argument.</span></span>
 <span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>                 formula <span class="op">=</span> <span class="va">Cylinder</span><span class="op">:</span><span class="va">cyl</span> <span class="op">+</span> <span class="va">Engine</span><span class="op">:</span><span class="va">vs</span> <span class="op">~</span></span>
@@ -210,10 +211,10 @@
 <div class="section level2">
 <h2 id="exporting-to-excel">Exporting to Excel<a class="anchor" aria-label="anchor" href="#exporting-to-excel"></a>
 </h2>
-<p>Tables created with <code>tablespan</code> can now be translated to xlsx tables with <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> using the <code>to_excel</code> function:</p>
+<p>Tables created with <code>tablespan</code> can now be translated to xlsx tables with <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> using the <code>as_excel</code> function:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># to_excel creates an openxlsx workbook</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_excel.html">to_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># as_excel creates an openxlsx workbook</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_excel.html">as_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Save the workbook as an xlsx file:</span></span>
 <span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
@@ -223,11 +224,11 @@
 <div class="section level3">
 <h3 id="styling">Styling<a class="anchor" aria-label="anchor" href="#styling"></a>
 </h3>
-<p>While <code>tablespan</code> provides limited styling options, some elements can be adjusted. For example, we may want to print some elements in bold or format numbers differently. In <code>tablespan</code>, styling happens when translating the table to an <code>openxlsx</code> workbook with <code>to_excel</code>. To this end, <code>tablespan</code> provides a <code>styles</code> argument.</p>
+<p>While <code>tablespan</code> provides limited styling options, some elements can be adjusted. For example, we may want to print some elements in bold or format numbers differently. In <code>tablespan</code>, styling happens when translating the table to an <code>openxlsx</code> workbook with <code>as_excel</code>. To this end, <code>tablespan</code> provides a <code>styles</code> argument.</p>
 <div class="section level4">
 <h4 id="formatting-cells">Formatting Cells<a class="anchor" aria-label="anchor" href="#formatting-cells"></a>
 </h4>
-<p>Let’s assume we want all <code>mean_hp</code> values with a value <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\geq 100</annotation></semantics></math> to be printed in bold. To this end, we first create a new style object using <code>openxlsx</code>:</p>
+<p>Let’s assume we want all <code>mean_hp</code> values with a value <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Cgeq%20100%20%22%5Cgeq%20100%22" alt="\geq 100"> to be printed in bold. To this end, we first create a new style object using <code>openxlsx</code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bold</span> <span class="op">&lt;-</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createStyle.html" class="external-link">createStyle</a></span><span class="op">(</span>textDecoration <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we create a cell style with <code>tablespan</code>:</p>
@@ -237,10 +238,10 @@
 <span>                        style <span class="op">=</span> <span class="va">bold</span>,</span>
 <span>                        gridExpand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Note that we specify the indices of the rows that we want to be in bold and the column name of the item.</p>
-<p>Finally, we pass this style as part of a list to <code>to_excel</code>:</p>
+<p>Finally, we pass this style as part of a list to <code>as_excel</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># to_excel creates an openxlsx workbook</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_excel.html">to_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, </span>
+<code class="sourceCode R"><span><span class="co"># as_excel creates an openxlsx workbook</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_excel.html">as_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, </span>
 <span>               styles <span class="op">=</span> <span class="fu"><a href="reference/tbl_styles.html">tbl_styles</a></span><span class="op">(</span>cell_styles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">hp_ge_100</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Save the workbook as an xlsx file:</span></span>
@@ -256,7 +257,7 @@
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">double_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_data_styles.html">create_data_styles</a></span><span class="op">(</span>double <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>test <span class="op">=</span> <span class="va">is.double</span>, </span>
 <span>                                                 style <span class="op">=</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createStyle.html" class="external-link">createStyle</a></span><span class="op">(</span>numFmt <span class="op">=</span> <span class="st">"0.000"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_excel.html">to_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, styles <span class="op">=</span> <span class="fu"><a href="reference/tbl_styles.html">tbl_styles</a></span><span class="op">(</span>data_styles <span class="op">=</span> <span class="va">double_style</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_excel.html">as_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, styles <span class="op">=</span> <span class="fu"><a href="reference/tbl_styles.html">tbl_styles</a></span><span class="op">(</span>data_styles <span class="op">=</span> <span class="va">double_style</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Save the workbook as an xlsx file:</span></span>
 <span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
@@ -269,20 +270,24 @@
 <div class="section level2">
 <h2 id="exporting-to-html-latex-and-rtf">Exporting to HTML, LaTeX, and RTF<a class="anchor" aria-label="anchor" href="#exporting-to-html-latex-and-rtf"></a>
 </h2>
-<p>Tables created with <code>tablespan</code> can also be exported to <code>gt</code> which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call <code>to_gt</code> on our table:</p>
+<p>Tables created with <code>tablespan</code> can also be exported to <code>gt</code> which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call <code>as_gt</code> on our table:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Translate to gt:</span></span>
-<span><span class="va">gt_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/to_gt.html">to_gt</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
+<span><span class="va">gt_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
 <span><span class="va">gt_tbl</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%"></p>
+
 <p>The <code>gt</code> package provides a wide range of functions to adapt the style of these tables. For instance, <code>opt_stylize</code> adds a pre-defined style to the entire table:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/opt_stylize.html" class="external-link">opt_stylize</a></span><span class="op">(</span>style <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>                  color <span class="op">=</span> <span class="st">'gray'</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%"></p>
+
 </div>
 <div class="section level2">
 <h2 id="tables-without-row-names">Tables without row names<a class="anchor" aria-label="anchor" href="#tables-without-row-names"></a>
@@ -311,7 +316,15 @@
 </ul>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/jhorzek/tablespan/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/jhorzek/tablespan/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
