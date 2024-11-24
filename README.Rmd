@@ -153,11 +153,11 @@ tbl
 
 ## Exporting to Excel
 
-Tables created with `tablespan` can now be translated to xlsx tables with [`openxlsx`](https://ycphs.github.io/openxlsx/) using the `to_excel` function:
+Tables created with `tablespan` can now be translated to xlsx tables with [`openxlsx`](https://ycphs.github.io/openxlsx/) using the `as_excel` function:
 
 ```{r}
-# to_excel creates an openxlsx workbook
-wb <- to_excel(tbl = tbl)
+# as_excel creates an openxlsx workbook
+wb <- as_excel(tbl = tbl)
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
@@ -172,7 +172,7 @@ wb <- to_excel(tbl = tbl)
 While `tablespan` provides limited styling options, some elements can be adjusted.
 For example, we may want to print some elements in bold or format numbers differently.
 In `tablespan`, styling happens when translating the table to an `openxlsx` workbook
-with `to_excel`.
+with `as_excel`.
 To this end, `tablespan` provides a `styles` argument.
 
 #### Formatting Cells
@@ -195,11 +195,11 @@ hp_ge_100 <- cell_style(rows = which(summarized_table$mean_hp >= 100),
 Note that we specify the indices of the rows that we want to be in bold and the
 column name of the item.
 
-Finally, we pass this style as part of a list to `to_excel`:
+Finally, we pass this style as part of a list to `as_excel`:
 
 ```{r}
-# to_excel creates an openxlsx workbook
-wb <- to_excel(tbl = tbl, 
+# as_excel creates an openxlsx workbook
+wb <- as_excel(tbl = tbl, 
                styles = tbl_styles(cell_styles = list(hp_ge_100)))
 
 # Save the workbook as an xlsx file:
@@ -220,7 +220,7 @@ function that checks for the data type we want to style (here `is.double`) and
 ```{r}
 double_style <- create_data_styles(double = list(test = is.double, 
                                                  style = openxlsx::createStyle(numFmt = "0.000")))
-wb <- to_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
+wb <- as_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
@@ -232,11 +232,11 @@ wb <- to_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
 
 ## Exporting to HTML, LaTeX, and RTF
 
-Tables created with `tablespan` can also be exported to `gt` which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call `to_gt` on our table:
+Tables created with `tablespan` can also be exported to `gt` which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call `as_gt` on our table:
 
 ```{r, eval=FALSE}
 # Translate to gt:
-gt_tbl <- to_gt(tbl = tbl)
+gt_tbl <- as_gt(tbl = tbl)
 gt_tbl
 ```
 <p align="center">

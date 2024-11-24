@@ -73,7 +73,7 @@
 #' @param title string specifying the title of the table
 #' @param subtitle string specifying the subtitle of the table
 #' @param footnote string specifying the footnote of the table
-#' @returns Object of class Tabletop with title, subtitle, header info, data, and footnote.
+#' @returns Object of class Tablespan with title, subtitle, header info, data, and footnote.
 #' @export
 #' @examples
 #' library(tablespan)
@@ -102,13 +102,13 @@
 #' tbl
 #'
 #' # Export as Excel table:
-#' wb <- to_excel(tbl = tbl)
+#' wb <- as_excel(tbl = tbl)
 #'
 #' # Save using openxlsx
 #' # openxlsx::saveWorkbook(wb, "iris.xlsx")
 #'
 #' # Export as gt:
-#' gt_tbl <- to_gt(tbl = tbl)
+#' gt_tbl <- as_gt(tbl = tbl)
 #' gt_tbl
 tablespan <- function(data,
                      formula,

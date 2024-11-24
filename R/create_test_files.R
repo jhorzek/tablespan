@@ -23,14 +23,14 @@ create_test_files_cars <- function(){
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars.xlsx"),
                          overwrite = TRUE)
 
   # offset
-  wb <- to_excel(tbl = tbl, start_row = 3, start_col = 5)
+  wb <- as_excel(tbl = tbl, start_row = 3, start_col = 5)
 
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_offset.xlsx"),
@@ -38,7 +38,7 @@ create_test_files_cars <- function(){
 
   # custom cell styles
   bold <- openxlsx::createStyle(textDecoration = "bold")
-  wb <- to_excel(tbl = tbl,
+  wb <- as_excel(tbl = tbl,
                  styles = tbl_styles(cell_styles = list(cell_style(rows = 2:3,
                                                                    colnames = "mean_hp",
                                                                    style = bold),
@@ -50,7 +50,7 @@ create_test_files_cars <- function(){
                          overwrite = TRUE)
 
   # custom data type styles
-  wb <- to_excel(tbl = tbl,
+  wb <- as_excel(tbl = tbl,
                  styles = tbl_styles(data_styles = create_data_styles(double = list(test = is.double,
                                                                                     style = bold))))
   openxlsx::saveWorkbook(wb,
@@ -67,7 +67,7 @@ create_test_files_cars <- function(){
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_additional_spanners.xlsx"),
@@ -83,7 +83,7 @@ create_test_files_cars <- function(){
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_additional_spanners_left_right.xlsx"),
@@ -99,7 +99,7 @@ create_test_files_cars <- function(){
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_no_row_names.xlsx"),
@@ -112,7 +112,7 @@ create_test_files_cars <- function(){
                         (`Weight` = Mean:mean_wt + SD:sd_wt)),
                    footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_no_titles.xlsx"),
@@ -125,7 +125,7 @@ create_test_files_cars <- function(){
                         (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
                         (`Weight` = Mean:mean_wt + SD:sd_wt)))
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_no_titles_no_footnote.xlsx"),

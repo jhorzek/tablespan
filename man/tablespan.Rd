@@ -18,7 +18,7 @@ tablespan(data, formula, title = NULL, subtitle = NULL, footnote = NULL)
 \item{footnote}{string specifying the footnote of the table}
 }
 \value{
-Object of class Tabletop with title, subtitle, header info, data, and footnote.
+Object of class Tablespan with title, subtitle, header info, data, and footnote.
 }
 \description{
 Create complex table spanners with a simple formula.
@@ -118,12 +118,12 @@ tbl <- tablespan(data = summarized_table,
 tbl
 
 # Export as Excel table:
-wb <- to_excel(tbl = tbl)
+wb <- as_excel(tbl = tbl)
 
 # Save using openxlsx
 # openxlsx::saveWorkbook(wb, "iris.xlsx")
 
 # Export as gt:
-gt_tbl <- to_gt(tbl = tbl)
+gt_tbl <- as_gt(tbl = tbl)
 gt_tbl
 }

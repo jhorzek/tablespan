@@ -34,7 +34,7 @@ test_that("errors", {
                                   formula = Cylinder:cyl * Engine:vs ~ N))
 
   # unknown rows
-  testthat::expect_error(to_excel(tbl = tablespan(data = summarized_table,
+  testthat::expect_error(as_excel(tbl = tablespan(data = summarized_table,
                                                  formula = Cylinder:cyl + Engine:vs ~
                                                    N + Unknown +
                                                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
@@ -42,7 +42,7 @@ test_that("errors", {
                                                  title = "Motor Trend Car Road Tests",
                                                  subtitle = "A table created with tablespan",
                                                  footnote = "Data from the infamous mtcars data set.")))
-  testthat::expect_error(to_excel(tbl = tablespan(data = summarized_table,
+  testthat::expect_error(as_excel(tbl = tablespan(data = summarized_table,
                                                  formula = Cylinder:cyl + Engine:vs + Unknown ~
                                                    N +
                                                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
@@ -54,7 +54,7 @@ test_that("errors", {
   # incorrect specification of styles
   bold <- openxlsx::createStyle(textDecoration = "bold")
   testthat::expect_error(tbl_styles(cell_styles = bold))
-  testthat::expect_error(to_excel(tbl = tbl, styles = bold))
+  testthat::expect_error(as_excel(tbl = tbl, styles = bold))
 
   testthat::expect_error(cell_style(rows = "1",
                                     colnames = "colname",
@@ -77,12 +77,12 @@ test_that("errors", {
                   footnote = "Data from the infamous mtcars data set.")
   bold <- openxlsx::createStyle(textDecoration = "bold")
 
-  testthat::expect_error(to_excel(tbl = tbl,
+  testthat::expect_error(as_excel(tbl = tbl,
                                   styles = tbl_styles(cell_styles = list(cell_style(rows = 30,
                                                                                     colnames = "mean_hp",
                                                                                     style = bold)))))
 
-  testthat::expect_error(to_excel(tbl = tbl,
+  testthat::expect_error(as_excel(tbl = tbl,
                                   styles = tbl_styles(cell_styles = list(cell_style(rows = 3,
                                                                                     colnames = "Unknown",
                                                                                     style = bold)))))

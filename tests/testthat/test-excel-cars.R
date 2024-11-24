@@ -23,7 +23,7 @@ test_that("cars", {
                   subtitle = "A table created with tablespan",
                   footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars.xlsx"))
@@ -66,7 +66,7 @@ test_that("cars-offset", {
                   subtitle = "A table created with tablespan",
                   footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl, start_row = 3, start_col = 5)
+  wb <- as_excel(tbl = tbl, start_row = 3, start_col = 5)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_offset.xlsx"))
@@ -110,7 +110,7 @@ test_that("cars-cell_styles", {
                   footnote = "Data from the infamous mtcars data set.")
 
   bold <- openxlsx::createStyle(textDecoration = "bold")
-  wb <- to_excel(tbl = tbl,
+  wb <- as_excel(tbl = tbl,
                  styles = tbl_styles(cell_styles = list(cell_style(rows = 2:3,
                                                                    colnames = "mean_hp",
                                                                    style = bold),
@@ -161,7 +161,7 @@ test_that("cars-data_styles", {
 
   # custom data type styles
   bold <- openxlsx::createStyle(textDecoration = "bold")
-  wb <- to_excel(tbl = tbl,
+  wb <- as_excel(tbl = tbl,
                  styles = tbl_styles(data_styles = create_data_styles(double = list(test = is.double,
                                                                                     style = bold))))
 
@@ -206,7 +206,7 @@ test_that("cars-additional_spanners", {
                   subtitle = "A table created with tablespan",
                   footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_additional_spanners.xlsx"))
@@ -250,7 +250,7 @@ test_that("cars-no_row_names", {
                   subtitle = "A table created with tablespan",
                   footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_no_row_names.xlsx"))
@@ -292,7 +292,7 @@ test_that("cars-no_titles", {
                        (`Weight` = Mean:mean_wt + SD:sd_wt)),
                   footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_no_titles.xlsx"))
@@ -333,7 +333,7 @@ test_that("cars-no_titles_no_footnotes", {
                        (`Horse Power` = (Mean = Mean:mean_hp) + (`Standard Deviation` = SD:sd_hp)) +
                        (`Weight` = Mean:mean_wt + SD:sd_wt)))
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_no_titles_no_footnote.xlsx"))
@@ -378,7 +378,7 @@ test_that("cars-table_with_higher_spanner_left_right", {
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  wb <- to_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl)
 
   # Compare just the data
   xlsx_compare <- openxlsx::read.xlsx(xlsxFile = paste0(comp_file_dir, "cars_additional_spanners_left_right.xlsx"))

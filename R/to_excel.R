@@ -1,4 +1,4 @@
-#' to_excel
+#' as_excel
 #'
 #' Write a tablespan table to an excel workbook.
 #'
@@ -21,7 +21,7 @@
 #'           formula = Species ~ (Sepal = Sepal.Length + Sepal.Width) +
 #'             (Petal = (Width = Petal.Length) + Petal.Width))
 #'
-#' wb <- to_excel(tbl = tbl)
+#' wb <- as_excel(tbl = tbl)
 #'
 #' # saveWorkbook(wb, "iris.xlsx")
 #'
@@ -30,7 +30,7 @@
 #' # the rows 9-10 of the Petal.Width column.
 #' bold <- openxlsx::createStyle(textDecoration = "bold")
 #'
-#' wb <- to_excel(tbl = tbl,
+#' wb <- as_excel(tbl = tbl,
 #'                styles = tbl_styles(cell_styles = list(cell_style(rows = 1:5,
 #'                                                                 colnames = "Sepal.Length",
 #'                                                                 style = bold),
@@ -64,12 +64,12 @@
 #'           subtitle = "A table created with tablespan",
 #'           footnote = "Data from the infamous mtcars data set.")
 #'
-#' wb <- to_excel(tbl = tbl)
+#' wb <- as_excel(tbl = tbl)
 #'
 #' # Create the excel table:
 #' # openxlsx::saveWorkbook(wb,
 #' #                        file = "cars.xlsx", overwrite = TRUE)
-to_excel <- function(tbl,
+as_excel <- function(tbl,
                      workbook = openxlsx::createWorkbook(),
                      sheet = "BasicTable",
                      start_row = 1,
