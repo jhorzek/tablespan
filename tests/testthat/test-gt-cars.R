@@ -36,7 +36,7 @@ test_that("cars", {
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  gt_tbl <- to_gt(tbl = tbl)
+  gt_tbl <- as_gt(tbl = tbl)
 
   expected <- summarized_table |>
     gt::gt(groupname_col = NULL) |>
@@ -104,7 +104,7 @@ test_that("cars - no autostyle", {
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  gt_tbl <- to_gt(tbl = tbl, auto_format = FALSE)
+  gt_tbl <- as_gt(tbl = tbl, auto_format = FALSE)
 
   expected <- summarized_table |>
     gt::gt(groupname_col = NULL) |>
@@ -171,7 +171,7 @@ test_that("cars-additional_spanners", {
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  gt_tbl <- to_gt(tbl = tbl)
+  gt_tbl <- as_gt(tbl = tbl)
 
   expected <- summarized_table |>
     gt::gt(groupname_col = NULL) |>
@@ -253,7 +253,7 @@ test_that("cars-no_row_names", {
                    subtitle = "A table created with tablespan",
                    footnote = "Data from the infamous mtcars data set.")
 
-  gt_tbl <- to_gt(tbl = tbl)
+  gt_tbl <- as_gt(tbl = tbl)
 
   expected <- summarized_table |>
     ungroup() |>
@@ -328,7 +328,7 @@ test_that("cars-no_titles", {
                      (`Weight` = Mean:mean_wt + SD:sd_wt),
                    footnote = "Data from the infamous mtcars data set.")
 
-  gt_tbl <- to_gt(tbl = tbl)
+  gt_tbl <- as_gt(tbl = tbl)
 
   expected <- summarized_table |>
     gt::gt(groupname_col = NULL) |>
@@ -391,7 +391,7 @@ test_that("cars-no_titles_no_footnotes", {
                      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
                      (`Weight` = Mean:mean_wt + SD:sd_wt))
 
-  gt_tbl <- to_gt(tbl = tbl)
+  gt_tbl <- as_gt(tbl = tbl)
 
   expected <- summarized_table |>
     gt::gt(groupname_col = NULL) |>
@@ -460,7 +460,7 @@ test_that("cars-duplicated_spanner_names", {
                 (`Model 1` = Estimate:Estimate.x + (Significance = `t-value`:`t value.x` + `p-value`:`Pr(>|t|).x`)) +
                 (`Model 2` = Estimate:Estimate.y + (Significance = `t-value`:`t value.y` + `p-value`:`Pr(>|t|).y`)))
 
-  gt_tbl <- to_gt(tbl)
+  gt_tbl <- as_gt(tbl)
 
   expected <- combined_models |>
     select(all_of(c("Parameter",

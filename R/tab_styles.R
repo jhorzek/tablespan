@@ -97,7 +97,7 @@ tbl_styles <- function(
 #' # the rows 9-10 of the Petal.Width column.
 #' bold <- openxlsx::createStyle(textDecoration = "bold")
 #'
-#' wb <- to_excel(tbl = tbl,
+#' wb <- as_excel(tbl = tbl,
 #'                styles = tbl_styles(cell_styles = list(cell_style(rows = 1:5,
 #'                                                                 colnames = "Sepal.Length",
 #'                                                                 style = bold),

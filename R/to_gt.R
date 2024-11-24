@@ -1,10 +1,10 @@
 ##### Functions #####
-#' to_gt
+#' as_gt
 #'
 #' Translates a table created with tablespan to a great table (gt). See https://gt.rstudio.com/.
 #'
 #' Tablespan itself does not provide any printing of tables as HTML table. However,
-#' with to_gt, tablespan can be translated to a great table which provides html and
+#' with as_gt, tablespan can be translated to a great table which provides html and
 #' LaTeX output.
 #'
 #' @param tbl table created with tablespan::tablespan
@@ -35,9 +35,9 @@
 #'                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
 #'                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
 #'
-#' gt_tbl <- to_gt(tbl)
+#' gt_tbl <- as_gt(tbl)
 #' gt_tbl
-to_gt <- function(tbl,
+as_gt <- function(tbl,
                   groupname_col = NULL,
                   separator_style = gt::cell_borders(sides = c("right"),
                                                      weight = gt::px(1),

@@ -50,8 +50,8 @@ summarized_table <- mtcars |>
             sd_hp = sd(hp),
             mean_wt = mean(wt),
             sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has grouped output by 'cyl'. You can override using the
+#> `.groups` argument.
 
 print(summarized_table)
 #> # A tibble: 5 × 7
@@ -116,8 +116,8 @@ tablespan(data = summarized_table,
 #>  | ... | ...        ...   |
 ```
 
-Spanners can also be nested (e.g.,
-`cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))`.
+Spanners can also be nested (e.g., `cyl ~ (Horsepower = (Mean = mean_hp)
++ (SD = sd_hp))`.
 
 ``` r
 tablespan(data = summarized_table,
@@ -139,9 +139,9 @@ Variable names in an R `data.frame` are often very technical (e.g.,
 `mean_hp` and `sd_hp`). When sharing the table, we may want to replace
 those names. In the example above, we may want to replace `mean_hp` and
 `sd_hp` with “Mean” and “SD”. In `tablespan` renaming variables is
-achieved with `new_name:old_name`. For example,
-`cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` renames `mean_hp` to
-`Mean` and `sd_hp` to `SD`:
+achieved with `new_name:old_name`. For example, `cyl ~ (Horsepower =
+Mean:mean_hp + SD:sd_hp)` renames `mean_hp` to `Mean` and `sd_hp` to
+`SD`:
 
 ``` r
 tablespan(data = summarized_table,
@@ -173,8 +173,8 @@ summarized_table <- mtcars |>
             sd_hp = sd(hp),
             mean_wt = mean(wt),
             sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has grouped output by 'cyl'. You can override using the
+#> `.groups` argument.
 
 tbl <- tablespan(data = summarized_table,
                  formula = Cylinder:cyl + Engine:vs ~
@@ -202,11 +202,11 @@ tbl
 
 Tables created with `tablespan` can now be translated to xlsx tables
 with [`openxlsx`](https://ycphs.github.io/openxlsx/) using the
-`to_excel` function:
+`as_excel` function:
 
 ``` r
-# to_excel creates an openxlsx workbook
-wb <- to_excel(tbl = tbl)
+# as_excel creates an openxlsx workbook
+wb <- as_excel(tbl = tbl)
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
@@ -221,14 +221,15 @@ wb <- to_excel(tbl = tbl)
 While `tablespan` provides limited styling options, some elements can be
 adjusted. For example, we may want to print some elements in bold or
 format numbers differently. In `tablespan`, styling happens when
-translating the table to an `openxlsx` workbook with `to_excel`. To this
+translating the table to an `openxlsx` workbook with `as_excel`. To this
 end, `tablespan` provides a `styles` argument.
 
 #### Formatting Cells
 
-Let’s assume we want all `mean_hp` values with a value $\geq 100$ to be
-printed in bold. To this end, we first create a new style object using
-`openxlsx`:
+Let’s assume we want all `mean_hp` values with a value
+![\\geq 100](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cgeq%20100
+"\\geq 100") to be printed in bold. To this end, we first create a new
+style object using `openxlsx`:
 
 ``` r
 bold <- openxlsx::createStyle(textDecoration = "bold")
@@ -246,11 +247,11 @@ hp_ge_100 <- cell_style(rows = which(summarized_table$mean_hp >= 100),
 Note that we specify the indices of the rows that we want to be in bold
 and the column name of the item.
 
-Finally, we pass this style as part of a list to `to_excel`:
+Finally, we pass this style as part of a list to `as_excel`:
 
 ``` r
-# to_excel creates an openxlsx workbook
-wb <- to_excel(tbl = tbl, 
+# as_excel creates an openxlsx workbook
+wb <- as_excel(tbl = tbl, 
                styles = tbl_styles(cell_styles = list(hp_ge_100)))
 
 # Save the workbook as an xlsx file:
@@ -272,7 +273,7 @@ To this end, we use the `create_data_styles` function, where we specify
 ``` r
 double_style <- create_data_styles(double = list(test = is.double, 
                                                  style = openxlsx::createStyle(numFmt = "0.000")))
-wb <- to_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
+wb <- as_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
 
 # Save the workbook as an xlsx file:
 # openxlsx::saveWorkbook(wb,
@@ -286,16 +287,18 @@ wb <- to_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
 
 Tables created with `tablespan` can also be exported to `gt` which
 allows saving as HTML, LaTeX, or RTF file. To this end, we simply have
-to call `to_gt` on our table:
+to call `as_gt` on our table:
 
 ``` r
 # Translate to gt:
-gt_tbl <- to_gt(tbl = tbl)
+gt_tbl <- as_gt(tbl = tbl)
 gt_tbl
 ```
 
 <p align="center">
+
 <img src="man/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%">
+
 </p>
 
 The `gt` package provides a wide range of functions to adapt the style
@@ -309,7 +312,9 @@ gt_tbl |>
 ```
 
 <p align="center">
+
 <img src="man/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%">
+
 </p>
 
 ## Tables without row names
@@ -333,14 +338,14 @@ tablespan(data = summarized_table,
 
 ## References
 
-- gt: Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J,
-  Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready Display
-  Tables. R package version 0.11.1.9000,
-  <https://github.com/rstudio/gt>, <https://gt.rstudio.com>.
-- expss: Gregory D et al. (2024). expss: Tables with Labels in R. R
-  package version 0.9.31, <https://gdemin.github.io/expss/>.
-- tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R
-  package version 0.9.31, <https://dmurdoch.github.io/tables/>.
-- openxlsx: Schauberger P, Walker A (2023). *openxlsx: Read, Write and
-  Edit xlsx Files*. R package version 4.2.5.2,
-  <https://CRAN.R-project.org/package=openxlsx>.
+  - gt: Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J,
+    Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready
+    Display Tables. R package version 0.11.1.9000,
+    <https://github.com/rstudio/gt>, <https://gt.rstudio.com>.
+  - expss: Gregory D et al. (2024). expss: Tables with Labels in R. R
+    package version 0.9.31, <https://gdemin.github.io/expss/>.
+  - tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R
+    package version 0.9.31, <https://dmurdoch.github.io/tables/>.
+  - openxlsx: Schauberger P, Walker A (2023). *openxlsx: Read, Write and
+    Edit xlsx Files*. R package version 4.2.5.2,
+    <https://CRAN.R-project.org/package=openxlsx>.
