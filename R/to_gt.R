@@ -1,7 +1,7 @@
 ##### Functions #####
 #' as_gt
 #'
-#' Translates a table created with tablespan to a great table (gt). See https://gt.rstudio.com/.
+#' Translates a table created with tablespan to a great table (gt). See <https://gt.rstudio.com/>.
 #'
 #' Tablespan itself does not provide any printing of tables as HTML table. However,
 #' with as_gt, tablespan can be translated to a great table which provides html and

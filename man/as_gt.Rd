@@ -27,7 +27,7 @@ from the data.}
 \item{...}{additional arguments passed to gt::gt().}
 }
 \description{
-Translates a table created with tablespan to a great table (gt). See https://gt.rstudio.com/.
+Translates a table created with tablespan to a great table (gt). See <https://gt.rstudio.com/>.
 }
 \details{
 Tablespan itself does not provide any printing of tables as HTML table. However,
