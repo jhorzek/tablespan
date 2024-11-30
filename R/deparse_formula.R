@@ -106,7 +106,7 @@ deparse_formula_partial <- function(formula_partial,
     # Check if there is a name for the current spanner
     try_name <- try(formula_partial[[2]][[1]] != "=", silent = TRUE)
     if(is(try_name, "try-error") | try_name){
-      stop("The following spanner has not name: ", formula_partial, ".")
+      stop("The following spanner has no label: ", formula_partial, ".")
     }
     # In case of a brace, we have to go one step deeper
     deparsed$entries <- c(deparsed$entries,
