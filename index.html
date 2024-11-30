@@ -51,8 +51,8 @@
 <blockquote>
 <p>Create satisficing tables in R the formula way.</p>
 </blockquote>
-<p>The objective of <code>tablespan</code> is to provide a “good enough” approach to creating tables in R with simple formulas (inspired by <a href="https://dmurdoch.github.io/tables/" class="external-link"><code>tables</code></a>). To this end, <code>tablespan</code> builds on the awesome packages <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> and <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>. You can think of <code>tablespan</code> as a simple wrapper around <code>openxlsx</code> and <code>gt</code>.</p>
-<p>Tables created with <code>tablespan</code> can be exported to:</p>
+<p>The objective of <code>tablespan</code> is to provide a “good enough” approach to creating tables by leveraging R’s formulas.</p>
+<p><code>tablespan</code> builds on the awesome packages <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> and <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>, which allows tables created with <code>tablespan</code> to be exported to the following formats:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Excel</strong> (using <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a>)</li>
@@ -74,8 +74,8 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>tablespan</code> assumes that you already have a perfectly summarized table that you now want to share. All you need are some <strong>table</strong> headers with <strong>spanners</strong> without investing much time into making it look perfect. This is what <code>tablespan</code> was designed for.</p>
-<p>Let’s assume we want to share the following table:</p>
+<p>R has a large set of great packages that allow you to create and export tables that look exactly like you envisioned. However, sometimes you may just need a good-enough table that is easy to create and share with others. This is where <code>tablespan</code> can be of help.</p>
+<p>Let’s assume that we want to share the following table:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mtcars"</span><span class="op">)</span></span>
@@ -100,15 +100,16 @@
 <span><span class="co">#&gt; 3     6     0     3   132.  37.5     2.76  0.128</span></span>
 <span><span class="co">#&gt; 4     6     1     4   115.   9.18    3.39  0.116</span></span>
 <span><span class="co">#&gt; 5     8     0    14   209.  51.0     4.00  0.759</span></span></code></pre></div>
-<p>Now we want to create a table where we show the grouping variables as row names and also create spanners for the horse power (<code>hp</code>) and the weight (<code>wt</code>) variables. The result should look something like this:</p>
+<p>We don’t want to share the table as is - the variable names are all a bit technical and the table could need some spanners summarizing columns. So, we want to share a table that looks something like this:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="sc">|</span>                   <span class="er">|</span> Horse Power <span class="sc">|</span>   Weight  <span class="sc">|</span></span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="er">|</span> Cylinder <span class="sc">|</span> Engine <span class="sc">|</span> Mean  <span class="sc">|</span>  SD <span class="sc">|</span> Mean <span class="sc">|</span> SD <span class="sc">|</span></span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="er">|</span> <span class="sc">--------</span> <span class="er">|</span> <span class="sc">------</span> <span class="er">|</span> <span class="sc">-----</span> <span class="er">|</span> <span class="sc">---</span> <span class="er">|</span> <span class="sc">----</span> <span class="er">|</span> <span class="sc">--</span> <span class="er">|</span></span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="er">|</span>                   <span class="er">|</span>                         <span class="er">|</span></span></code></pre></div>
+<p><code>tablespan</code> allows us to create this table with a single formula.</p>
 <div class="section level3">
 <h3 id="creating-a-basic-table">Creating a Basic Table<a class="anchor" aria-label="anchor" href="#creating-a-basic-table"></a>
 </h3>
-<p>In <code>tablespan</code>, the table headers are defined with a formula approach inspired by the <a href="https://dmurdoch.github.io/tables/" class="external-link"><code>tables</code></a> package. For example, <code>cyl ~ mean_hp + sd_hp</code> defines a table with <code>cyl</code> as the row names and <code>mean_hp</code> and <code>sd_hp</code> as columns. The output will look as follows:</p>
+<p>In <code>tablespan</code>, the table headers are defined with a formula. For example, <code>cyl ~ mean_hp + sd_hp</code> defines a table with <code>cyl</code> as the row names and <code>mean_hp</code> and <code>sd_hp</code> as columns:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jhorzek.github.io/tablespan/">tablespan</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
@@ -125,7 +126,7 @@
 <div class="section level3">
 <h3 id="adding-spanners">Adding Spanners<a class="anchor" aria-label="anchor" href="#adding-spanners"></a>
 </h3>
-<p>Spanners are defined using braces and spanner names. For example, the following defines a spanner for <code>mean_hp</code> and <code>sd_hp</code> with the name <code>Horsepower</code>: <code>cyl ~ (Horsepower = mean_hp + sd_hp)</code>.</p>
+<p>Spanners are defined using braces and spanner names. For example, the following defines a spanner for <code>mean_hp</code> and <code>sd_hp</code> with the name <code>Horsepower</code>: <code>cyl ~ (Horsepower = mean_hp + sd_hp)</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
@@ -137,7 +138,7 @@
 <span><span class="co">#&gt;  | 4   | 81.8       21.87 |</span></span>
 <span><span class="co">#&gt;  | 6   | 131.67     37.53 |</span></span>
 <span><span class="co">#&gt;  | ... | ...        ...   |</span></span></code></pre></div>
-<p>Spanners can also be nested (e.g., <code>cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))</code>.</p>
+<p>Spanners can also be nested:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="op">(</span><span class="va">Mean</span> <span class="op">=</span> <span class="va">mean_hp</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">SD</span>  <span class="op">=</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -170,7 +171,7 @@
 <div class="section level3">
 <h3 id="creating-the-full-table">Creating the Full Table<a class="anchor" aria-label="anchor" href="#creating-the-full-table"></a>
 </h3>
-<p>The combination of row names, spanners, and renaming of variables allows creating the full table as follows:</p>
+<p>The combination of row names, spanners, and renaming of variables allows creating the full table:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jhorzek.github.io/tablespan/">tablespan</a></span><span class="op">)</span></span>
@@ -277,19 +278,592 @@
 <span><span class="va">gt_tbl</span></span></code></pre></div>
 <p align="center">
 <img src="reference/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%"></p>
-<p>The <code>gt</code> package provides a wide range of functions to adapt the style of these tables. For instance, <code>opt_stylize</code> adds a pre-defined style to the entire table:</p>
+<div class="section level3">
+<h3 id="styling-great-tables">Styling Great Tables<a class="anchor" aria-label="anchor" href="#styling-great-tables"></a>
+</h3>
+<p>The <code>gt</code> package provides a wide range of functions to adapt the style of the table created with <code>as_gt</code>. For instance, <code>opt_stylize</code> adds a pre-defined style to the entire table:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/opt_stylize.html" class="external-link">opt_stylize</a></span><span class="op">(</span>style <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>                  color <span class="op">=</span> <span class="st">'gray'</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
 <img src="reference/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%"></p>
+<p>When adapting the <code>gt</code> object, there is an important detail to keep in mind: To ensure that each table spanner has a unique ID, <code>tablespan</code> will create IDs that differ from the text shown in the spanner. To demonstrate this, Let’s assume that we want to add a spanner above <code>Horse Power</code> and <code>Weight</code>:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_spanner.html" class="external-link">tab_spanner</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"New Spanner"</span>, </span>
+<span>                  spanners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Horse Power"</span>, <span class="st">"Weight"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in `gt::tab_spanner()`:</span></span>
+<span><span class="co">#&gt; ! One or more spanner ID(s) supplied in `spanners` (Horse Power and</span></span>
+<span><span class="co">#&gt;   Weight), for the new spanner with the ID `New Spanner` doesn't belong to any</span></span>
+<span><span class="co">#&gt;   existing spanners.</span></span></code></pre></div>
+<p>This will throw an error because the spanner IDs are different from the spanner labels. To get the spanner IDs, use <code><a href="https://gt.rstudio.com/reference/tab_info.html" class="external-link">gt::tab_info()</a></code>:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_info.html" class="external-link">tab_info</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div id="cctlqodhdh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+#cctlqodhdh table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+&#10;#cctlqodhdh thead, #cctlqodhdh tbody, #cctlqodhdh tfoot, #cctlqodhdh tr, #cctlqodhdh td, #cctlqodhdh th {
+  border-style: none;
+}
+&#10;#cctlqodhdh p {
+  margin: 0;
+  padding: 0;
+}
+&#10;#cctlqodhdh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 800px;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #F7F7F7;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+&#10;#cctlqodhdh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+&#10;#cctlqodhdh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+&#10;#cctlqodhdh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_bottom_border {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_col_headings {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+&#10;#cctlqodhdh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+&#10;#cctlqodhdh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+&#10;#cctlqodhdh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+&#10;#cctlqodhdh .gt_column_spanner {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+&#10;#cctlqodhdh .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+&#10;#cctlqodhdh .gt_group_heading {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 1px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+&#10;#cctlqodhdh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 1px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+&#10;#cctlqodhdh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+&#10;#cctlqodhdh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+&#10;#cctlqodhdh .gt_row {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #F7F7F7;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+&#10;#cctlqodhdh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#cctlqodhdh .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+&#10;#cctlqodhdh .gt_row_group_first td {
+  border-top-width: 1px;
+}
+&#10;#cctlqodhdh .gt_row_group_first th {
+  border-top-width: 1px;
+}
+&#10;#cctlqodhdh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#cctlqodhdh .gt_first_summary_row {
+  border-top-style: none;
+  border-top-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+&#10;#cctlqodhdh .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#cctlqodhdh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: none;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: none;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+&#10;#cctlqodhdh .gt_table_body {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#cctlqodhdh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#cctlqodhdh .gt_sourcenote {
+  font-size: 10px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#cctlqodhdh .gt_left {
+  text-align: left;
+}
+&#10;#cctlqodhdh .gt_center {
+  text-align: center;
+}
+&#10;#cctlqodhdh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+&#10;#cctlqodhdh .gt_font_normal {
+  font-weight: normal;
+}
+&#10;#cctlqodhdh .gt_font_bold {
+  font-weight: bold;
+}
+&#10;#cctlqodhdh .gt_font_italic {
+  font-style: italic;
+}
+&#10;#cctlqodhdh .gt_super {
+  font-size: 65%;
+}
+&#10;#cctlqodhdh .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+&#10;#cctlqodhdh .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+&#10;#cctlqodhdh .gt_indent_1 {
+  text-indent: 5px;
+}
+&#10;#cctlqodhdh .gt_indent_2 {
+  text-indent: 10px;
+}
+&#10;#cctlqodhdh .gt_indent_3 {
+  text-indent: 15px;
+}
+&#10;#cctlqodhdh .gt_indent_4 {
+  text-indent: 20px;
+}
+&#10;#cctlqodhdh .gt_indent_5 {
+  text-indent: 25px;
+}
+&#10;#cctlqodhdh .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+&#10;#cctlqodhdh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="table gt_table" style="table-layout:fixed;width:800px;" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width:250px;">
+<col style="width:50px;">
+<col style="width:280px;">
+</colgroup>
+<thead>
+<tr class="gt_heading">
+<td colspan="3" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>
+<span class="gt_from_md">Information on ID and Label Values</span>
+</td>
+</tr>
+<tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="a::stub">
+ID
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="i">
+<span class="gt_from_md"><em>Idx</em><br><em>Lvl</em></span>
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="label">
+Label
+</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="gt_group_heading_row">
+<th colspan="3" class="gt_group_heading" scope="colgroup" id="Columns">
+Columns
+</th>
+</tr>
+<tr class="gt_row_group_first">
+<th id="stub_1_1" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+cyl
+</th>
+<td headers="Columns stub_1_1 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+1
+</td>
+<td headers="Columns stub_1_1 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+Cylinder
+</td>
+</tr>
+<tr>
+<th id="stub_1_2" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+vs
+</th>
+<td headers="Columns stub_1_2 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+2
+</td>
+<td headers="Columns stub_1_2 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+Engine
+</td>
+</tr>
+<tr>
+<th id="stub_1_3" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+N
+</th>
+<td headers="Columns stub_1_3 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+3
+</td>
+<td headers="Columns stub_1_3 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+N
+</td>
+</tr>
+<tr>
+<th id="stub_1_4" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+mean_hp
+</th>
+<td headers="Columns stub_1_4 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+4
+</td>
+<td headers="Columns stub_1_4 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+Mean
+</td>
+</tr>
+<tr>
+<th id="stub_1_5" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+sd_hp
+</th>
+<td headers="Columns stub_1_5 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+5
+</td>
+<td headers="Columns stub_1_5 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+SD
+</td>
+</tr>
+<tr>
+<th id="stub_1_6" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+mean_wt
+</th>
+<td headers="Columns stub_1_6 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+6
+</td>
+<td headers="Columns stub_1_6 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+Mean
+</td>
+</tr>
+<tr>
+<th id="stub_1_7" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+sd_wt
+</th>
+<td headers="Columns stub_1_7 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+7
+</td>
+<td headers="Columns stub_1_7 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+SD
+</td>
+</tr>
+<tr class="gt_group_heading_row">
+<th colspan="3" class="gt_group_heading" scope="colgroup" id="Rows">
+Rows
+</th>
+</tr>
+<tr class="gt_row_group_first">
+<th id="stub_1_8" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+&lt;&lt; Index values 1 to 5 &gt;&gt;
+</th>
+<td headers="Rows stub_1_8 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+<br>
+</td>
+<td headers="Rows stub_1_8 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+<br>
+</td>
+</tr>
+<tr class="gt_group_heading_row">
+<th colspan="3" class="gt_group_heading" scope="colgroup" id="Spanners">
+Spanners
+</th>
+</tr>
+<tr class="gt_row_group_first">
+<th id="stub_1_9" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+__BASE_LEVEL__Horse Power
+</th>
+<td headers="Spanners stub_1_9 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+1
+</td>
+<td headers="Spanners stub_1_9 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+Horse Power
+</td>
+</tr>
+<tr>
+<th id="stub_1_10" scope="row" class="gt_row gt_left gt_stub" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+__BASE_LEVEL__Weight
+</th>
+<td headers="Spanners stub_1_10 i" class="gt_row gt_right" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+1
+</td>
+<td headers="Spanners stub_1_10 label" class="gt_row gt_left" style="font-family: 'IBM Plex Mono'; font-size: 14px;">
+Weight
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The IDs for the spanners can be found at the very bottom. To add another spanner above <code>Horse Power</code> and <code>Weight</code>, we have to use these IDs:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_spanner.html" class="external-link">tab_spanner</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"New Spanner"</span>, </span>
+<span>                  spanners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"__BASE_LEVEL__Horse Power"</span>, </span>
+<span>                               <span class="st">"__BASE_LEVEL__Weight"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="tables-without-row-names">Tables without row names<a class="anchor" aria-label="anchor" href="#tables-without-row-names"></a>
 </h2>
 <p>Using <code>1</code> on the left hand side of the formula creates a table without row names. For example, <code>1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)</code> defines</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="fl">1</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                      </span></span>
