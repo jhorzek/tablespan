@@ -19,11 +19,11 @@ library(tablespan)
 
 > Create satisficing tables in R the formula way.
 
-The objective of `tablespan` is to provide a "good enough" approach to creating tables in R with simple formulas (inspired by [`tables`](https://dmurdoch.github.io/tables/)). 
-To this end, `tablespan` builds on the awesome packages [`openxlsx`](https://ycphs.github.io/openxlsx/) and [`gt`](https://gt.rstudio.com/).
-You can think of `tablespan` as a simple wrapper around `openxlsx` and `gt`.
+The objective of `tablespan` is to provide a "good enough" approach to creating tables by 
+leveraging R's formulas.
 
-Tables created with `tablespan` can be exported to:
+`tablespan` builds on the awesome packages [`openxlsx`](https://ycphs.github.io/openxlsx/) and [`gt`](https://gt.rstudio.com/), which allows tables created with `tablespan`
+to be exported to the following formats:
 
 1. **Excel** (using [`openxlsx`](https://ycphs.github.io/openxlsx/))
 2. **HTML** (using [`gt`](https://gt.rstudio.com/))
@@ -43,12 +43,12 @@ remotes::install_github("jhorzek/tablespan")
 
 ## Introduction
 
-`tablespan` assumes that you already have a perfectly summarized table
-that you now want to share. All you need are some **table** headers with **spanners**
-without investing much time into making it look perfect. 
-This is what `tablespan` was designed for.
+R has a large set of great packages that allow you to create and export tables 
+that look exactly like you envisioned. However, sometimes you may just need a
+good-enough table that is easy to create and share with others. This is where
+`tablespan` can be of help.
 
-Let's assume we want to share the following table:
+Let's assume that we want to share the following table:
 ```{r}
 library(dplyr)
 data("mtcars")
@@ -64,9 +64,9 @@ summarized_table <- mtcars |>
 print(summarized_table)
 ```
 
-Now we want to create a table where we show the grouping variables
-as row names and also create spanners for the horse power (`hp`) and the
-weight (`wt`) variables. The result should look something like this:
+We don't want to share the table as is - the variable names are all a bit technical
+and the table could need some spanners summarizing columns. So, we want
+to share a table that looks something like this:
 
 ```
 |                   | Horse Power |   Weight  |
@@ -75,12 +75,13 @@ weight (`wt`) variables. The result should look something like this:
 |                   |                         |
 ```
 
+`tablespan` allows us to create this table with a single formula.
+
 ### Creating a Basic Table
 
-In `tablespan`, the table headers are defined with a formula approach inspired by
-the [`tables`](https://dmurdoch.github.io/tables/) package. For example,
+In `tablespan`, the table headers are defined with a formula. For example,
 `cyl ~ mean_hp + sd_hp` defines a table with `cyl` as the
-row names and `mean_hp` and `sd_hp` as columns. The output will look as follows:
+row names and `mean_hp` and `sd_hp` as columns:
 
 ```{r}
 library(tablespan)
@@ -94,14 +95,14 @@ Note that the row names (`cyl`) are in a separate block to the left.
 
 Spanners are defined using braces and spanner names. For example, the 
 following defines a spanner for `mean_hp` and `sd_hp` with the name `Horsepower`:
-`cyl ~ (Horsepower = mean_hp + sd_hp)`.
+`cyl ~ (Horsepower = mean_hp + sd_hp)`:
 
 ```{r}
 tablespan(data = summarized_table,
           formula = cyl ~ (Horsepower = mean_hp + sd_hp))
 ```
 
-Spanners can also be nested (e.g., `cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))`.
+Spanners can also be nested:
 
 ```{r}
 tablespan(data = summarized_table,
@@ -125,7 +126,7 @@ tablespan(data = summarized_table,
 ### Creating the Full Table
 
 The combination of row names, spanners, and renaming of variables allows creating
-the full table as follows:
+the full table:
 
 ```{r}
 library(dplyr)
@@ -234,6 +235,10 @@ wb <- as_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
 
 Tables created with `tablespan` can also be exported to `gt` which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call `as_gt` on our table:
 
+```{r, include=FALSE}
+# Translate to gt:
+gt_tbl <- as_gt(tbl = tbl)
+```
 ```{r, eval=FALSE}
 # Translate to gt:
 gt_tbl <- as_gt(tbl = tbl)
@@ -243,8 +248,11 @@ gt_tbl
     <img src="man/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%">
 </p>
 
-The `gt` package provides a wide range of functions to adapt the style of these 
-tables. For instance, `opt_stylize` adds a pre-defined style to the entire table:
+### Styling Great Tables
+
+The `gt` package provides a wide range of functions to adapt the style of the 
+table created with `as_gt`. For instance, `opt_stylize` adds a pre-defined style 
+to the entire table:
 
 ```{r, eval=FALSE}
 gt_tbl |> 
@@ -255,6 +263,34 @@ gt_tbl |>
 <p align="center">
     <img src="man/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%">
 </p>
+
+When adapting the `gt` object, there is an important detail to keep in mind: To 
+ensure that each table spanner has a unique ID, `tablespan` will create IDs that
+differ from the text shown in the spanner. To demonstrate this, Let's assume
+that we want to add a spanner above `Horse Power` and `Weight`:
+```{r, error=TRUE}
+gt_tbl |> 
+  gt::tab_spanner(label = "New Spanner", 
+                  spanners = c("Horse Power", "Weight"))
+```
+
+This will throw an error because the spanner IDs are different from the spanner labels.
+To get the spanner IDs, use `gt::tab_info()`:
+
+```{r}
+gt_tbl |> 
+  gt::tab_info()
+```
+
+The IDs for the spanners can be found at the very bottom. To add another spanner
+above `Horse Power` and `Weight`, we have to use these IDs:
+```{r, eval=FALSE}
+gt_tbl |> 
+  gt::tab_spanner(label = "New Spanner", 
+                  spanners = c("__BASE_LEVEL__Horse Power", 
+                               "__BASE_LEVEL__Weight"))
+```
+
 
 
 ## Tables without row names
