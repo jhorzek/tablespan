@@ -1,7 +1,7 @@
 Package: tablespan
 Type: Package
 Title: Create satisficing Excel, HTML, LaTeX, and RTF tables using a simple formula
-Version: 0.1.1
+Version: 0.1.2
 Author: Jannik H. Orzek
 Maintainer: Jannik H. Orzek <jannik.orzek@mailbox.org>
 Description: tablespan provides a "good enough" approach to creating Excel, HTML, LaTeX, and RTF tables

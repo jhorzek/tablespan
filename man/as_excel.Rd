@@ -7,7 +7,7 @@
 as_excel(
   tbl,
   workbook = openxlsx::createWorkbook(),
-  sheet = "BasicTable",
+  sheet = "Table",
   start_row = 1,
   start_col = 1,
   styles = tbl_styles()

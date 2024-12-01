@@ -32,8 +32,13 @@ to be exported to the following formats:
 
 ## Installation
 
-`tablespan` is not yet available from CRAN. To install from GitHub, run the following
-lines:
+To install `tablespan` from CRAN use:
+
+```{r, eval=FALSE}
+install.packages("tablespan")
+```
+
+The development version of `tablespan` can be installed from GitHub with:
 
 ```{r, eval=FALSE}
 library(remotes)

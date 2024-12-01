@@ -71,7 +71,7 @@
 #' #                        file = "cars.xlsx", overwrite = TRUE)
 as_excel <- function(tbl,
                      workbook = openxlsx::createWorkbook(),
-                     sheet = "BasicTable",
+                     sheet = "Table",
                      start_row = 1,
                      start_col = 1,
                      styles = tbl_styles()){
