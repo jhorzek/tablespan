@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
 *.xlsx
 !tests/testthat/xlsx_files/*.xlsx
 docs
