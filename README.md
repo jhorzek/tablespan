@@ -3,6 +3,16 @@
 
 # tablespan
 
+<!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/tablespan)](https://CRAN.R-project.org/package=tablespan)
+[![Total
+Downloads](https://cranlogs.r-pkg.org/badges/grand-total/tablespan)](https://cranlogs.r-pkg.org/badges/grand-total/tablespan)
+<!-- badges: end -->
+
 > Create satisficing tables in R the formula way.
 
 The objective of `tablespan` is to provide a “good enough” approach to
@@ -20,8 +30,14 @@ creating tables by leveraging R’s formulas.
 
 ## Installation
 
-`tablespan` is not yet available from CRAN. To install from GitHub, run
-the following lines:
+To install `tablespan` from CRAN use:
+
+``` r
+install.packages("tablespan")
+```
+
+The development version of `tablespan` can be installed from GitHub
+with:
 
 ``` r
 library(remotes)
@@ -384,4 +400,4 @@ tablespan(data = summarized_table,
   package version 0.9.31, <https://dmurdoch.github.io/tables/>.
 - openxlsx: Schauberger P, Walker A (2023). *openxlsx: Read, Write and
   Edit xlsx Files*. R package version 4.2.5.2,
-  <https://CRAN.R-project.org/package=openxlsx>.
+  <https://ycphs.github.io/openxlsx/>.

@@ -6,3 +6,5 @@
 *.xlsx
 !tests/testthat/xlsx_files/*.xlsx
 docs
+CRAN-SUBMISSION
+cran-comments.md
