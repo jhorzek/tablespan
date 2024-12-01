@@ -277,10 +277,13 @@ gt_tbl |>
 This will throw an error because the spanner IDs are different from the spanner labels.
 To get the spanner IDs, use `gt::tab_info()`:
 
-```{r}
+```{r, eval = FALSE}
 gt_tbl |> 
   gt::tab_info()
 ```
+<p align="center">
+    <img src="man/figures/tablespan_example_tab_info.png" alt="Table spanner IDs" width="50%">
+</p>
 
 The IDs for the spanners can be found at the very bottom. To add another spanner
 above `Horse Power` and `Weight`, we have to use these IDs:
@@ -290,6 +293,10 @@ gt_tbl |>
                   spanners = c("__BASE_LEVEL__Horse Power", 
                                "__BASE_LEVEL__Weight"))
 ```
+
+<p align="center">
+    <img src="man/figures/tablespan_example_new_spanner.png" alt="Table with additional spanner" width="50%">
+</p>
 
 
 
