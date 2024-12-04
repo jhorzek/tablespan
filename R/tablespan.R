@@ -145,7 +145,7 @@ tablespan <- function(data,
 #'
 #' @param data data set
 #' @param variables variable names from formula
-#' @keywords internal
+#' @noRd
 check_variables <- function(data, variables){
   if(!is.null(variables$row_variables)){
     check_row_variables <- setdiff(variables$row_variables, colnames(data))
@@ -166,7 +166,7 @@ check_variables <- function(data, variables){
 #'
 #' @param data data set
 #' @param col_variables variable names from formula
-#' @keywords internal
+#' @noRd
 get_col_data <- function(data, col_variables){
   return(data[,col_variables, drop = FALSE])
 }
@@ -177,7 +177,7 @@ get_col_data <- function(data, col_variables){
 #'
 #' @param data data set
 #' @param row_variables variable names from formula
-#' @keywords internal
+#' @noRd
 get_row_data <- function(data, row_variables){
   if(!is.null(row_variables))
     return(data[,row_variables, drop = FALSE])
@@ -191,7 +191,7 @@ get_row_data <- function(data, row_variables){
 #'
 #' @param deparsed table formula translated in nested list
 #' @returns deparsed with widht and levels fields
-#' @keywords internal
+#' @noRd
 construct_header <- function(deparsed){
 
   deparsed$rhs <- add_header_width(deparsed$rhs)
@@ -218,7 +218,7 @@ construct_header <- function(deparsed){
 #' @param parsed_partial The left hand side or right hand side of the parsed
 #' table
 #' @returns the parsed_partial with additional width fields
-#' @keywords internal
+#' @noRd
 #' @examples
 #' library(tablespan)
 #' deparsed <- tablespan:::deparse_formula(formula =
@@ -261,7 +261,7 @@ add_header_width <- function(parsed_partial){
 #' @param parsed_partial The left hand side or right hand side of the parsed
 #' table
 #' @returns the parsed_partial with additional level fields
-#' @keywords internal
+#' @noRd
 #' @examples
 #' library(tablespan)
 #' deparsed <- tablespan:::deparse_formula(formula =

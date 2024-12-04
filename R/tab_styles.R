@@ -22,7 +22,7 @@
 #' @param cell_styles an optional list with styles for selected cells in the
 #' data frame.
 #' @importFrom openxlsx createStyle
-#' @returns a list with styles
+#' @returns a list with styles for different elements of the table
 #' @export
 #' @examples
 #' tbl_styles()
@@ -81,6 +81,7 @@ tbl_styles <- function(
 #' elements (set gridExpand = FALSE) or to all combinations?
 #' @param stack should the style be added to existing styles (TRUE) or overwrite
 #' existing styles (FALSE)
+#' @returns list with specified styles
 #' @importFrom methods is
 #' @export
 #' @examples

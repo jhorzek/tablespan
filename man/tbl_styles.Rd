@@ -59,7 +59,7 @@ order of the list, meaning that a later style may overwrite an earlier style.}
 data frame.}
 }
 \value{
-a list with styles
+a list with styles for different elements of the table
 }
 \description{
 Define styles for different elements of the table.

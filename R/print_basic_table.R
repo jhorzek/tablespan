@@ -102,7 +102,7 @@ print.Tablespan <- function(x, digits = 2, n = 3, ...){
 #' @param column_offset offset to write data in columns
 #' @param header_table table in which the header entries should be inserted
 #' @returns header_table with entries
-#' @keywords internal
+#' @noRd
 print_insert_header_entries <- function(header_partial, max_level, column_offset, header_table){
   if(header_partial$name != "_BASE_LEVEL_"){
     header_table[max_level - header_partial$level, column_offset] <- header_partial$name

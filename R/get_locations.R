@@ -5,7 +5,7 @@
 #' @param start_row row index at which the table will start
 #' @param start_col column index at which the table will start
 #' @returns list with locations
-#' @keywords internal
+#' @noRd
 get_locations <- function(tbl,
                           start_row,
                           start_col){

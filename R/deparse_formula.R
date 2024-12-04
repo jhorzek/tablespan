@@ -11,7 +11,7 @@
 #'
 #' @param formula an R formula following the pattern above
 #' @returns nested lists for the left hand side and right hand side of the formula
-#' @keywords internal
+#' @noRd
 #' @examples
 #' library(tablespan)
 #' deparsed <- tablespan:::deparse_formula(formula =
@@ -49,7 +49,7 @@ deparse_formula <- function(formula){
 #' Don't change this manually.
 #' @returns a nested list with formula elements
 #' @importFrom methods is
-#' @keywords internal
+#' @noRd
 #' @examples
 #' library(tablespan)
 #' formula <- (`Row Name` = `Row 1` + `Row 2`) ~
@@ -126,7 +126,7 @@ deparse_formula_partial <- function(formula_partial,
 #'
 #' @param deparsed_formula result from tablespan:::deparse_formula
 #' @returns a list with the names of the variables that build the rows and columns
-#' @keywords internal
+#' @noRd
 #' @examples
 #' library(tablespan)
 #' deparsed <- tablespan:::deparse_formula(formula =
@@ -158,7 +158,7 @@ get_variables <- function(deparsed_formula){
 #' tablespan:::deparse_formula
 #' @param variables the function is recursive and fills the variable vector
 #' @returns a vector with the names of the variables
-#' @keywords internal
+#' @noRd
 #' @examples
 #' library(tablespan)
 #' deparsed <- tablespan:::deparse_formula(formula =
