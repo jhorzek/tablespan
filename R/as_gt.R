@@ -1,4 +1,3 @@
-##### Functions #####
 #' as_gt
 #'
 #' Translates a table created with tablespan to a great table (gt). See <https://gt.rstudio.com/>.
@@ -14,6 +13,7 @@
 #' from the data.
 #' @param auto_format should the table be formatted automatically?
 #' @param ... additional arguments passed to gt::gt().
+#' @returns gt table that can be further adapted with the gt package.
 #' @import gt
 #' @export
 #' @examples
@@ -90,6 +90,7 @@ as_gt <- function(tbl,
 #' @param tbl table created with tablespan::tablespan
 #' @keywords internal
 #' @import gt
+#' @noRd
 #' @examples
 #' library(tablespan)
 #' library(dplyr)
@@ -134,6 +135,7 @@ flatten_table <- function(tbl){
 #' @param flattened list filled recursively
 #' @import gt
 #' @keywords internal
+#' @noRd
 #' @examples
 #' library(tablespan)
 #' library(dplyr)
@@ -185,6 +187,7 @@ flatten_table_partial <- function(tbl_partial, id = "", flattened = list()){
 #' @param tbl table created with tablespan::tablespan
 #' @import gt
 #' @keywords internal
+#' @noRd
 add_gt_spanners <- function(gt_tbl, tbl){
   flattened_tbl <- flatten_table(tbl)
 
@@ -211,6 +214,7 @@ add_gt_spanners <- function(gt_tbl, tbl){
 #' @importFrom dplyr all_of
 #' @importFrom rlang :=
 #' @keywords internal
+#' @noRd
 add_gt_spanner_partial <- function(gt_tbl, tbl_partial){
   # The table spanners need to be added in the correct order. All children of
   # a spanner must already be in the table, otherwise we get an error.
@@ -262,6 +266,7 @@ add_gt_spanner_partial <- function(gt_tbl, tbl_partial){
 #' from the data.
 #' @import gt
 #' @keywords internal
+#' @noRd
 add_gt_rowname_separator <- function(gt_tbl,
                                      right_of,
                                      separator_style){
@@ -280,6 +285,7 @@ add_gt_rowname_separator <- function(gt_tbl,
 #' @return gt
 #' @keywords internal
 #' @importFrom gt tab_header
+#' @noRd
 add_gt_titles <- function(gt_tbl,
                           title,
                           subtitle){
@@ -296,9 +302,10 @@ add_gt_titles <- function(gt_tbl,
 #' Add a footnote to a gt table
 #' @param gt_tbl gt table
 #' @param footnote footnote text
-#' @return gt
+#' @returns gt
 #' @keywords internal
 #' @importFrom gt tab_header
+#' @noRd
 add_gt_footnote <- function(gt_tbl,
                             footnote){
   return(

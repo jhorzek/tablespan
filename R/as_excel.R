@@ -10,6 +10,7 @@
 #' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
+#' @returns openxlsx workbook object that can be edited and saved with openxlsx
 #' @import openxlsx
 #' @export
 #' @examples
@@ -71,7 +72,7 @@
 #' #                        file = "cars.xlsx", overwrite = TRUE)
 as_excel <- function(tbl,
                      workbook = openxlsx::createWorkbook(),
-                     sheet = "BasicTable",
+                     sheet = "Table",
                      start_row = 1,
                      start_col = 1,
                      styles = tbl_styles()){
@@ -138,7 +139,7 @@ as_excel <- function(tbl,
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
-#' @keywords internal
+#' @noRd
 fill_background <- function(tbl,
                             workbook,
                             sheet,
@@ -174,7 +175,7 @@ fill_background <- function(tbl,
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
-#' @keywords internal
+#' @noRd
 create_outlines <- function(tbl,
                             workbook,
                             sheet,
@@ -247,7 +248,7 @@ create_outlines <- function(tbl,
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
-#' @keywords internal
+#' @noRd
 write_title <- function(tbl,
                         workbook,
                         sheet,
@@ -308,7 +309,7 @@ write_title <- function(tbl,
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
-#' @keywords internal
+#' @noRd
 write_header <- function(workbook,
                          sheet,
                          header,
@@ -358,7 +359,7 @@ write_header <- function(workbook,
 #' @param header_style openxlsx style for the header
 #' @param vline_style openxlsx style for the vertical lines in the header
 #' @import openxlsx
-#' @keywords internal
+#' @noRd
 write_header_entry <- function(workbook,
                                sheet,
                                header_entry,
@@ -435,7 +436,7 @@ write_header_entry <- function(workbook,
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
-#' @keywords internal
+#' @noRd
 write_data <- function(workbook,
                        sheet,
                        header,
@@ -529,7 +530,7 @@ write_data <- function(workbook,
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
-#' @keywords internal
+#' @noRd
 write_footnote <- function(tbl,
                            workbook,
                            sheet,
@@ -570,7 +571,7 @@ write_footnote <- function(tbl,
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @import openxlsx
-#' @keywords internal
+#' @noRd
 merge_rownames <- function(workbook,
                            sheet,
                            table_data,

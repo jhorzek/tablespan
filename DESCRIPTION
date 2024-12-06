@@ -1,11 +1,16 @@
 Package: tablespan
 Type: Package
-Title: Create satisficing Excel, HTML, LaTeX, and RTF tables using a simple formula
-Version: 0.1.1
-Author: Jannik H. Orzek
+Title: Create Satisficing 'Excel', 'HTML', 'LaTeX', and 'RTF' Tables using a Simple Formula
+Version: 0.1.7
+Authors@R: c(person(given   = "Jannik H.", family = "Orzek",
+                    role    = c("aut", "cre", "cph"),
+                    email   = "jannik.orzek@mailbox.org",
+                    comment = c(ORCID = "0000-0002-3123-2248")))
 Maintainer: Jannik H. Orzek <jannik.orzek@mailbox.org>
-Description: tablespan provides a "good enough" approach to creating Excel, HTML, LaTeX, and RTF tables
-  in R by leveraging openxlsx and gt.
+Description: Create "good enough" tables with a single formula. 'tablespan' tables 
+  can be exported to 'Excel', 'HTML', 'LaTeX', and 'RTF' by leveraging
+  the packages 'openxlsx' and 'gt'. See <https://jhorzek.github.io/tablespan/> for
+  an introduction.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -20,5 +25,6 @@ Imports:
     openxlsx,
     rlang,
     utils
-URL: https://jhorzek.github.io/tablespan/
+URL: https://github.com/jhorzek/tablespan,
+     https://jhorzek.github.io/tablespan/
 BugReports: https://github.com/jhorzek/tablespan/issues

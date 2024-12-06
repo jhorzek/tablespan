@@ -20,6 +20,9 @@ elements (set gridExpand = FALSE) or to all combinations?}
 \item{stack}{should the style be added to existing styles (TRUE) or overwrite
 existing styles (FALSE)}
 }
+\value{
+list with specified styles
+}
 \description{
 cell_style
 }
