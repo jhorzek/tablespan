@@ -577,42 +577,53 @@ merge_rownames <- function(workbook,
                            table_data,
                            locations,
                            styles){
-  for(i in 1:ncol(table_data$row_data)){
-    current_element <- NULL
-    to_merge <- NULL
-    for(j in 1:nrow(table_data$row_data)){
-      if(is.null(current_element) || (current_element != table_data$row_data[j, i])){
-        if(!is.null(to_merge) && length(to_merge) > 1){
-          openxlsx::addStyle(wb = workbook,
-                             sheet = sheet,
-                             style = styles$merged_rownames_style,
-                             rows = locations$row$end_row_header + to_merge,
-                             cols = locations$col$start_col_header_lhs + i - 1,
-                             stack = TRUE)
 
-          openxlsx::mergeCells(wb = workbook,
-                               sheet = sheet,
-                               cols = locations$col$start_col_header_lhs + i - 1,
-                               rows = locations$row$end_row_header + to_merge)
-        }
-        current_element <- table_data$row_data[j, i]
-        to_merge <- j
-        next
-      }
-      to_merge <- c(to_merge, j)
-    }
-    if(!is.null(to_merge) && length(to_merge) > 1){
-      openxlsx::addStyle(wb = workbook,
-                         sheet = sheet,
-                         style = styles$merged_rownames_style,
-                         rows = locations$row$end_row_header + to_merge,
-                         cols = locations$col$start_col_header_lhs + i - 1,
-                         stack = TRUE)
+  cell_ids <- row_data_cell_ids(table_data$row_data)
 
-      openxlsx::mergeCells(wb = workbook,
+  # We merge all cells within a column that have the same id.
+  for(co in 1:ncol(table_data$row_data)){
+    unique_ids <- unique(cell_ids[,co])
+    for(id in unique_ids){
+      if(sum(cell_ids[,co] == id) > 1){
+        openxlsx::addStyle(wb = workbook,
                            sheet = sheet,
-                           cols = locations$col$start_col_header_lhs + i - 1,
-                           rows = locations$row$end_row_header + to_merge)
+                           style = styles$merged_rownames_style,
+                           rows = locations$row$end_row_header + which(cell_ids[,co] == id),
+                           cols = locations$col$start_col_header_lhs + co - 1,
+                           stack = TRUE)
+
+        openxlsx::mergeCells(wb = workbook,
+                             sheet = sheet,
+                             rows = locations$row$end_row_header + which(cell_ids[,co] == id),
+                             cols = locations$col$start_col_header_lhs + co - 1)
+      }
     }
   }
+}
+
+#' row_data_cell_ids
+#'
+#' Creates an index for each element in the row_data. This index is used
+#' to merge cells that are identical.
+#' @param row_data row_data for the table
+#' @return matrix with indices. Cells that should be merged get the same index.
+#' @noRd
+#' @examples
+#' row_data <- tibble::tibble(cyl = c(4,4,6,6,8),
+#'                            vs  = c(0,1,1,0,0))
+#' tablespan:::row_data_cell_ids(row_data)
+row_data_cell_ids <- function(row_data){
+  ids <- matrix(NA,
+                nrow = nrow(row_data),
+                ncol = ncol(row_data))
+  ids[1,] <- 1
+  if(nrow(row_data) == 1)
+    return(ids)
+
+  for(ro in 2:nrow(row_data)){
+    for(co in 1:ncol(row_data)){
+      ids[ro, co] <- ids[ro-1, co] + ifelse(all(row_data[ro, 1:co] == row_data[ro-1, 1:co]), 0, 1)
+    }
+  }
+  return(ids)
 }
