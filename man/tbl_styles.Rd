@@ -5,42 +5,75 @@
 \title{tbl_styles}
 \usage{
 tbl_styles(
-  background_style = openxlsx::createStyle(fgFill = "#ffffff"),
-  hline_style = openxlsx::createStyle(border = "Top", borderColour =
-    openxlsx::openxlsx_getOp("borderColour", "black"), borderStyle =
-    openxlsx::openxlsx_getOp("borderStyle", "double")),
-  vline_style = openxlsx::createStyle(border = "Left", borderColour =
-    openxlsx::openxlsx_getOp("borderColour", "black"), borderStyle =
-    openxlsx::openxlsx_getOp("borderStyle", "double")),
-  title_style = openxlsx::createStyle(fontSize = 14, halign = "left", textDecoration =
+  bg_default = openxlsx::createStyle(fgFill = "#ffffff"),
+  bg_title = bg_default,
+  bg_subtitle = bg_default,
+  bg_header_lhs = bg_default,
+  bg_header_rhs = bg_default,
+  bg_rownames = bg_default,
+  bg_data = bg_default,
+  bg_footnote = bg_default,
+  vline = openxlsx::createStyle(border = "Left", borderColour = "#000000", borderStyle =
+    "thin"),
+  hline = openxlsx::createStyle(border = "Top", borderColour = "#000000", borderStyle =
+    "thin"),
+  cell_default = openxlsx::createStyle(fontSize = 11),
+  cell_title = openxlsx::createStyle(fontSize = 14, halign = "left", textDecoration =
     "bold"),
-  subtitle_style = openxlsx::createStyle(fontSize = 11, halign = "left", textDecoration =
+  cell_subtitle = openxlsx::createStyle(fontSize = 11, halign = "left", textDecoration =
     "bold"),
-  header_style = openxlsx::createStyle(fontSize = 11, halign = "center", border =
-    "BottomLeftRight", borderColour = openxlsx::openxlsx_getOp("borderColour", "black"),
-    borderStyle = openxlsx::openxlsx_getOp("borderStyle", "double"), textDecoration =
+  cell_header_lhs = openxlsx::createStyle(fontSize = 11, halign = "center", border =
+    "BottomLeftRight", borderColour = "#000000", borderStyle = "thin", textDecoration =
     "bold"),
+  cell_header_rhs = openxlsx::createStyle(fontSize = 11, halign = "center", border =
+    "BottomLeftRight", borderColour = "#000000", borderStyle = "thin", textDecoration =
+    "bold"),
+  cell_rownames = cell_default,
+  cell_data = cell_default,
+  cell_footnote = openxlsx::createStyle(fontSize = 11, halign = "left"),
   merge_rownames = TRUE,
-  merged_rownames_style = createStyle(valign = "top"),
+  merged_rownames_style = openxlsx::createStyle(valign = "top"),
   footnote_style = openxlsx::createStyle(fontSize = 11, halign = "left"),
   data_styles = create_data_styles(),
   cell_styles = NULL
 )
 }
 \arguments{
-\item{background_style}{color etc. for the entire background of the table}
+\item{bg_default}{default color for the background of the table}
 
-\item{hline_style}{style for the horizontal lines used in the table. Note:
-the style for the lines under spanners is defined in the title_style.}
+\item{bg_title}{background color for the title}
 
-\item{vline_style}{style for the vertical lines used in the table. Note:
-the style for the lines under spanners is defined in the title_style.}
+\item{bg_subtitle}{background color for the subtitle}
 
-\item{title_style}{style applied to the table title}
+\item{bg_header_lhs}{background color for the left hand side of the table header}
 
-\item{subtitle_style}{style applied to the table subtitle}
+\item{bg_header_rhs}{background color for the right hand side of the table header}
 
-\item{header_style}{style applied to the table header (column names)}
+\item{bg_rownames}{background color for the row names}
+
+\item{bg_data}{background color for the data}
+
+\item{bg_footnote}{background color for the footnote}
+
+\item{vline}{styling for all vertical lines added to the table}
+
+\item{hline}{styling for all horizontal lines added to the table}
+
+\item{cell_default}{default style added to cells in the table}
+
+\item{cell_title}{style added to title cells in the table}
+
+\item{cell_subtitle}{style added to subtitle cells in the table}
+
+\item{cell_header_lhs}{style added to the left hand side of the header cells in the table}
+
+\item{cell_header_rhs}{style added to the right hand side of the header cells in the table}
+
+\item{cell_rownames}{style added to row name cells in the table}
+
+\item{cell_data}{style added to data cells in the table}
+
+\item{cell_footnote}{style added to footnote cells in the table}
 
 \item{merge_rownames}{boolean: Should adjacent rows with identical names be merged?}
 
@@ -51,12 +84,12 @@ the style for the lines under spanners is defined in the title_style.}
 \item{data_styles}{styles applied to the columns in the data set based on their
 classes (e.g., numeric, character, etc.). data_styles must be a list of lists.
 Each inner list must have two elements: a "test" that is used to determine the
-class of a data colum (e.g., is.double) and a style that is then applied to
+class of a data column (e.g., is.double) and a style that is then applied to
 the columns where the test returns TRUE. Note that styles will be applied in the
 order of the list, meaning that a later style may overwrite an earlier style.}
 
 \item{cell_styles}{an optional list with styles for selected cells in the
-data frame.}
+data frame. See ?cell_style.}
 }
 \value{
 a list with styles for different elements of the table

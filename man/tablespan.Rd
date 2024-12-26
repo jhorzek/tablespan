@@ -121,7 +121,7 @@ tbl
 wb <- as_excel(tbl = tbl)
 
 # Save using openxlsx
-# openxlsx::saveWorkbook(wb, "iris.xlsx")
+# openxlsx::saveWorkbook(wb, "cars.xlsx")
 
 # Export as gt:
 gt_tbl <- as_gt(tbl = tbl)

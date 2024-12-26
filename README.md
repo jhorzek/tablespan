@@ -237,6 +237,38 @@ format numbers differently. In `tablespan`, styling happens when
 translating the table to an `openxlsx` workbook with `as_excel`. To this
 end, `tablespan` provides a `styles` argument.
 
+#### Changing the Overall Look
+
+The easiest way to customize tables is to change the default color
+scheme. The function `tbl_styles` provides control over most elements in
+the table, but in many cases `style_color` may be sufficient. The
+following creates a table with teal-colored backgrounds for the title,
+header, and row names:
+
+``` r
+wb <- as_excel(tbl = tbl, 
+               styles = style_color(primary_color = "#008080"))
+
+# Save the workbook as an xlsx file:
+# openxlsx::saveWorkbook(wb,
+#                        file = "cars.xlsx", 
+#                        overwrite = TRUE)
+```
+
+![](man/figures/tablespan_example_cars_color.png)
+
+Similarly, a dark background can be defined as follows:
+
+``` r
+wb <- as_excel(tbl = tbl, 
+               styles = style_color(primary_color = "#000000"))
+
+# Save the workbook as an xlsx file:
+# openxlsx::saveWorkbook(wb,
+#                        file = "cars.xlsx", 
+#                        overwrite = TRUE)
+```
+
 #### Formatting Cells
 
 Let’s assume we want all `mean_hp` values with a value $\geq 100$ to be

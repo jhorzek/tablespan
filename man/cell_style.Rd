@@ -4,7 +4,7 @@
 \alias{cell_style}
 \title{cell_style}
 \usage{
-cell_style(rows, colnames, style, gridExpand = TRUE, stack = TRUE)
+cell_style(rows, colnames, style, gridExpand = FALSE, stack = TRUE)
 }
 \arguments{
 \item{rows}{indices of the rows to which the style should be applied}
@@ -15,7 +15,7 @@ cell_style(rows, colnames, style, gridExpand = TRUE, stack = TRUE)
 the selected cells}
 
 \item{gridExpand}{see ?openxlsx::addStyle: Apply style only to the selected
-elements (set gridExpand = FALSE) or to all combinations?}
+elements (gridExpand = FALSE, default) or to all combinations?}
 
 \item{stack}{should the style be added to existing styles (TRUE) or overwrite
 existing styles (FALSE)}
