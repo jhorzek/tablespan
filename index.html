@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tablespan</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -232,20 +232,43 @@
 </h3>
 <p>While <code>tablespan</code> provides limited styling options, some elements can be adjusted. For example, we may want to print some elements in bold or format numbers differently. In <code>tablespan</code>, styling happens when translating the table to an <code>openxlsx</code> workbook with <code>as_excel</code>. To this end, <code>tablespan</code> provides a <code>styles</code> argument.</p>
 <div class="section level4">
+<h4 id="changing-the-overall-look">Changing the Overall Look<a class="anchor" aria-label="anchor" href="#changing-the-overall-look"></a>
+</h4>
+<p>The easiest way to customize tables is to change the default color scheme. The function <code>tbl_styles</code> provides control over most elements in the table, but in many cases <code>style_color</code> may be sufficient. The following creates a table with teal-colored backgrounds for the title, header, and row names:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_excel.html">as_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, </span>
+<span>               styles <span class="op">=</span> <span class="fu"><a href="reference/style_color.html">style_color</a></span><span class="op">(</span>primary_color <span class="op">=</span> <span class="st">"#008080"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Save the workbook as an xlsx file:</span></span>
+<span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
+<span><span class="co">#                        file = "cars.xlsx", </span></span>
+<span><span class="co">#                        overwrite = TRUE)</span></span></code></pre></div>
+<p><img src="reference/figures/tablespan_example_cars_color.png"></p>
+<p>Similarly, a dark background can be defined as follows:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_excel.html">as_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, </span>
+<span>               styles <span class="op">=</span> <span class="fu"><a href="reference/style_color.html">style_color</a></span><span class="op">(</span>primary_color <span class="op">=</span> <span class="st">"#000000"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Save the workbook as an xlsx file:</span></span>
+<span><span class="co"># openxlsx::saveWorkbook(wb,</span></span>
+<span><span class="co">#                        file = "cars.xlsx", </span></span>
+<span><span class="co">#                        overwrite = TRUE)</span></span></code></pre></div>
+</div>
+<div class="section level4">
 <h4 id="formatting-cells">Formatting Cells<a class="anchor" aria-label="anchor" href="#formatting-cells"></a>
 </h4>
 <p>Let’s assume we want all <code>mean_hp</code> values with a value <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\geq 100</annotation></semantics></math> to be printed in bold. To this end, we first create a new style object using <code>openxlsx</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bold</span> <span class="op">&lt;-</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createStyle.html" class="external-link">createStyle</a></span><span class="op">(</span>textDecoration <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we create a cell style with <code>tablespan</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hp_ge_100</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cell_style.html">cell_style</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">summarized_table</span><span class="op">$</span><span class="va">mean_hp</span> <span class="op">&gt;=</span> <span class="fl">100</span><span class="op">)</span>, </span>
 <span>                        colnames <span class="op">=</span> <span class="st">"mean_hp"</span>, </span>
 <span>                        style <span class="op">=</span> <span class="va">bold</span>,</span>
 <span>                        gridExpand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Note that we specify the indices of the rows that we want to be in bold and the column name of the item.</p>
 <p>Finally, we pass this style as part of a list to <code>as_excel</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># as_excel creates an openxlsx workbook</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_excel.html">as_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, </span>
 <span>               styles <span class="op">=</span> <span class="fu"><a href="reference/tbl_styles.html">tbl_styles</a></span><span class="op">(</span>cell_styles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">hp_ge_100</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -260,7 +283,7 @@
 <h4 id="formatting-data-types">Formatting Data Types<a class="anchor" aria-label="anchor" href="#formatting-data-types"></a>
 </h4>
 <p><code>tablespan</code> also allows formatting specific data types. Let’s assume that we want to round all doubles to 3 instead of the default 2 digits. To this end, we use the <code>create_data_styles</code> function, where we specify (1) a function that checks for the data type we want to style (here <code>is.double</code>) and (2) a style for all columns that match that style:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">double_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_data_styles.html">create_data_styles</a></span><span class="op">(</span>double <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>test <span class="op">=</span> <span class="va">is.double</span>, </span>
 <span>                                                 style <span class="op">=</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createStyle.html" class="external-link">createStyle</a></span><span class="op">(</span>numFmt <span class="op">=</span> <span class="st">"0.000"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_excel.html">as_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span>, styles <span class="op">=</span> <span class="fu"><a href="reference/tbl_styles.html">tbl_styles</a></span><span class="op">(</span>data_styles <span class="op">=</span> <span class="va">double_style</span><span class="op">)</span><span class="op">)</span></span>
@@ -277,7 +300,7 @@
 <h2 id="exporting-to-html-latex-and-rtf">Exporting to HTML, LaTeX, and RTF<a class="anchor" aria-label="anchor" href="#exporting-to-html-latex-and-rtf"></a>
 </h2>
 <p>Tables created with <code>tablespan</code> can also be exported to <code>gt</code> which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call <code>as_gt</code> on our table:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Translate to gt:</span></span>
 <span><span class="va">gt_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
 <span><span class="va">gt_tbl</span></span></code></pre></div>
@@ -287,14 +310,14 @@
 <h3 id="styling-great-tables">Styling Great Tables<a class="anchor" aria-label="anchor" href="#styling-great-tables"></a>
 </h3>
 <p>The <code>gt</code> package provides a wide range of functions to adapt the style of the table created with <code>as_gt</code>. For instance, <code>opt_stylize</code> adds a pre-defined style to the entire table:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/opt_stylize.html" class="external-link">opt_stylize</a></span><span class="op">(</span>style <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>                  color <span class="op">=</span> <span class="st">'gray'</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
 <img src="reference/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%"></p>
 <p>When adapting the <code>gt</code> object, there is an important detail to keep in mind: To ensure that each table spanner has a unique ID, <code>tablespan</code> will create IDs that differ from the text shown in the spanner. To demonstrate this, Let’s assume that we want to add a spanner above <code>Horse Power</code> and <code>Weight</code>:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_spanner.html" class="external-link">tab_spanner</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"New Spanner"</span>, </span>
 <span>                  spanners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Horse Power"</span>, <span class="st">"Weight"</span><span class="op">)</span><span class="op">)</span></span>
@@ -303,13 +326,13 @@
 <span><span class="co">#&gt;   Weight), for the new spanner with the ID `New Spanner` doesn't belong to any</span></span>
 <span><span class="co">#&gt;   existing spanners.</span></span></code></pre></div>
 <p>This will throw an error because the spanner IDs are different from the spanner labels. To get the spanner IDs, use <code><a href="https://gt.rstudio.com/reference/tab_info.html" class="external-link">gt::tab_info()</a></code>:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_info.html" class="external-link">tab_info</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
 <img src="reference/figures/tablespan_example_tab_info.png" alt="Table spanner IDs" width="50%"></p>
 <p>The IDs for the spanners can be found at the very bottom. To add another spanner above <code>Horse Power</code> and <code>Weight</code>, we have to use these IDs:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_spanner.html" class="external-link">tab_spanner</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"New Spanner"</span>, </span>
 <span>                  spanners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"__BASE_LEVEL__Horse Power"</span>, </span>
@@ -322,7 +345,7 @@
 <h2 id="tables-without-row-names">Tables without row names<a class="anchor" aria-label="anchor" href="#tables-without-row-names"></a>
 </h2>
 <p>Using <code>1</code> on the left hand side of the formula creates a table without row names. For example, <code>1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)</code> defines</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="fl">1</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                      </span></span>
