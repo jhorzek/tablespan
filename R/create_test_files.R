@@ -29,21 +29,34 @@ create_test_files_cars <- function(){
                          file = paste0(target_dir, "cars.xlsx"),
                          overwrite = TRUE)
 
+  # Different colors
+  wb <- as_excel(tbl = tbl, styles = style_color(primary_color = "#987349"))
+
+  openxlsx::saveWorkbook(wb,
+                         file = paste0(target_dir, "cars_987349.xlsx"),
+                         overwrite = TRUE)
+
+  wb <- as_excel(tbl = tbl, styles = style_color(primary_color = "#893485"))
+
+  openxlsx::saveWorkbook(wb,
+                         file = paste0(target_dir, "cars_893485.xlsx"),
+                         overwrite = TRUE)
+
   # Complex merging of rownames
   summarized_table_merge <- summarized_table
   summarized_table_merge[ ,"vs"] <- 1
   summarized_table_merge[1,"vs"] <- 0
   summarized_table_merge[ , "N"] <- 1
 
-  tbl <- tablespan(data = summarized_table_merge,
-                   formula = Cylinder:cyl + Engine:vs + N ~
-                     (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-                     (`Weight` = Mean:mean_wt + SD:sd_wt),
-                   title = "Motor Trend Car Road Tests",
-                   subtitle = "A table created with tablespan",
-                   footnote = "Data from the infamous mtcars data set.")
+  tbl_merge <- tablespan(data = summarized_table_merge,
+                         formula = Cylinder:cyl + Engine:vs + N ~
+                           (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                           (`Weight` = Mean:mean_wt + SD:sd_wt),
+                         title = "Motor Trend Car Road Tests",
+                         subtitle = "A table created with tablespan",
+                         footnote = "Data from the infamous mtcars data set.")
 
-  wb <- as_excel(tbl = tbl)
+  wb <- as_excel(tbl = tbl_merge)
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_complex_merge.xlsx"),
                          overwrite = TRUE)
