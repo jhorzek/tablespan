@@ -619,17 +619,19 @@ merge_rownames <- function(workbook,
   for(co in 1:ncol(table_data$row_data)){
     unique_ids <- unique(cell_ids[,co])
     for(id in unique_ids){
-      if(sum(cell_ids[,co] == id) > 1){
+      is_identical <- sapply(cell_ids[,co],
+                             function(x) identical(x, id))
+      if(sum(is_identical) > 1){
         openxlsx::addStyle(wb = workbook,
                            sheet = sheet,
                            style = styles$merged_rownames_style,
-                           rows = locations$row$end_row_header + which(cell_ids[,co] == id),
+                           rows = locations$row$end_row_header + which(is_identical),
                            cols = locations$col$start_col_header_lhs + co - 1,
                            stack = TRUE)
 
         openxlsx::mergeCells(wb = workbook,
                              sheet = sheet,
-                             rows = locations$row$end_row_header + which(cell_ids[,co] == id),
+                             rows = locations$row$end_row_header + which(is_identical),
                              cols = locations$col$start_col_header_lhs + co - 1)
       }
     }
@@ -657,7 +659,7 @@ row_data_cell_ids <- function(row_data){
 
   for(ro in 2:nrow(row_data)){
     for(co in 1:ncol(row_data)){
-      ids[ro, co] <- ids[ro-1, co] + ifelse(all(row_data[ro, 1:co] == row_data[ro-1, 1:co]), 0, 1)
+      ids[ro, co] <- ids[ro-1, co] + ifelse(identical(row_data[ro, 1:co], row_data[ro-1, 1:co]), 0, 1)
     }
   }
   return(ids)

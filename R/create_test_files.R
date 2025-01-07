@@ -162,4 +162,31 @@ create_test_files_cars <- function(){
   openxlsx::saveWorkbook(wb,
                          file = paste0(target_dir, "cars_no_titles_no_footnote.xlsx"),
                          overwrite = TRUE)
+
+  ## Test data with missing row names. See https://github.com/jhorzek/tablespan/issues/40
+  summarized_table <- mtcars |>
+    group_by(cyl, vs) |>
+    summarise(N = n(),
+              mean_hp = mean(hp),
+              sd_hp = sd(hp),
+              mean_wt = mean(wt),
+              sd_wt = sd(wt))
+
+  summarized_table[1,1] <- NA
+  summarized_table[2,1] <- NA
+
+  tbl <- tablespan(data = summarized_table,
+                   formula = Cylinder:cyl + Engine:vs ~
+                     N +
+                     (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                     (`Weight` = Mean:mean_wt + SD:sd_wt),
+                   title = "Motor Trend Car Road Tests",
+                   subtitle = "A table created with tablespan",
+                   footnote = "Data from the infamous mtcars data set.")
+
+  wb <- as_excel(tbl = tbl)
+
+  openxlsx::saveWorkbook(wb,
+                         file = paste0(target_dir, "cars_missing_rownames.xlsx"),
+                         overwrite = TRUE)
 }
