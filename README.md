@@ -11,6 +11,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://www.r-pkg.org/badges/version/tablespan)](https://CRAN.R-project.org/package=tablespan)
 [![Total
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/tablespan)](https://cranlogs.r-pkg.org/badges/grand-total/tablespan)
+[![Codecov test
+coverage](https://codecov.io/gh/jhorzek/basicTables/graph/badge.svg)](https://app.codecov.io/gh/jhorzek/basicTables)
 <!-- badges: end -->
 
 > Create satisficing tables in R the formula way.
