@@ -202,7 +202,7 @@ fill_background <- function(tbl,
   if(!is.null(tbl$footnote))
     openxlsx::addStyle(wb = workbook,
                        sheet = sheet,
-                       style = styles$bg_data,
+                       style = styles$bg_footnote,
                        rows = locations$row$start_row_footnote:locations$row$end_row_footnote,
                        cols = locations$col$start_col_footnote:locations$col$end_col_footnote,
                        gridExpand = TRUE,
