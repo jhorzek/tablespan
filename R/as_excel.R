@@ -176,7 +176,7 @@ fill_background <- function(tbl,
   # Header RHS
   openxlsx::addStyle(wb = workbook,
                      sheet = sheet,
-                     style = styles$bg_header_lhs,
+                     style = styles$bg_header_rhs,
                      rows = locations$row$start_row_header:locations$row$end_row_header,
                      cols = locations$col$start_col_header_rhs:locations$col$end_col_header_rhs,
                      gridExpand = TRUE,
