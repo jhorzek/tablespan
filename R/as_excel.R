@@ -645,11 +645,15 @@ merge_rownames <- function(workbook,
 #' @param row_data row_data for the table
 #' @return matrix with indices. Cells that should be merged get the same index.
 #' @noRd
+#' @importFrom tibble as_tibble
+#' @importFrom tibble is_tibble
 #' @examples
 #' row_data <- tibble::tibble(cyl = c(4,4,6,6,8),
 #'                            vs  = c(0,1,1,0,0))
 #' tablespan:::row_data_cell_ids(row_data)
 row_data_cell_ids <- function(row_data){
+  if(!tibble::is_tibble(row_data))
+    row_data <- tibble::as_tibble(row_data)
   ids <- matrix(NA,
                 nrow = nrow(row_data),
                 ncol = ncol(row_data))
@@ -659,7 +663,8 @@ row_data_cell_ids <- function(row_data){
 
   for(ro in 2:nrow(row_data)){
     for(co in 1:ncol(row_data)){
-      ids[ro, co] <- ids[ro-1, co] + ifelse(identical(row_data[ro, 1:co], row_data[ro-1, 1:co]), 0, 1)
+      ids[ro, co] <- ids[ro-1, co] + ifelse(identical(row_data[ro, 1:co],
+                                                      row_data[ro-1, 1:co]), 0, 1)
     }
   }
   return(ids)
