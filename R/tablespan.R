@@ -74,6 +74,8 @@
 #' @param subtitle string specifying the subtitle of the table
 #' @param footnote string specifying the footnote of the table
 #' @returns Object of class Tablespan with title, subtitle, header info, data, and footnote.
+#' @importFrom tibble as_tibble
+#' @importFrom tibble is_tibble
 #' @export
 #' @examples
 #' library(tablespan)
@@ -111,10 +113,15 @@
 #' gt_tbl <- as_gt(tbl = tbl)
 #' gt_tbl
 tablespan <- function(data,
-                     formula,
-                     title = NULL,
-                     subtitle = NULL,
-                     footnote = NULL){
+                      formula,
+                      title = NULL,
+                      subtitle = NULL,
+                      footnote = NULL){
+
+  if(!tibble::is_tibble(data)){
+    warning("Tablespan uses tibble internally. Translating data to tibble")
+    data <- tibble::as_tibble(data)
+  }
 
   deparsed <- deparse_formula(formula)
 
