@@ -1,7 +1,7 @@
 Package: tablespan
 Type: Package
 Title: Create Satisficing 'Excel', 'HTML', 'LaTeX', and 'RTF' Tables using a Simple Formula
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(person(given   = "Jannik H.", family = "Orzek",
                     role    = c("aut", "cre", "cph"),
                     email   = "jannik.orzek@mailbox.org",
@@ -17,6 +17,8 @@ LazyData: true
 RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0)
+Depends:
+    R (>= 4.1.0)
 Config/testthat/edition: 3
 Imports: 
     dplyr,
