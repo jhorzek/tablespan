@@ -31,3 +31,18 @@ test_that("print", {
   testthat::expect_no_error(print.Tablespan(tablespan(data = summarized_table,
                                                       formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))))
 })
+
+test_that("print factors", {
+  library(tibble)
+  library(tablespan)
+
+  tibble(x = factor(LETTERS[1:5],
+                    levels = LETTERS[1:5]),
+         y = 1:5,
+         z = seq(0,1, length.out = 5)) |>
+    tablespan(x + z ~ y) |>
+    tablespan:::print.Tablespan() |>
+    testthat::expect_output("| A   0    | 1   |")
+
+
+})
