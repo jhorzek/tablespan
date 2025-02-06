@@ -45,7 +45,12 @@ print.Tablespan <- function(x, digits = 2, n = 3, ...){
   if(!is.null(x$header$lhs)){
     cls <- 1:ncol(x$table_data$row_data)
     header_table[rws, cls] <- x$table_data$row_data |>
-      sapply(function(x) if(is.numeric(x) & !is.integer(x)){round(x, digits)}else{x}) |>
+      sapply(function(x)
+        if(is.numeric(x) & !is.integer(x)){
+          as.character(round(x, digits))
+        }else{
+          as.character(x)
+        }) |>
       utils::head(n = n)
 
     # add vertical line
@@ -57,7 +62,12 @@ print.Tablespan <- function(x, digits = 2, n = 3, ...){
   }
 
   header_table[rws, cls] <- x$table_data$col_data |>
-    sapply(function(x) if(is.numeric(x) & !is.integer(x)){round(x, digits)}else{x}) |>
+    sapply(function(x)
+      if(is.numeric(x) & !is.integer(x)){
+        as.character(round(x, digits))
+      }else{
+        as.character(x)
+      }) |>
     utils::head(n = n)
 
   # add horizontal line
