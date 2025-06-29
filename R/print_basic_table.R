@@ -50,7 +50,13 @@ print.Tablespan <- function(x, digits = 2, n = 3, ...){
           as.character(round(x, digits))
         }else{
           as.character(x)
-        }) |>
+        },
+        # we prevent simplification because otherwise sapply drops to a
+        # vector when using single-row tibbles. This is why we need the
+        # somewhat weird workaround using tibble and as.matrix.
+        simplify = FALSE) |>
+      tibble::as_tibble() |>
+      as.matrix() |>
       utils::head(n = n)
 
     # add vertical line
@@ -67,7 +73,13 @@ print.Tablespan <- function(x, digits = 2, n = 3, ...){
         as.character(round(x, digits))
       }else{
         as.character(x)
-      }) |>
+      },
+      # we prevent simplification because otherwise sapply drops to a
+      # vector when using single-row tibbles. This is why we need the
+      # somewhat weird workaround using tibble and as.matrix.
+      simplify = FALSE) |>
+    tibble::as_tibble() |>
+    as.matrix() |>
     utils::head(n = n)
 
   # add horizontal line
