@@ -1,15 +1,18 @@
+#' initialize_styles
+#'
+#' Internal function that initializes all styling objects of a tablespan table
+#'
+#' @param tbl tablespan table
+#' @returns tablespan table with added styles field
+#' @noRd
 initialize_styles <- function(tbl) {
-  tbl$styles <- list()
-  if (!is.null(tbl$table_data$row_data)) {
-    data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
-  } else {
-    data <- tbl$table_data$col_data
-  }
+  tbl$styles <- default_styles()
+  data <- extract_data(tbl)
 
   for (column_name in colnames(data)) {
-    tbl <- set_style(
+    tbl <- set_style_column(
       tbl = tbl,
-      style = create_style(
+      style = create_style_column(
         format = format_auto(data_col = data[[column_name]])
       ),
       columns = dplyr::all_of(column_name),
@@ -20,17 +23,164 @@ initialize_styles <- function(tbl) {
   return(tbl)
 }
 
+#' default_styles
+#'
+#' Sets the default styles for a tablespan table.
+#'
+#' @returns a list with default styles
+#' @noRd
+default_styles <- function() {
+  list(
+    title = list(
+      gt = function(tbl) {
+        return(
+          tbl
+        )
+      },
+      "openxlsx" = openxlsx::createStyle(
+        fgFill = "#ffffff",
+        textDecoration = "bold",
+        fontSize = 14
+      )
+    ),
+    subtitle = list(
+      gt = function(tbl) {
+        return(tbl)
+      },
+      "openxlsx" = openxlsx::createStyle(
+        fgFill = "#ffffff",
+        textDecoration = "bold"
+      )
+    ),
+    header = list(
+      gt = function(tbl) {
+        return(
+          tbl
+        )
+      },
+      "openxlsx" = openxlsx::createStyle(
+        fgFill = "#ffffff",
+        textDecoration = "bold"
+      )
+    ),
+    header_cells = list(
+      gt = function(tbl) {
+        return(
+          tbl
+        )
+      },
+      "openxlsx" = openxlsx::createStyle(
+        fontSize = 11,
+        halign = "center",
+        border = "BottomLeftRight",
+        borderColour = "#000000",
+        borderStyle = "thin",
+        textDecoration = "bold"
+      )
+    ),
+    columns = list(),
+    footnote = list(
+      gt = function(tbl) {
+        return(
+          tbl
+        )
+      },
+      "openxlsx" = openxlsx::createStyle(fgFill = "#ffffff")
+    ),
+    hline = list(
+      gt = function(tbl) {
+        return(
+          tbl
+        )
+      },
+      "openxlsx" = openxlsx::createStyle(
+        border = "Top",
+        borderColour = "#000000",
+        borderStyle = "thin"
+      )
+    ),
+    vline = list(
+      gt = function(tbl) {
+        return(tbl)
+      },
+      "openxlsx" = openxlsx::createStyle(
+        border = "Left",
+        borderColour = "#000000",
+        borderStyle = "thin"
+      )
+    )
+  )
+}
+
+#' format_auto
+#'
+#' Tries to identify the data type and implement a sensible default styling.
+#' @param data_col the column for which a format should be created
+#' @returns a list with styling for gt and excel tables
+#' @noRd
 format_auto <- function(data_col) {
   if (is.integer(data_col)) {
     return(format_number(decimals = 0))
   } else if (is.numeric(data_col)) {
-    return(format_number(decimals = 3))
+    return(format_number(decimals = 2))
   } else {
     return(format_text())
   }
 }
 
-format_number <- function(decimals = 3, sep_mark = ",", dec_mark = ".") {
+#' format_number
+#'
+#' Implements simple formatting for numbers in gt and excel exports of tablespan.
+#' @param decimals the number of decimals to show
+#' @param sep_mark optional symbol used to separate thousands
+#' @param dec_mark symbol used to separate decimals
+#' @returns a list with styles for gt and openxlsx
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_column(columns = mean_hp,
+#'                    style = create_style_column(format = format_number(decimals = 5))) |>
+#'   as_gt()
+format_number <- function(decimals = 2, sep_mark = ",", dec_mark = ".") {
+  if (decimals == 0) {
+    openxlsx_format <- "0"
+  } else {
+    openxlsx_format <- paste0(ifelse(
+      sep_mark == "",
+      paste0("0", dec_mark, paste0(rep("0", decimals), collapse = "")),
+      paste0(
+        "#",
+        sep_mark,
+        "##0",
+        dec_mark,
+        paste0(rep("0", decimals), collapse = "")
+      )
+    ))
+  }
+
   return(
     list(
       "gt" = function(data, columns, rows) {
@@ -43,15 +193,44 @@ format_number <- function(decimals = 3, sep_mark = ",", dec_mark = ".") {
           dec_mark = dec_mark
         )
       },
-      "openxlsx" = paste0(ifelse(
-        sep_mark == "",
-        "0",
-        paste0("#", sep_mark, "##0", dec_mark, rep("0", decimals))
-      ))
+      "openxlsx" = openxlsx_format
     )
   )
 }
 
+#' format_text
+#'
+#' Implements simple formatting for text in gt and excel exports of tablespan.
+#' @returns a list with styles for gt and openxlsx
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_column(columns = mean_hp,
+#'                    style = create_style_column(format = format_text())) |>
+#'   as_gt()
 format_text <- function() {
   return(list(
     gt = gt::fmt_auto,
@@ -59,68 +238,582 @@ format_text <- function() {
   ))
 }
 
-set_style <- function(tbl, style, columns = NULL, rows = NULL) {
-  # replaces all existing styles
-  if (!is(style, "tbl_style")) {
-    stop("style must be a tbl_style. Use style() to create a new style object")
-  }
-  columns_expr <- rlang::enquo(columns)
-  browser()
-  if (!is.null(tbl$table_data$row_data)) {
-    data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
-  } else {
-    data <- tbl$table_data$col_data
-  }
-
-  column_names <- data |>
-    dplyr::select(!!columns_expr) |>
-    colnames()
-
-  for (column_name in column_names) {
-    tbl$styles[[column_name]] <- list(list(style = style, rows = rows))
-  }
-
-  return(tbl)
-}
-
-add_style <- function(tbl, style, columns = NULL, rows = NULL) {
-  # adds a style to the list of existing styles
-  if (!is(style, "tbl_style")) {
-    stop("style must be a tbl_style. Use style() to create a new style object")
-  }
-  columns_expr <- rlang::enquo(columns)
-  if (!is.null(tbl$table_data$row_data)) {
-    data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
-  } else {
-    data <- tbl$table_data$col_data
-  }
-
-  column_names <- data |>
-    dplyr::select(!!columns_expr) |>
-    colnames()
-
-  for (column_name in column_names) {
-    tbl$styles[[column_name]] <- c(
-      tbl$styles[[column_name]],
-      list(style = style, rows = rows)
+#' set_style_title
+#'
+#' Set the style used for the title of the tablespan table.
+#'
+#' The styling for openxlsx and gt works differently:
+#'
+#' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
+#' will then be applied to the title
+#' - gt_style must be a list of gt::tab_style objects to be applied to the table
+#'
+#' All functions that start with "set_style_" completely replace existing styling.
+#'
+#' @param tbl tablespan table
+#' @param openxlsx_style style used when exporting to openxlsx
+#' @param gt_style style used when exporting to gt
+#' @returns the tablespan table with added styles
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_title(
+#'     openxlsx_style = openxlsx::createStyle(
+#'       fontSize = 18
+#'       fgFill = "#ffffff",
+#'       textDecoration = "bold"),
+#'     gt_style = list(gt::cell_text(size = 18))) |>
+#'   as_gt()
+set_style_title <- function(
+  tbl,
+  openxlsx_style,
+  gt_style
+) {
+  tbl$styles$title$gt <- function(tbl) {
+    return(
+      tbl |>
+        gt::tab_style(
+          style = gt_style,
+          locations = gt::cells_title(groups = "title")
+        )
     )
   }
+  tbl$styles$title$openxlsx <- openxlsx_style
   return(tbl)
 }
 
+#' set_style_subtitle
+#'
+#' Set the style used for the subtitle of the tablespan table.
+#'
+#' The styling for openxlsx and gt works differently:
+#'
+#' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
+#' will then be applied to the subtitle
+#' - gt_style must be a list of gt::tab_style objects to be applied to the table
+#'
+#' All functions that start with "set_style_" completely replace existing styling.
+#'
+#' @param tbl tablespan table
+#' @param openxlsx_style style used when exporting to openxlsx
+#' @param gt_style style used when exporting to gt
+#' @returns the tablespan table with added styles
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_title(
+#'     openxlsx_style = openxlsx::createStyle(
+#'       fontSize = 8
+#'       fgFill = "#ffffff"),
+#'     gt_style = list(gt::cell_text(size = 8))) |>
+#'   as_gt()
+set_style_subtitle <- function(
+  tbl,
+  openxlsx_style,
+  gt_style
+) {
+  tbl$styles$subtitle$gt <- function(tbl) {
+    return(
+      tbl |>
+        gt::tab_style(
+          style = gt_style,
+          locations = gt::cells_title(groups = "subtitle")
+        )
+    )
+  }
+  tbl$styles$subtitle$openxlsx <- openxlsx_style
+  return(tbl)
+}
 
-create_style <- function(
+#' set_style_header
+#'
+#' Set the style used for the header of the tablespan table.
+#'
+#' The styling for openxlsx and gt works differently:
+#'
+#' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
+#' will then be applied to the header
+#' - gt_style must be a list of gt::tab_style objects to be applied to the table
+#'
+#' All functions that start with "set_style_" completely replace existing styling.
+#'
+#' @param tbl tablespan table
+#' @param openxlsx_style style used when exporting to openxlsx
+#' @param gt_style style used when exporting to gt
+#' @returns the tablespan table with added styles
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_header(
+#'     openxlsx_style = openxlsx::createStyle(
+#'       fontSize = 8
+#'       fgFill = "#ffffff"),
+#'     gt_style = list(gt::cell_text(size = 8))) |>
+#'   as_gt()
+set_style_header <- function(
+  tbl,
+  openxlsx_style,
+  gt_style
+) {
+  tbl$styles$header$gt <- function(tbl) {
+    return(
+      tbl |>
+        gt::tab_style(
+          style = gt_style,
+          locations = gt::cells_column_labels()
+        ) |>
+        gt::tab_style(
+          style = gt_style,
+          locations = gt::cells_column_spanners()
+        )
+    )
+  }
+  tbl$styles$header$openxlsx <- openxlsx_style
+  return(tbl)
+}
+
+#' set_style_header_cells
+#'
+#' Set the style used for the cells in the openxlsx export. This function
+#' is used to create the borders around cells in openxlsx.
+#'
+#' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
+#' will then be applied to the header
+#'
+#' All functions that start with "set_style_" completely replace existing styling.
+#'
+#' @param tbl tablespan table
+#' @param openxlsx_style style used when exporting to openxlsx
+#' @returns the tablespan table with added styles
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' wb <- tbl |>
+#'   set_style_header_cells(
+#'     openxlsx_style = openxlsx::createStyle(
+#'        fontSize = 11,
+#'        halign = "center",
+#'        border = "Bottom",
+#'        borderColour = "#000000",
+#'        borderStyle = "thin",
+#'        textDecoration = "bold"
+#'      )) |>
+#'   as_excel()
+#' # save workbook to see the effect
+set_style_header_cells <- function(
+  tbl,
+  openxlsx_style
+) {
+  # does not exist for gt
+  tbl$styles$header_cells$gt <- function(tbl) {
+    return(tbl)
+  }
+  tbl$styles$header_cells$openxlsx <- openxlsx_style
+  return(tbl)
+}
+
+#' set_style_footnote
+#'
+#' Set the style used for the footnote of the tablespan table.
+#'
+#' The styling for openxlsx and gt works differently:
+#'
+#' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
+#' will then be applied to the footnote
+#' - gt_style must be a list of gt::tab_style objects to be applied to the table
+#'
+#' All functions that start with "set_style_" completely replace existing styling.
+#'
+#' @param tbl tablespan table
+#' @param openxlsx_style style used when exporting to openxlsx
+#' @param gt_style style used when exporting to gt
+#' @returns the tablespan table with added styles
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_footnote(
+#'     openxlsx_style = openxlsx::createStyle(
+#'       fontSize = 8
+#'       fgFill = "#ffffff"),
+#'     gt_style = list(gt::cell_text(size = 8))) |>
+#'   as_gt()
+set_style_footnote <- function(
+  tbl,
+  openxlsx_style,
+  gt_style
+) {
+  tbl$styles$footnote$gt <- function(tbl) {
+    return(
+      tbl |>
+        gt::tab_style(
+          style = gt_style,
+          locations = gt::cells_footnotes()
+        )
+    )
+  }
+  tbl$styles$footnote$openxlsx <- openxlsx_style
+  return(tbl)
+}
+
+#' set_style_hline
+#'
+#' Set the style used for the horizontal lines of the tablespan table. Currently only
+#' supported for excel export.
+#'
+#' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
+#' will then be applied to the horizontal lines
+#'
+#' All functions that start with "set_style_" completely replace existing styling.
+#'
+#' @param tbl tablespan table
+#' @param openxlsx_style style used when exporting to openxlsx
+#' @returns the tablespan table with added styles
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' wb <- tbl |>
+#'   set_style_hline(
+#'     openxlsx_style = openxlsx::createStyle(
+#'       border = "Top",
+#'       borderColour = "#928505",
+#'       borderStyle = "thin")) |>
+#'   as_excel()
+#' # save workbook to see effect
+set_style_hline <- function(
+  tbl,
+  openxlsx_style
+) {
+  tbl$styles$hline$openxlsx <- openxlsx_style
+  return(tbl)
+}
+
+#' set_style_vline
+#'
+#' Set the style used for the vertical lines of the tablespan table. Currently only
+#' supported for excel export.
+#'
+#' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
+#' will then be applied to the vertical lines
+#'
+#' All functions that start with "set_style_" completely replace existing styling.
+#'
+#' @param tbl tablespan table
+#' @param openxlsx_style style used when exporting to openxlsx
+#' @returns the tablespan table with added styles
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' wb <- tbl |>
+#'   set_style_vline(
+#'     openxlsx_style = openxlsx::createStyle(
+#'       border = "Top",
+#'       borderColour = "#928505",
+#'       borderStyle = "thin")) |>
+#'   as_excel()
+#' # save workbook to see effect
+set_style_vline <- function(
+  tbl,
+  openxlsx_style
+) {
+  tbl$styles$vline$openxlsx <- openxlsx_style
+  return(tbl)
+}
+
+#' set_style_column
+#'
+#' Change the style of a column or single cells within columns.
+#'
+#' To change the style of the data shown in the body of the table,
+#'
+#' @param tbl tablespan table
+#' @param style the style applied to the column / cells. This style must be created with create_style_column.
+#' @param columns the columns to style. Must be a tidyselect selector expression (e.g., starts_with("hp_"))
+#' @param rows indices of the rows which should be styled. When set to NULL, the style is applied to all rows
+#' @param stack When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
+#' for openxlsx. When set to FALSE, the new style replaces all previous styling.
+#' @returns the tablespan table with added styles
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_column(columns = mean_hp,
+#'                    style = create_style_column(bold = TRUE)) |>
+#'   as_gt()
+set_style_column <- function(
+  tbl,
+  style,
+  columns = dplyr::everything(),
+  rows = NULL,
+  stack = TRUE
+) {
+  if (!is(style, "tbl_style")) {
+    stop("style must be a tbl_style. Use style() to create a new style object")
+  }
+  columns_expr <- rlang::enquo(columns)
+  if (!is.null(tbl$table_data$row_data)) {
+    data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
+  } else {
+    data <- tbl$table_data$col_data
+  }
+
+  column_names <- data |>
+    dplyr::select(!!columns_expr) |>
+    colnames()
+
+  for (column_name in column_names) {
+    if (stack) {
+      tbl$styles$columns[[column_name]] <- append(
+        tbl$styles$columns[[column_name]],
+        list(list("style" = style, "rows" = rows))
+      )
+    } else {
+      tbl$styles$columns[[column_name]] <- list(list(
+        style = style,
+        rows = rows
+      ))
+    }
+  }
+
+  return(tbl)
+}
+
+#' create_style_column
+#'
+#' Create a new style to be applied to the body of the table.
+#'
+#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
+#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
+#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param openxlsx_style allows passing a custom openxlsx style. When not NULL, all other arguments will be ignored for
+#' openxlsx exports. The object must be created with openxlsx::createStyle
+#' @param gt_style allows passing a custom gt style. When not NULL, all other arguments will be ignored for
+#' gt exports. Must be a function with three arguments: function(data, column, rows){ logic applying style to the specified rows in the columns }
+#' @export
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_column(columns = mean_hp,
+#'                    style = create_style_column(bold = TRUE)) |>
+#'   as_gt()
+create_style_column <- function(
+  format,
   background_color = "#ffffff",
   text_color = "#000000",
   font_size = 11,
   bold = FALSE,
   italic = FALSE,
-  format = auto_format,
   openxlsx_style = NULL,
   gt_style = NULL
 ) {
   if (is.null(gt_style)) {
-    gt_style <- create_style_gt(
+    gt_style <- create_style_column_gt(
       format = format,
       font_size = font_size,
       text_color = text_color,
@@ -131,7 +824,7 @@ create_style <- function(
   }
 
   if (is.null(openxlsx_style)) {
-    openxlsx_style <- create_style_openxlsx(
+    openxlsx_style <- create_style_column_openxlsx(
       format = format,
       font_size = font_size,
       text_color = text_color,
@@ -149,8 +842,48 @@ create_style <- function(
   return(style)
 }
 
-
-create_style_gt <- function(
+#' create_style_column_gt
+#'
+#' Create a new style to be applied to the body of the table.
+#'
+#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
+#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
+#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @noRd
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_column(columns = mean_hp,
+#'                    style = create_style_column(bold = TRUE)) |>
+#'   as_gt()
+create_style_column_gt <- function(
   format,
   font_size,
   text_color,
@@ -184,7 +917,48 @@ create_style_gt <- function(
   return(gt_style)
 }
 
-create_style_openxlsx <- function(
+#' create_style_column_openxlsx
+#'
+#' Create a new style to be applied to the body of the table.
+#'
+#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
+#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
+#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @noRd
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_column(columns = mean_hp,
+#'                    style = create_style_column(bold = TRUE)) |>
+#'   as_excel()
+create_style_column_openxlsx <- function(
   format,
   font_size,
   text_color,
@@ -192,7 +966,6 @@ create_style_openxlsx <- function(
   italic,
   background_color
 ) {
-  browser()
   textDecoration <- NULL
   if (bold) {
     textDecoration <- c("Bold")
@@ -200,12 +973,11 @@ create_style_openxlsx <- function(
   if (italic) {
     textDecoration <- c(textDecoration, "italic")
   }
-
   openxlsx_style <- openxlsx::createStyle(
     numFmt = format$openxlsx,
     fontSize = font_size,
     fontColour = text_color,
-    bgFill = background_color,
+    fgFill = background_color,
     textDecoration = textDecoration
   )
 

@@ -10,7 +10,7 @@ as_excel(
   sheet = "Table",
   start_row = 1,
   start_col = 1,
-  styles = tbl_styles()
+  merge_rownames = TRUE
 )
 }
 \arguments{
@@ -24,9 +24,7 @@ as_excel(
 
 \item{start_col}{column at which to start the table}
 
-\item{styles}{openxlsx style for the different table elements (see ?tablespan::tbl_styles).
-The styles element also allows applying custom styles to parts of the data shown in the
-table body.}
+\item{merge_rownames}{should row names with identical entries be merged?}
 }
 \value{
 openxlsx workbook object that can be edited and saved with openxlsx

@@ -124,6 +124,10 @@ tablespan <- function(
     data <- tibble::as_tibble(data)
   }
 
+  # ensure that the data is not grouped
+  data <- data |>
+    dplyr::ungroup()
+
   deparsed <- deparse_formula(formula)
 
   variables <- get_variables(deparsed)
@@ -321,4 +325,13 @@ add_header_level <- function(parsed_partial) {
   }
 
   return(parsed_partial)
+}
+
+extract_data <- function(tbl) {
+  if (!is.null(tbl$table_data$row_data)) {
+    data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
+  } else {
+    data <- tbl$table_data$col_data
+  }
+  return(data)
 }

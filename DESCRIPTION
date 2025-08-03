@@ -1,7 +1,7 @@
 Package: tablespan
 Type: Package
 Title: Create Satisficing 'Excel', 'HTML', 'LaTeX', and 'RTF' Tables using a Simple Formula
-Version: 0.2.2
+Version: 0.3.0
 Authors@R: c(person(given   = "Jannik H.", family = "Orzek",
                     role    = c("aut", "cre", "cph"),
                     email   = "jannik.orzek@mailbox.org",
