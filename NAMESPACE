@@ -3,7 +3,6 @@
 S3method(print,Tablespan)
 export(as_excel)
 export(as_gt)
-export(create_style_column)
 export(format_number)
 export(format_text)
 export(set_style_column)

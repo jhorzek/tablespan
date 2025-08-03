@@ -45,6 +45,6 @@ tbl <- tablespan(data = summarized_table,
 
 tbl |>
   set_style_column(columns = mean_hp,
-                   style = create_style_column(format = format_number(decimals = 5))) |>
+                   format = format_number(decimals = 5)) |>
   as_gt()
 }

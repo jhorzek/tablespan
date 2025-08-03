@@ -4,14 +4,33 @@
 \alias{set_style_header}
 \title{set_style_header}
 \usage{
-set_style_header(tbl, openxlsx_style, gt_style)
+set_style_header(
+  tbl,
+  background_color = "#ffffff",
+  text_color = "#000000",
+  font_size = 11,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL,
+  gt_style = NULL
+)
 }
 \arguments{
 \item{tbl}{tablespan table}
 
-\item{openxlsx_style}{style used when exporting to openxlsx}
+\item{background_color}{hex code for the background color}
 
-\item{gt_style}{style used when exporting to gt}
+\item{text_color}{hex code for the text color}
+
+\item{font_size}{font size}
+
+\item{bold}{set to TRUE for bold}
+
+\item{italic}{set to TRUE for italic}
+
+\item{openxlsx_style}{optional custom openxlsx style. When provided, all other arguments are ignored}
+
+\item{gt_style}{optional custom gt style. When provided, all other arguments are ignored}
 }
 \value{
 the tablespan table with added styles

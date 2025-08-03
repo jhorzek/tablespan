@@ -6,20 +6,43 @@
 \usage{
 set_style_column(
   tbl,
-  style,
   columns = dplyr::everything(),
   rows = NULL,
+  format = list(gt = gt::fmt_auto, openxlsx = "GENERAL"),
+  background_color = "#ffffff",
+  text_color = "#000000",
+  font_size = 11,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL,
+  gt_style = NULL,
   stack = TRUE
 )
 }
 \arguments{
 \item{tbl}{tablespan table}
 
-\item{style}{the style applied to the column / cells. This style must be created with create_style_column.}
-
 \item{columns}{the columns to style. Must be a tidyselect selector expression (e.g., starts_with("hp_"))}
 
 \item{rows}{indices of the rows which should be styled. When set to NULL, the style is applied to all rows}
+
+\item{format}{formatting used for openxlsx and gt. The easiest option is using one of the predefined
+formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
+formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")}
+
+\item{background_color}{hex code for the background color}
+
+\item{text_color}{hex code for the text color}
+
+\item{font_size}{font size}
+
+\item{bold}{set to TRUE for bold}
+
+\item{italic}{set to TRUE for italic}
+
+\item{openxlsx_style}{optional custom openxlsx style. When provided, all other arguments are ignored}
+
+\item{gt_style}{optional custom gt style. When provided, all other arguments are ignored}
 
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}
@@ -59,6 +82,6 @@ tbl <- tablespan(data = summarized_table,
 
 tbl |>
   set_style_column(columns = mean_hp,
-                   style = create_style_column(bold = TRUE)) |>
+                   bold = TRUE) |>
   as_gt()
 }

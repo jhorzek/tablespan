@@ -38,6 +38,6 @@ tbl <- tablespan(data = summarized_table,
 
 tbl |>
   set_style_column(columns = mean_hp,
-                   style = create_style_column(format = format_text())) |>
+                  format = format_text()) |>
   as_gt()
 }

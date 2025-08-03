@@ -12,9 +12,7 @@ initialize_styles <- function(tbl) {
   for (column_name in colnames(data)) {
     tbl <- set_style_column(
       tbl = tbl,
-      style = create_style_column(
-        format = format_auto(data_col = data[[column_name]])
-      ),
+      format = format_auto(data_col = data[[column_name]]),
       columns = dplyr::all_of(column_name),
       rows = seq_len(length(data[[column_name]]))
     )
@@ -162,7 +160,7 @@ format_auto <- function(data_col) {
 #'
 #' tbl |>
 #'   set_style_column(columns = mean_hp,
-#'                    style = create_style_column(format = format_number(decimals = 5))) |>
+#'                    format = format_number(decimals = 5)) |>
 #'   as_gt()
 format_number <- function(decimals = 2, sep_mark = ",", dec_mark = ".") {
   if (decimals == 0) {
@@ -229,11 +227,17 @@ format_number <- function(decimals = 2, sep_mark = ",", dec_mark = ".") {
 #'
 #' tbl |>
 #'   set_style_column(columns = mean_hp,
-#'                    style = create_style_column(format = format_text())) |>
+#'                   format = format_text()) |>
 #'   as_gt()
 format_text <- function() {
   return(list(
-    gt = gt::fmt_auto,
+    gt = function(data, columns, rows) {
+      gt::fmt_auto(
+        data = data,
+        columns = columns,
+        rows = rows
+      )
+    },
     openxlsx = "TEXT"
   ))
 }
@@ -251,8 +255,13 @@ format_text <- function() {
 #' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
-#' @param openxlsx_style style used when exporting to openxlsx
-#' @param gt_style style used when exporting to gt
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
+#' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -289,9 +298,34 @@ format_text <- function() {
 #'   as_gt()
 set_style_title <- function(
   tbl,
-  openxlsx_style,
-  gt_style
+  format = list(gt = gt::fmt_auto, openxlsx = "TEXT"),
+  background_color = "#ffffff",
+  text_color = "#000000",
+  font_size = 11,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL,
+  gt_style = NULL
 ) {
+  gt_style <- create_style_gt(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    gt_style = gt_style
+  )
+
+  openxlsx_style <- create_style_openxlsx(
+    format = "TEXT",
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    openxlsx_style = openxlsx_style
+  )
+
   tbl$styles$title$gt <- function(tbl) {
     return(
       tbl |>
@@ -318,8 +352,13 @@ set_style_title <- function(
 #' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
-#' @param openxlsx_style style used when exporting to openxlsx
-#' @param gt_style style used when exporting to gt
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
+#' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -355,9 +394,33 @@ set_style_title <- function(
 #'   as_gt()
 set_style_subtitle <- function(
   tbl,
-  openxlsx_style,
-  gt_style
+  background_color = "#ffffff",
+  text_color = "#000000",
+  font_size = 11,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL,
+  gt_style = NULL
 ) {
+  gt_style <- create_style_gt(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    gt_style = gt_style
+  )
+
+  openxlsx_style <- create_style_openxlsx(
+    format = "TEXT",
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    openxlsx_style = openxlsx_style
+  )
+
   tbl$styles$subtitle$gt <- function(tbl) {
     return(
       tbl |>
@@ -384,8 +447,13 @@ set_style_subtitle <- function(
 #' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
-#' @param openxlsx_style style used when exporting to openxlsx
-#' @param gt_style style used when exporting to gt
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
+#' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -421,9 +489,33 @@ set_style_subtitle <- function(
 #'   as_gt()
 set_style_header <- function(
   tbl,
-  openxlsx_style,
-  gt_style
+  background_color = "#ffffff",
+  text_color = "#000000",
+  font_size = 11,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL,
+  gt_style = NULL
 ) {
+  gt_style <- create_style_gt(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    gt_style = gt_style
+  )
+
+  openxlsx_style <- create_style_openxlsx(
+    format = "TEXT",
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    openxlsx_style = openxlsx_style
+  )
+
   tbl$styles$header$gt <- function(tbl) {
     return(
       tbl |>
@@ -452,7 +544,12 @@ set_style_header <- function(
 #' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
-#' @param openxlsx_style style used when exporting to openxlsx
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -493,8 +590,22 @@ set_style_header <- function(
 #' # save workbook to see the effect
 set_style_header_cells <- function(
   tbl,
-  openxlsx_style
+  background_color = "#ffffff",
+  text_color = "#000000",
+  font_size = 11,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL
 ) {
+  openxlsx_style <- create_style_openxlsx(
+    format = "TEXT",
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    openxlsx_style = openxlsx_style
+  )
   # does not exist for gt
   tbl$styles$header_cells$gt <- function(tbl) {
     return(tbl)
@@ -516,8 +627,13 @@ set_style_header_cells <- function(
 #' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
-#' @param openxlsx_style style used when exporting to openxlsx
-#' @param gt_style style used when exporting to gt
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
+#' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -553,9 +669,33 @@ set_style_header_cells <- function(
 #'   as_gt()
 set_style_footnote <- function(
   tbl,
-  openxlsx_style,
-  gt_style
+  background_color = "#ffffff",
+  text_color = "#000000",
+  font_size = 11,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL,
+  gt_style = NULL
 ) {
+  gt_style <- create_style_gt(
+    format = "TEXT",
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    gt_style = gt_style
+  )
+
+  openxlsx_style <- create_style_openxlsx(
+    format = format,
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    openxlsx_style = openxlsx_style
+  )
   tbl$styles$footnote$gt <- function(tbl) {
     return(
       tbl |>
@@ -684,9 +824,18 @@ set_style_vline <- function(
 #' To change the style of the data shown in the body of the table,
 #'
 #' @param tbl tablespan table
-#' @param style the style applied to the column / cells. This style must be created with create_style_column.
 #' @param columns the columns to style. Must be a tidyselect selector expression (e.g., starts_with("hp_"))
 #' @param rows indices of the rows which should be styled. When set to NULL, the style is applied to all rows
+#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
+#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
+#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
+#' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @param stack When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 #' for openxlsx. When set to FALSE, the new style replaces all previous styling.
 #' @returns the tablespan table with added styles
@@ -717,18 +866,25 @@ set_style_vline <- function(
 #'
 #' tbl |>
 #'   set_style_column(columns = mean_hp,
-#'                    style = create_style_column(bold = TRUE)) |>
+#'                    bold = TRUE) |>
 #'   as_gt()
 set_style_column <- function(
   tbl,
-  style,
   columns = dplyr::everything(),
   rows = NULL,
+  format = list(
+    gt = gt::fmt_auto,
+    openxlsx = "GENERAL"
+  ),
+  background_color = "#ffffff",
+  text_color = "#000000",
+  font_size = 11,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL,
+  gt_style = NULL,
   stack = TRUE
 ) {
-  if (!is(style, "tbl_style")) {
-    stop("style must be a tbl_style. Use style() to create a new style object")
-  }
   columns_expr <- rlang::enquo(columns)
   if (!is.null(tbl$table_data$row_data)) {
     data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
@@ -739,6 +895,31 @@ set_style_column <- function(
   column_names <- data |>
     dplyr::select(!!columns_expr) |>
     colnames()
+
+  gt_style <- create_style_gt_function(
+    format = format,
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    gt_style = gt_style
+  )
+
+  openxlsx_style <- create_style_openxlsx(
+    format = format,
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    openxlsx_style = openxlsx_style
+  )
+
+  style <- list(
+    gt = gt_style,
+    openxlsx = openxlsx_style
+  )
 
   for (column_name in column_names) {
     if (stack) {
@@ -757,94 +938,9 @@ set_style_column <- function(
   return(tbl)
 }
 
-#' create_style_column
+#' create_style_gt_function
 #'
-#' Create a new style to be applied to the body of the table.
-#'
-#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
-#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
-#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
-#' @param background_color hex code for the background color
-#' @param text_color hex code for the text color
-#' @param font_size font size
-#' @param bold set to TRUE for bold
-#' @param italic set to TRUE for italic
-#' @param openxlsx_style allows passing a custom openxlsx style. When not NULL, all other arguments will be ignored for
-#' openxlsx exports. The object must be created with openxlsx::createStyle
-#' @param gt_style allows passing a custom gt style. When not NULL, all other arguments will be ignored for
-#' gt exports. Must be a function with three arguments: function(data, column, rows){ logic applying style to the specified rows in the columns }
-#' @export
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' tbl |>
-#'   set_style_column(columns = mean_hp,
-#'                    style = create_style_column(bold = TRUE)) |>
-#'   as_gt()
-create_style_column <- function(
-  format,
-  background_color = "#ffffff",
-  text_color = "#000000",
-  font_size = 11,
-  bold = FALSE,
-  italic = FALSE,
-  openxlsx_style = NULL,
-  gt_style = NULL
-) {
-  if (is.null(gt_style)) {
-    gt_style <- create_style_column_gt(
-      format = format,
-      font_size = font_size,
-      text_color = text_color,
-      bold = bold,
-      italic = italic,
-      background_color = background_color
-    )
-  }
-
-  if (is.null(openxlsx_style)) {
-    openxlsx_style <- create_style_column_openxlsx(
-      format = format,
-      font_size = font_size,
-      text_color = text_color,
-      bold = bold,
-      italic = italic,
-      background_color = background_color
-    )
-  }
-
-  style <- list(
-    gt = gt_style,
-    openxlsx = openxlsx_style
-  )
-  class(style) <- "tbl_style"
-  return(style)
-}
-
-#' create_style_column_gt
-#'
-#' Create a new style to be applied to the body of the table.
+#' Create a new style function to be applied to the body of the table.
 #'
 #' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
 #' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
@@ -854,6 +950,7 @@ create_style_column <- function(
 #' @param font_size font size
 #' @param bold set to TRUE for bold
 #' @param italic set to TRUE for italic
+#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
 #' @noRd
 #' @examples
 #' library(tablespan)
@@ -881,16 +978,25 @@ create_style_column <- function(
 #'
 #' tbl |>
 #'   set_style_column(columns = mean_hp,
-#'                    style = create_style_column(bold = TRUE)) |>
+#'                    bold = TRUE) |>
 #'   as_gt()
-create_style_column_gt <- function(
+create_style_gt_function <- function(
   format,
   font_size,
   text_color,
   bold,
   italic,
-  background_color
+  background_color,
+  gt_style
 ) {
+  styles <- create_style_gt(
+    font_size,
+    text_color,
+    bold,
+    italic,
+    background_color,
+    gt_style = gt_style
+  )
   gt_style <- function(data, column, rows) {
     style <- if (italic) "italic" else NULL
     weight <- if (bold) "bold" else NULL
@@ -898,15 +1004,7 @@ create_style_column_gt <- function(
       format$gt(columns = gt::all_of(column), rows = rows) |>
       gt::tab_style(
         data = _,
-        style = list(
-          gt::cell_text(
-            size = font_size,
-            color = text_color,
-            style = style,
-            weight = weight
-          ),
-          gt::cell_fill(color = background_color)
-        ),
+        style = styles,
         locations = gt::cells_body(
           columns = gt::all_of(column),
           rows = rows
@@ -917,7 +1015,7 @@ create_style_column_gt <- function(
   return(gt_style)
 }
 
-#' create_style_column_openxlsx
+#' create_style_gt
 #'
 #' Create a new style to be applied to the body of the table.
 #'
@@ -929,6 +1027,7 @@ create_style_column_gt <- function(
 #' @param font_size font size
 #' @param bold set to TRUE for bold
 #' @param italic set to TRUE for italic
+#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
 #' @noRd
 #' @examples
 #' library(tablespan)
@@ -956,16 +1055,87 @@ create_style_column_gt <- function(
 #'
 #' tbl |>
 #'   set_style_column(columns = mean_hp,
-#'                    style = create_style_column(bold = TRUE)) |>
+#'                    bold = TRUE) |>
+#'   as_gt()
+create_style_gt <- function(
+  font_size,
+  text_color,
+  bold,
+  italic,
+  background_color,
+  gt_style = NULL
+) {
+  if (!is.null(gt_style)) {
+    return(gt_style)
+  }
+  style <- if (italic) "italic" else NULL
+  weight <- if (bold) "bold" else NULL
+
+  style = list(
+    gt::cell_text(
+      size = font_size,
+      color = text_color,
+      style = style,
+      weight = weight
+    ),
+    gt::cell_fill(color = background_color)
+  )
+}
+
+#' create_style_openxlsx
+#'
+#' Create a new style to be applied to the body of the table.
+#'
+#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
+#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
+#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
+#' @noRd
+#' @examples
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' # We want to report the following table:
+#' summarized_table <- mtcars |>
+#'   group_by(cyl, vs) |>
+#'   summarise(N = n(),
+#'             mean_hp = mean(hp),
+#'             sd_hp = sd(hp),
+#'             mean_wt = mean(wt),
+#'             sd_wt = sd(wt))
+#'
+#' # Create a tablespan:
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl + Engine:vs ~
+#'                    N +
+#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
+#'                  title = "Motor Trend Car Road Tests",
+#'                  subtitle = "A table created with tablespan",
+#'                  footnote = "Data from the infamous mtcars data set.")
+#'
+#' tbl |>
+#'   set_style_column(columns = mean_hp,
+#'                    style = bold = TRUE) |>
 #'   as_excel()
-create_style_column_openxlsx <- function(
+create_style_openxlsx <- function(
   format,
   font_size,
   text_color,
   bold,
   italic,
-  background_color
+  background_color,
+  openxlsx_style = NULL
 ) {
+  if (!is.null(openxlsx_style)) {
+    return(openxlsx_style)
+  }
   textDecoration <- NULL
   if (bold) {
     textDecoration <- c("Bold")
