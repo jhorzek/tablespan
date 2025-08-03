@@ -700,6 +700,8 @@ set_style_vline <- function(
 #' @param font_size font size
 #' @param bold set to TRUE for bold
 #' @param italic set to TRUE for italic
+#' @param color_scale a named vector of length 2 or 3 to define a color scale. Example for two colors: color_scale = c("#EE2F43" = -1, "#37E65A" = 1).
+#' Example for three colors: color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1)
 #' @param gt_style optional custom gt style. When provided, all other arguments are ignored
 #' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @param stack When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
@@ -747,6 +749,7 @@ set_style_column <- function(
   font_size = 11,
   bold = FALSE,
   italic = FALSE,
+  color_scale = NULL,
   openxlsx_style = NULL,
   gt_style = NULL,
   stack = TRUE
@@ -798,6 +801,13 @@ set_style_column <- function(
         style = style,
         rows = rows
       ))
+    }
+    if (!is.null(color_scale)) {
+      tbl$styles$columns[[column_name]] <- add_style_color_scale(
+        styles = tbl$styles$columns[[column_name]],
+        color_scale = color_scale,
+        rows = rows
+      )
     }
   }
 

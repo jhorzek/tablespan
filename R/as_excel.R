@@ -514,17 +514,28 @@ write_data <- function(workbook, sheet, header, table_data, locations, styles) {
         } else {
           data_rows <- locations$row$start_row_data + style$rows - 1
         }
-        openxlsx::addStyle(
-          wb = workbook,
-          sheet = sheet,
-          style = style$style$openxlsx,
-          rows = data_rows,
-          cols = locations$col$start_col_header_lhs +
-            which(names(column_styles) == column_name) -
-            1,
-          stack = TRUE,
-          gridExpand = FALSE
-        )
+        data_cols <- locations$col$start_col_header_lhs +
+          which(names(column_styles) == column_name) -
+          1
+        if (is(style$style$openxlsx, "Style")) {
+          openxlsx::addStyle(
+            wb = workbook,
+            sheet = sheet,
+            style = style$style$openxlsx,
+            rows = data_rows,
+            cols = data_cols,
+            stack = TRUE,
+            gridExpand = FALSE
+          )
+        } else if (is.function(style$style$openxlsx)) {
+          # used for color scales
+          style$style$openxlsx(
+            wb = workbook,
+            sheet = sheet,
+            rows = data_rows,
+            cols = data_cols
+          )
+        }
       }
     }
   }
