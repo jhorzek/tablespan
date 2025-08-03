@@ -166,7 +166,6 @@ default_styles <- function() {
 #'   as_gt()
 set_style_title <- function(
   tbl,
-  format = list(gt = gt::fmt_auto, openxlsx = "TEXT"),
   background_color = "#ffffff",
   text_color = "#000000",
   font_size = 11,
@@ -185,7 +184,7 @@ set_style_title <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = "TEXT",
+    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -280,7 +279,7 @@ set_style_subtitle <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = "TEXT",
+    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -375,7 +374,7 @@ set_style_header <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = "TEXT",
+    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -466,7 +465,7 @@ set_style_header_cells <- function(
   openxlsx_style = NULL
 ) {
   openxlsx_style <- create_style_openxlsx(
-    format = "TEXT",
+    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -546,7 +545,6 @@ set_style_footnote <- function(
   gt_style = NULL
 ) {
   gt_style <- create_style_gt(
-    format = "TEXT",
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -556,7 +554,7 @@ set_style_footnote <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = format,
+    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
