@@ -229,7 +229,7 @@ All functions used to style `tablespan` tables start with `style_`:
 
 Use the `style_title` and `style_subtitle` options to style title and subtitle:
 
-```{r}
+```{r, eval=FALSE}
 tbl |> 
   style_title(background_color = "#000000",
               text_color = "#ffffff",
@@ -238,6 +238,9 @@ tbl |>
   style_subtitle(italic = TRUE) |> 
   as_gt()
 ```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_title.png" alt="Standard table" width="50%">
+</p>
 
 All of the styles applied in the following would also be exported to .xlsx files when using `as_excel` and saving the workbook with `openxlsx`.
 
@@ -245,7 +248,7 @@ All of the styles applied in the following would also be exported to .xlsx files
 
 To adapt the header, use `style_header`:
 
-```{r}
+```{r, eval=FALSE}
 tbl |> 
   style_header(background_color = "#000000",
                text_color = "#ffffff",
@@ -253,6 +256,9 @@ tbl |>
                italic = TRUE) |> 
   as_gt()
 ```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_header.png" alt="Standard table" width="50%">
+</p>
 
 ### Styling the body
 
@@ -260,7 +266,7 @@ The body is adapted with `style_column`. This function also allows styling only 
 body or styling multiple columns at once. Columns are selected with tidy expressions. Please note
 that you will have to reference the columns with their respective names in the raw data set, not the names shown in the spanner:
 
-```{r}
+```{r, eval = FALSE}
 tbl |> 
   style_column(
     columns = starts_with("mean_"),
@@ -271,10 +277,13 @@ tbl |>
     italic = TRUE) |> 
   as_gt()
 ```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_column.png" alt="Standard table" width="50%">
+</p>
 
 ### Styling the footnote
 
-```{r}
+```{r, eval = FALSE}
 tbl |> 
   style_footnote(
     background_color = "#000000",
@@ -283,12 +292,15 @@ tbl |>
     italic = TRUE) |> 
   as_gt()
 ```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_footnote.png" alt="Standard table" width="50%">
+</p>
 
 ### Custom styles
 
 The current interface only exports a small amount of the styles available in `gt` and `openxlsx`. However, users can also provide custom styles:
 
-```{r}
+```{r, eval = FALSE}
 tbl |> 
   style_column(
     columns = dplyr::where(is.double),
@@ -299,6 +311,9 @@ tbl |>
   ) |> 
   as_gt()
 ```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_costum.png" alt="Standard table" width="50%">
+</p>
 
 ## Adapting Great Tables
 
