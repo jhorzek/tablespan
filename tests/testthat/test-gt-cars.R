@@ -89,7 +89,6 @@ test_that("cars", {
       data = _,
       style = list(
         gt::cell_text(
-          size = 11,
           color = "#000000",
           style = NULL,
           weight = NULL
@@ -195,7 +194,6 @@ test_that("cars - no autostyle", {
       data = _,
       style = list(
         gt::cell_text(
-          size = 11,
           color = "#000000",
           style = NULL,
           weight = NULL
@@ -325,7 +323,6 @@ test_that("cars-additional_spanners", {
       data = _,
       style = list(
         gt::cell_text(
-          size = 11,
           color = "#000000",
           style = NULL,
           weight = NULL
@@ -448,7 +445,6 @@ test_that("cars-no_row_names", {
       data = _,
       style = list(
         gt::cell_text(
-          size = 11,
           color = "#000000",
           style = NULL,
           weight = NULL
@@ -549,7 +545,6 @@ test_that("cars-no_titles", {
       data = _,
       style = list(
         gt::cell_text(
-          size = 11,
           color = "#000000",
           style = NULL,
           weight = NULL
@@ -648,7 +643,6 @@ test_that("cars-no_titles_no_footnotes", {
       data = _,
       style = list(
         gt::cell_text(
-          size = 11,
           color = "#000000",
           style = NULL,
           weight = NULL
@@ -772,7 +766,6 @@ test_that("cars-duplicated_spanner_names", {
       data = _,
       style = list(
         gt::cell_text(
-          size = 11,
           color = "#000000",
           style = NULL,
           weight = NULL
@@ -879,7 +872,6 @@ test_that("cars - gt styling", {
       data = _,
       style = list(
         gt::cell_text(
-          size = 11,
           color = "#000000",
           style = NULL,
           weight = NULL
@@ -897,7 +889,297 @@ test_that("cars - gt styling", {
     tbl_2 = expected_base
   ))
 
-  # bold
-  gt_bold <- gt_tbl_base |>
-    tablespan::add_column_style()
+  # title
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(background_color = "#983439") |>
+      as_gt(),
+    expected_base |>
+      gt::tab_style(
+        style = gt::cell_text(color = "#000000"),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      )
+  ))
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(background_color = "#983439", text_color = "#ffffff") |>
+      as_gt(),
+    expected_base |>
+      gt::tab_style(
+        style = gt::cell_text(color = "#ffffff"),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      )
+  ))
+
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      as_gt(),
+    expected_base |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      )
+  ))
+
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      as_gt(),
+    expected_base |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("subtitle")
+      )
+  ))
+
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      as_gt(),
+    expected_base |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(weight = "lighter"),
+        locations = gt::cells_footnotes()
+      )
+  ))
+
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_header(background_color = "#B65455", bold = TRUE) |>
+      as_gt(),
+    expected_base |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(weight = "lighter"),
+        locations = gt::cells_footnotes()
+      ) |>
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_fill(color = "#B65455")
+        ),
+        locations = gt::cells_column_labels()
+      ) |>
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_fill(color = "#B65455")
+        ),
+        locations = gt::cells_column_spanners()
+      )
+  ))
+
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_header(background_color = "#B65455", bold = TRUE) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        format = list(
+          gt = function(x, columns, rows, ...) {
+            gt::fmt_number(x, columns = columns, rows = rows, decimals = 1)
+          },
+          openxlsx = "GENERAL"
+        ),
+        italic = TRUE,
+        text_color = "#B54321"
+      ) |>
+      as_gt(),
+    expected_base |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(weight = "lighter"),
+        locations = gt::cells_footnotes()
+      ) |>
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_fill(color = "#B65455")
+        ),
+        locations = gt::cells_column_labels()
+      ) |>
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_fill(color = "#B65455")
+        ),
+        locations = gt::cells_column_spanners()
+      ) |>
+      gt::fmt_number(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        decimals = 1
+      ) |>
+      gt::tab_style(
+        style = list(gt::cell_text(
+          color = "#B54321",
+          style = "italic"
+        )),
+        locations = gt::cells_body(
+          columns = dplyr::where(is.double),
+          rows = 2:3
+        )
+      )
+  ))
 })

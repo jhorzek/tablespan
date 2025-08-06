@@ -10,7 +10,7 @@ initialize_styles <- function(tbl) {
   data <- extract_data(tbl)
 
   for (column_name in colnames(data)) {
-    tbl <- set_style_column(
+    tbl <- style_column(
       tbl = tbl,
       format = format_auto(data_col = data[[column_name]]),
       columns = dplyr::all_of(column_name),
@@ -110,7 +110,7 @@ default_styles <- function() {
   )
 }
 
-#' set_style_title
+#' style_title
 #'
 #' Set the style used for the title of the tablespan table.
 #'
@@ -119,8 +119,6 @@ default_styles <- function() {
 #' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
 #' will then be applied to the title
 #' - gt_style must be a list of gt::tab_style objects to be applied to the table
-#'
-#' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
 #' @param background_color hex code for the background color
@@ -157,18 +155,13 @@ default_styles <- function() {
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_title(
-#'     openxlsx_style = openxlsx::createStyle(
-#'       fontSize = 18
-#'       fgFill = "#ffffff",
-#'       textDecoration = "bold"),
-#'     gt_style = list(gt::cell_text(size = 18))) |>
+#'   style_title(bold = TRUE) |>
 #'   as_gt()
-set_style_title <- function(
+style_title <- function(
   tbl,
   background_color = "#ffffff",
   text_color = "#000000",
-  font_size = 11,
+  font_size = NULL,
   bold = FALSE,
   italic = FALSE,
   openxlsx_style = NULL,
@@ -206,7 +199,7 @@ set_style_title <- function(
   return(tbl)
 }
 
-#' set_style_subtitle
+#' style_subtitle
 #'
 #' Set the style used for the subtitle of the tablespan table.
 #'
@@ -216,7 +209,6 @@ set_style_title <- function(
 #' will then be applied to the subtitle
 #' - gt_style must be a list of gt::tab_style objects to be applied to the table
 #'
-#' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
 #' @param background_color hex code for the background color
@@ -253,17 +245,13 @@ set_style_title <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_title(
-#'     openxlsx_style = openxlsx::createStyle(
-#'       fontSize = 8
-#'       fgFill = "#ffffff"),
-#'     gt_style = list(gt::cell_text(size = 8))) |>
+#'   style_subtitle(bold = TRUE) |>
 #'   as_gt()
-set_style_subtitle <- function(
+style_subtitle <- function(
   tbl,
   background_color = "#ffffff",
   text_color = "#000000",
-  font_size = 11,
+  font_size = NULL,
   bold = FALSE,
   italic = FALSE,
   openxlsx_style = NULL,
@@ -301,7 +289,7 @@ set_style_subtitle <- function(
   return(tbl)
 }
 
-#' set_style_header
+#' style_header
 #'
 #' Set the style used for the header of the tablespan table.
 #'
@@ -310,8 +298,6 @@ set_style_subtitle <- function(
 #' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
 #' will then be applied to the header
 #' - gt_style must be a list of gt::tab_style objects to be applied to the table
-#'
-#' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
 #' @param background_color hex code for the background color
@@ -348,17 +334,17 @@ set_style_subtitle <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_header(
+#'   style_header(
 #'     openxlsx_style = openxlsx::createStyle(
-#'       fontSize = 8
+#'       fontSize = 8,
 #'       fgFill = "#ffffff"),
 #'     gt_style = list(gt::cell_text(size = 8))) |>
 #'   as_gt()
-set_style_header <- function(
+style_header <- function(
   tbl,
   background_color = "#ffffff",
   text_color = "#000000",
-  font_size = 11,
+  font_size = NULL,
   bold = FALSE,
   italic = FALSE,
   openxlsx_style = NULL,
@@ -400,7 +386,7 @@ set_style_header <- function(
   return(tbl)
 }
 
-#' set_style_header_cells
+#' style_header_cells
 #'
 #' Set the style used for the cells in the openxlsx export. This function
 #' is used to create the borders around cells in openxlsx.
@@ -408,7 +394,6 @@ set_style_header <- function(
 #' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
 #' will then be applied to the header
 #'
-#' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
 #' @param background_color hex code for the background color
@@ -444,22 +429,14 @@ set_style_header <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' wb <- tbl |>
-#'   set_style_header_cells(
-#'     openxlsx_style = openxlsx::createStyle(
-#'        fontSize = 11,
-#'        halign = "center",
-#'        border = "Bottom",
-#'        borderColour = "#000000",
-#'        borderStyle = "thin",
-#'        textDecoration = "bold"
-#'      )) |>
+#'   style_header_cells(text_color = "#345364") |>
 #'   as_excel()
 #' # save workbook to see the effect
-set_style_header_cells <- function(
+style_header_cells <- function(
   tbl,
   background_color = "#ffffff",
   text_color = "#000000",
-  font_size = 11,
+  font_size = NULL,
   bold = FALSE,
   italic = FALSE,
   openxlsx_style = NULL
@@ -481,7 +458,7 @@ set_style_header_cells <- function(
   return(tbl)
 }
 
-#' set_style_footnote
+#' style_footnote
 #'
 #' Set the style used for the footnote of the tablespan table.
 #'
@@ -490,8 +467,6 @@ set_style_header_cells <- function(
 #' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
 #' will then be applied to the footnote
 #' - gt_style must be a list of gt::tab_style objects to be applied to the table
-#'
-#' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
 #' @param background_color hex code for the background color
@@ -528,17 +503,13 @@ set_style_header_cells <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_footnote(
-#'     openxlsx_style = openxlsx::createStyle(
-#'       fontSize = 8
-#'       fgFill = "#ffffff"),
-#'     gt_style = list(gt::cell_text(size = 8))) |>
+#'   style_footnote(bold = TRUE) |>
 #'   as_gt()
-set_style_footnote <- function(
+style_footnote <- function(
   tbl,
   background_color = "#ffffff",
   text_color = "#000000",
-  font_size = 11,
+  font_size = NULL,
   bold = FALSE,
   italic = FALSE,
   openxlsx_style = NULL,
@@ -575,7 +546,7 @@ set_style_footnote <- function(
   return(tbl)
 }
 
-#' set_style_hline
+#' style_hline
 #'
 #' Set the style used for the horizontal lines of the tablespan table. Currently only
 #' supported for excel export.
@@ -583,8 +554,6 @@ set_style_footnote <- function(
 #' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
 #' will then be applied to the horizontal lines
 #'
-#' All functions that start with "set_style_" completely replace existing styling.
-#'
 #' @param tbl tablespan table
 #' @param openxlsx_style style used when exporting to openxlsx
 #' @returns the tablespan table with added styles
@@ -614,14 +583,14 @@ set_style_footnote <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' wb <- tbl |>
-#'   set_style_hline(
+#'   style_hline(
 #'     openxlsx_style = openxlsx::createStyle(
 #'       border = "Top",
 #'       borderColour = "#928505",
 #'       borderStyle = "thin")) |>
 #'   as_excel()
 #' # save workbook to see effect
-set_style_hline <- function(
+style_hline <- function(
   tbl,
   openxlsx_style
 ) {
@@ -629,15 +598,13 @@ set_style_hline <- function(
   return(tbl)
 }
 
-#' set_style_vline
+#' style_vline
 #'
 #' Set the style used for the vertical lines of the tablespan table. Currently only
 #' supported for excel export.
 #'
 #' - openxlsx_style must be a style object created with openxlsx::createStyle. This style
 #' will then be applied to the vertical lines
-#'
-#' All functions that start with "set_style_" completely replace existing styling.
 #'
 #' @param tbl tablespan table
 #' @param openxlsx_style style used when exporting to openxlsx
@@ -668,14 +635,14 @@ set_style_hline <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' wb <- tbl |>
-#'   set_style_vline(
+#'   style_vline(
 #'     openxlsx_style = openxlsx::createStyle(
 #'       border = "Top",
 #'       borderColour = "#928505",
 #'       borderStyle = "thin")) |>
 #'   as_excel()
 #' # save workbook to see effect
-set_style_vline <- function(
+style_vline <- function(
   tbl,
   openxlsx_style
 ) {
@@ -683,11 +650,9 @@ set_style_vline <- function(
   return(tbl)
 }
 
-#' set_style_column
+#' style_column
 #'
 #' Change the style of a column or single cells within columns.
-#'
-#' To change the style of the data shown in the body of the table,
 #'
 #' @param tbl tablespan table
 #' @param columns the columns to style. Must be a tidyselect selector expression (e.g., starts_with("hp_"))
@@ -733,10 +698,10 @@ set_style_vline <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_column(columns = mean_hp,
-#'                    bold = TRUE) |>
+#'   style_column(columns = mean_hp,
+#'                bold = TRUE) |>
 #'   as_gt()
-set_style_column <- function(
+style_column <- function(
   tbl,
   columns = dplyr::everything(),
   rows = NULL,
@@ -746,7 +711,7 @@ set_style_column <- function(
   ),
   background_color = "#ffffff",
   text_color = "#000000",
-  font_size = 11,
+  font_size = NULL,
   bold = FALSE,
   italic = FALSE,
   color_scale = NULL,
@@ -853,7 +818,7 @@ set_style_column <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_column(columns = mean_hp,
+#'   style_column(columns = mean_hp,
 #'                    bold = TRUE) |>
 #'   as_gt()
 create_style_gt_function <- function(
@@ -930,7 +895,7 @@ create_style_gt_function <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_column(columns = mean_hp,
+#'   style_column(columns = mean_hp,
 #'                    bold = TRUE) |>
 #'   as_gt()
 create_style_gt <- function(
@@ -997,7 +962,7 @@ create_style_gt <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_column(columns = mean_hp,
+#'   style_column(columns = mean_hp,
 #'                    style = bold = TRUE) |>
 #'   as_excel()
 create_style_openxlsx <- function(

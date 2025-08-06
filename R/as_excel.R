@@ -24,20 +24,6 @@
 #'
 #' # saveWorkbook(wb, "iris.xlsx")
 #'
-#' # To apply a custom style to some elements use the styles argument. The following
-#' # applies the "bold" style to the rows 1-5 of the Sepal.Length column and
-#' # the rows 9-10 of the Petal.Width column.
-#' bold <- openxlsx::createStyle(textDecoration = "bold")
-#'
-#' wb <- as_excel(tbl = tbl,
-#'                styles = tbl_styles(cell_styles = list(cell_style(rows = 1:5,
-#'                                                                 colnames = "Sepal.Length",
-#'                                                                 style = bold),
-#'                                                      cell_style(rows = 9:10,
-#'                                                                 colnames = "Petal.Width",
-#'                                                                 style = bold))))
-#' # saveWorkbook(wb, "iris.xlsx")
-#'
 #' # The main use case for tablespan is when you already have a summarized table
 #' # that you now want to share using xlsx. The following shows an example using
 #' # the dplyr package:

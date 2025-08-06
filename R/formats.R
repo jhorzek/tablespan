@@ -47,8 +47,8 @@ format_auto <- function(data_col) {
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_column(columns = mean_hp,
-#'                    format = format_number(decimals = 5)) |>
+#'   style_column(columns = mean_hp,
+#'               format = format_number(decimals = 5)) |>
 #'   as_gt()
 format_number <- function(decimals = 2, sep_mark = ",", dec_mark = ".") {
   if (decimals == 0) {
@@ -114,8 +114,8 @@ format_number <- function(decimals = 2, sep_mark = ",", dec_mark = ".") {
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   set_style_column(columns = mean_hp,
-#'                   format = format_text()) |>
+#'   style_column(columns = mean_hp,
+#'               format = format_text()) |>
 #'   as_gt()
 format_text <- function() {
   return(list(

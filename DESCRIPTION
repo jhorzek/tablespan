@@ -26,6 +26,7 @@ Imports:
     methods,
     openxlsx,
     rlang,
+    scales,
     tibble,
     utils
 URL: https://github.com/jhorzek/tablespan,

@@ -30,6 +30,8 @@ create_color_scale_openxlsx <- function(color_scale) {
   )
 }
 
+#' @importFrom scales col_numeric
+#' @noRd
 create_color_scale_gt <- function(color_scale) {
   if (length(color_scale) == 3) {
     # Adapted from Paul at https://stackoverflow.com/questions/64469714/set-asymmetric-midpoint-for-data-color-in-gt-table
@@ -44,7 +46,6 @@ create_color_scale_gt <- function(color_scale) {
 
     return(
       function(data, column, rows) {
-        print(column)
         return(
           data |>
             gt::data_color(
