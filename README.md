@@ -16,7 +16,11 @@ Downloads](https://cranlogs.r-pkg.org/badges/grand-total/tablespan)](https://cra
 > Create satisficing tables in R the formula way.
 
 The objective of `tablespan` is to provide a “good enough” approach to
-creating tables by leveraging R’s formulas:
+creating tables by leveraging R’s formulas.
+
+The following shows an example, where we define a relatively complex
+table header setup with a single formula. The details of the syntax will
+be explained below.
 
 ``` r
 library(dplyr)
@@ -248,6 +252,25 @@ tbl
 #> Data from the infamous mtcars data set.
 ```
 
+### Tables without row names
+
+Using `1` on the left hand side of the formula creates a table without
+row names. For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)`
+defines:
+
+``` r
+tablespan(data = summarized_table,
+          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+#>                      
+#>  | Horsepower       |
+#>  | Mean       SD    |
+#>  | ---------- ----- |
+#>  | 91               |
+#>  | 81.8       21.87 |
+#>  | 131.67     37.53 |
+#>  | ...        ...   |
+```
+
 ## Exporting to Excel
 
 Tables created with `tablespan` can now be translated to xlsx tables
@@ -290,7 +313,20 @@ exported to `gt` and `openxlsx`. The workflow is heavily inspired by
 
 All functions used to style `tablespan` tables start with `style_`:
 
-### Styling the tile and subtitle
+- `style_title`: Adapt the style of the title
+- `style_subtitle`: Adapt the style of the subtitle
+- `style_header`: Adapt the style of the header
+- `style_header_cells`: Stlye the header cells in openxlsx. Used to
+  create the borders around header cells (only relevant for openxlsx
+  exports)
+- `style_column`: Add styling to the body of the table
+- `style_footnote`: Adapt the style of the footnotes
+- `style_vline`: Adapt the style of the vertical lines in the table.
+  Only relevant for openxlsx
+- `style_hline`: Adapt the style of the horizontal lines in the table.
+  Only relevant for openxlsx
+
+### Styling the title and subtitle
 
 Use the `style_title` and `style_subtitle` options to style title and
 subtitle:
@@ -449,25 +485,6 @@ gt_tbl |>
 <p align="center">
 <img src="man/figures/tablespan_example_new_spanner.png" alt="Table with additional spanner" width="50%">
 </p>
-
-## Tables without row names
-
-Using `1` on the left hand side of the formula creates a table without
-row names. For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)`
-defines
-
-``` r
-tablespan(data = summarized_table,
-          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
-#>                      
-#>  | Horsepower       |
-#>  | Mean       SD    |
-#>  | ---------- ----- |
-#>  | 91               |
-#>  | 81.8       21.87 |
-#>  | 131.67     37.53 |
-#>  | ...        ...   |
-```
 
 ## References
 
