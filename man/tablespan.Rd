@@ -117,6 +117,11 @@ tbl <- tablespan(data = summarized_table,
 
 tbl
 
+# Add styling:
+tbl <- tbl |>
+    style_header(background_color = "#000000", text_color = "#ffffff") |>
+    style_column(columns = where(is.double), bold = TRUE)
+
 # Export as Excel table:
 wb <- as_excel(tbl = tbl)
 

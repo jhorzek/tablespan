@@ -17,21 +17,20 @@
 #' deparsed <- tablespan:::deparse_formula(formula =
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
-deparse_formula <- function(formula){
-  if(formula[[2]] == "1"){
+deparse_formula <- function(formula) {
+  if (formula[[2]] == "1") {
     lhs <- NULL
-  }else{
+  } else {
     lhs <- deparse_formula_partial(formula_partial = formula[[2]])
   }
 
-  if(formula[[3]] == "1"){
+  if (formula[[3]] == "1") {
     stop("Missing right hand side of formula.")
-  }else{
+  } else {
     rhs <- deparse_formula_partial(formula_partial = formula[[3]])
   }
 
-  return(list(lhs = lhs,
-              rhs = rhs))
+  return(list(lhs = lhs, rhs = rhs))
 }
 
 #' deparse_formula_partial
@@ -57,8 +56,10 @@ deparse_formula <- function(formula){
 #'
 #' deparsed <- tablespan:::deparse_formula_partial(formula_partial = formula[[2]])
 #' str(deparsed)
-deparse_formula_partial <- function(formula_partial,
-                                    deparsed = list(name = "_BASE_LEVEL_", entries = list())){
+deparse_formula_partial <- function(
+  formula_partial,
+  deparsed = list(name = "_BASE_LEVEL_", entries = list())
+) {
   # There are three types of symbols on the right hand side:
   # 1) Braces group columns
   # 2) Equal signs assign the left hand side as name for multiple columns
@@ -68,54 +69,70 @@ deparse_formula_partial <- function(formula_partial,
   # to become
   # list(a = c("b1", "b2"))
 
-  if(length(formula_partial) == 1){
-    deparsed$entries <- c(deparsed$entries,
-                          list(list(name = as.character(formula_partial),
-                                    item_name = as.character(formula_partial),
-                                    entries = NULL)))
+  if (length(formula_partial) == 1) {
+    deparsed$entries <- c(
+      deparsed$entries,
+      list(list(
+        name = as.character(formula_partial),
+        item_name = as.character(formula_partial),
+        entries = NULL
+      ))
+    )
     return(deparsed)
   }
 
-  if((formula_partial[[1]] == ":")){
-    if((length(formula_partial[[2]]) == 1) & (length(formula_partial[[3]]) == 1)){
-      deparsed$entries <- c(deparsed$entries,
-                            list(list(name = as.character(formula_partial[[2]]),
-                                      item_name = as.character(formula_partial[[3]]),
-                                      entries = NULL)))
+  if ((formula_partial[[1]] == ":")) {
+    if (
+      (length(formula_partial[[2]]) == 1) & (length(formula_partial[[3]]) == 1)
+    ) {
+      deparsed$entries <- c(
+        deparsed$entries,
+        list(list(
+          name = as.character(formula_partial[[2]]),
+          item_name = as.character(formula_partial[[3]]),
+          entries = NULL
+        ))
+      )
       return(deparsed)
-    }else{
-      stop(paste0("Renaming with ", as.character(formula_partial) ,
-                  " is not allowed. Both sides of the colon must be single names (e.g., a:b)."))
+    } else {
+      stop(paste0(
+        "Renaming with ",
+        as.character(formula_partial),
+        " is not allowed. Both sides of the colon must be single names (e.g., a:b)."
+      ))
     }
   }
 
-  if(formula_partial[[1]] == "+"){
-    deparsed <- deparse_formula_partial(formula_partial[[2]],
-                                        deparsed)
-    deparsed <- deparse_formula_partial(formula_partial[[3]],
-                                        deparsed)
+  if (formula_partial[[1]] == "+") {
+    deparsed <- deparse_formula_partial(formula_partial[[2]], deparsed)
+    deparsed <- deparse_formula_partial(formula_partial[[3]], deparsed)
     return(deparsed)
-  }else if(formula_partial[[1]] == "="){
+  } else if (formula_partial[[1]] == "=") {
     # The left hand side is the name of the split, the right hand side
     # specifies the elements
     deparsed$name <- as.character(formula_partial[[2]])
-    deparsed <- deparse_formula_partial(formula_partial[[3]],
-                                        deparsed)
+    deparsed <- deparse_formula_partial(formula_partial[[3]], deparsed)
     return(deparsed)
-  }else if(formula_partial[[1]] == "("){
+  } else if (formula_partial[[1]] == "(") {
     # Check if there is a name for the current spanner
     try_name <- try(formula_partial[[2]][[1]] != "=", silent = TRUE)
-    if(is(try_name, "try-error") | try_name){
+    if (is(try_name, "try-error") | try_name) {
       stop("The following spanner has no label: ", formula_partial, ".")
     }
     # In case of a brace, we have to go one step deeper
-    deparsed$entries <- c(deparsed$entries,
-                          list(deparse_formula_partial(formula_partial[[2]],
-                                                       list(name = NULL,
-                                                            entries = list()))))
+    deparsed$entries <- c(
+      deparsed$entries,
+      list(deparse_formula_partial(
+        formula_partial[[2]],
+        list(name = NULL, entries = list())
+      ))
+    )
     return(deparsed)
-  }else{
-    stop(paste0("Unknown symbol detected: ", paste0(as.character(formula_partial), collapse = "")))
+  } else {
+    stop(paste0(
+      "Unknown symbol detected: ",
+      paste0(as.character(formula_partial), collapse = "")
+    ))
   }
 }
 
@@ -133,19 +150,22 @@ deparse_formula_partial <- function(formula_partial,
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
 #' tablespan:::get_variables(deparsed)
-get_variables <- function(deparsed_formula){
-  if(is.null(deparsed_formula$lhs)){
+get_variables <- function(deparsed_formula) {
+  if (is.null(deparsed_formula$lhs)) {
     # no row variable
     row_variables <- NULL
-  }else{
-    row_variables <- get_variables_from_list(deparsed_formula_element = deparsed_formula$lhs)
+  } else {
+    row_variables <- get_variables_from_list(
+      deparsed_formula_element = deparsed_formula$lhs
+    )
   }
 
-  col_variables <- get_variables_from_list(deparsed_formula_element = deparsed_formula$rhs)
+  col_variables <- get_variables_from_list(
+    deparsed_formula_element = deparsed_formula$rhs
+  )
 
   return(
-    list(row_variables = row_variables,
-         col_variables = col_variables)
+    list(row_variables = row_variables, col_variables = col_variables)
   )
 }
 
@@ -165,13 +185,14 @@ get_variables <- function(deparsed_formula){
 #'  (`Row Name` = `Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3`))
 #' str(deparsed)
 #' tablespan:::get_variables_from_list(deparsed$lhs)
-get_variables_from_list <- function(deparsed_formula_element, variables = c()){
-  if(is.null(deparsed_formula_element$entries)){
+get_variables_from_list <- function(deparsed_formula_element, variables = c()) {
+  if (is.null(deparsed_formula_element$entries)) {
     variables <- c(variables, deparsed_formula_element$item_name)
     return(variables)
-  }else{
-    for(entry in deparsed_formula_element$entries)
+  } else {
+    for (entry in deparsed_formula_element$entries) {
       variables <- get_variables_from_list(entry, variables)
+    }
     return(variables)
   }
 }
