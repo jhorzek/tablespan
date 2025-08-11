@@ -1110,20 +1110,27 @@ test_that("cars - gt styling", {
       ) |>
       style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
       style_header(background_color = "#B65455", bold = TRUE) |>
+      format_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        format_gt = function(x, columns, rows, ...) {
+          gt::fmt_number(x, columns = columns, rows = rows, decimals = 1)
+        },
+        format_openxlsx = "GENERAL"
+      ) |>
       style_column(
         columns = dplyr::where(is.double),
         rows = 2:3,
-        format = list(
-          gt = function(x, columns, rows, ...) {
-            gt::fmt_number(x, columns = columns, rows = rows, decimals = 1)
-          },
-          openxlsx = "GENERAL"
-        ),
         italic = TRUE,
         text_color = "#B54321"
       ) |>
       as_gt(),
     expected_base |>
+      gt::fmt_number(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        decimals = 1
+      ) |>
       gt::tab_style(
         style = gt::cell_text(
           color = "#ffffff",
@@ -1165,11 +1172,6 @@ test_that("cars - gt styling", {
           gt::cell_fill(color = "#B65455")
         ),
         locations = gt::cells_column_spanners()
-      ) |>
-      gt::fmt_number(
-        columns = dplyr::where(is.double),
-        rows = 2:3,
-        decimals = 1
       ) |>
       gt::tab_style(
         style = list(gt::cell_text(

@@ -488,6 +488,36 @@ write_data <- function(workbook, sheet, header, table_data, locations, styles) {
     colNames = FALSE
   )
 
+  # Add user defined formats
+  column_formats <- styles$formats
+  for (column_name in names(column_formats)) {
+    for (format in column_formats[[column_name]]) {
+      if (is.null(format$format$openxlsx)) {
+        next
+      } else {
+        if (is.null(style$rows)) {
+          data_rows <- locations$row$start_row_data:(locations$row$end_row_data)
+        } else {
+          data_rows <- locations$row$start_row_data + style$rows - 1
+        }
+        data_cols <- locations$col$start_col_header_lhs +
+          which(names(column_styles) == column_name) -
+          1
+        if (is(style$style$openxlsx, "Style")) {
+          openxlsx::addStyle(
+            wb = workbook,
+            sheet = sheet,
+            style = format$format$openxlsx,
+            rows = data_rows,
+            cols = data_cols,
+            stack = TRUE,
+            gridExpand = FALSE
+          )
+        }
+      }
+    }
+  }
+
   # Add user defined column styles
   column_styles <- styles$columns
   for (column_name in names(column_styles)) {

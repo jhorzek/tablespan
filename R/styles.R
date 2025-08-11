@@ -12,7 +12,6 @@ initialize_styles <- function(tbl) {
   for (column_name in colnames(data)) {
     tbl <- style_column(
       tbl = tbl,
-      format = format_auto(data_col = data[[column_name]]),
       columns = dplyr::all_of(column_name),
       rows = seq_len(length(data[[column_name]]))
     )
@@ -177,7 +176,6 @@ style_title <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -267,7 +265,6 @@ style_subtitle <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -360,7 +357,6 @@ style_header <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -442,7 +438,6 @@ style_header_cells <- function(
   openxlsx_style = NULL
 ) {
   openxlsx_style <- create_style_openxlsx(
-    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -525,7 +520,6 @@ style_footnote <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = list(openxlsx = "TEXT"),
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -657,9 +651,6 @@ style_vline <- function(
 #' @param tbl tablespan table
 #' @param columns the columns to style. Must be a tidyselect selector expression (e.g., starts_with("hp_"))
 #' @param rows indices of the rows which should be styled. When set to NULL, the style is applied to all rows
-#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
-#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
-#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
 #' @param background_color hex code for the background color
 #' @param text_color hex code for the text color
 #' @param font_size font size
@@ -705,10 +696,6 @@ style_column <- function(
   tbl,
   columns = dplyr::everything(),
   rows = NULL,
-  format = list(
-    gt = gt::fmt_auto,
-    openxlsx = "GENERAL"
-  ),
   background_color = "#ffffff",
   text_color = "#000000",
   font_size = NULL,
@@ -720,18 +707,13 @@ style_column <- function(
   stack = TRUE
 ) {
   columns_expr <- rlang::enquo(columns)
-  if (!is.null(tbl$table_data$row_data)) {
-    data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
-  } else {
-    data <- tbl$table_data$col_data
-  }
+  data <- extract_data(tbl)
 
   column_names <- data |>
     dplyr::select(!!columns_expr) |>
     colnames()
 
   gt_style <- create_style_gt_function(
-    format = format,
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -741,7 +723,6 @@ style_column <- function(
   )
 
   openxlsx_style <- create_style_openxlsx(
-    format = format,
     font_size = font_size,
     text_color = text_color,
     bold = bold,
@@ -783,9 +764,6 @@ style_column <- function(
 #'
 #' Create a new style function to be applied to the body of the table.
 #'
-#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
-#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
-#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
 #' @param background_color hex code for the background color
 #' @param text_color hex code for the text color
 #' @param font_size font size
@@ -822,7 +800,6 @@ style_column <- function(
 #'                    bold = TRUE) |>
 #'   as_gt()
 create_style_gt_function <- function(
-  format,
   font_size,
   text_color,
   bold,
@@ -842,7 +819,6 @@ create_style_gt_function <- function(
     style <- if (italic) "italic" else NULL
     weight <- if (bold) "bold" else NULL
     data |>
-      format$gt(columns = gt::all_of(column), rows = rows) |>
       gt::tab_style(
         data = _,
         style = styles,
@@ -860,9 +836,6 @@ create_style_gt_function <- function(
 #'
 #' Create a new style to be applied to the body of the table.
 #'
-#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
-#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
-#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
 #' @param background_color hex code for the background color
 #' @param text_color hex code for the text color
 #' @param font_size font size
@@ -927,9 +900,6 @@ create_style_gt <- function(
 #'
 #' Create a new style to be applied to the body of the table.
 #'
-#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
-#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
-#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
 #' @param background_color hex code for the background color
 #' @param text_color hex code for the text color
 #' @param font_size font size
@@ -963,10 +933,9 @@ create_style_gt <- function(
 #'
 #' tbl |>
 #'   style_column(columns = mean_hp,
-#'                    style = bold = TRUE) |>
+#'                bold = TRUE) |>
 #'   as_excel()
 create_style_openxlsx <- function(
-  format,
   font_size,
   text_color,
   bold,
@@ -985,7 +954,6 @@ create_style_openxlsx <- function(
     textDecoration <- c(textDecoration, "italic")
   }
   openxlsx_style <- openxlsx::createStyle(
-    numFmt = format$openxlsx,
     fontSize = font_size,
     fontColour = text_color,
     fgFill = background_color,

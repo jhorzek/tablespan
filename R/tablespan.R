@@ -161,6 +161,7 @@ tablespan <- function(
   )
   class(bt_result) <- "Tablespan"
 
+  bt_result <- initialize_formats(tbl = bt_result)
   bt_result <- initialize_styles(tbl = bt_result)
 
   return(bt_result)

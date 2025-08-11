@@ -334,6 +334,20 @@ format_gt <- function(gt_tbl, tbl, auto_format) {
       gt::sub_missing(missing_text = "")
   }
 
+  # Apply formats
+  for (column_name in names(tbl$formats$columns)) {
+    for (c_format in tbl$formats$columns[[column_name]]) {
+      if (is.null(c_format$format$gt)) {
+        next
+      }
+      if (is.null(c_format$rows)) {
+        c_format$rows <- TRUE
+      }
+      gt_tbl <- gt_tbl |>
+        c_format$format$gt(column = column_name, rows = c_format$rows)
+    }
+  }
+
   # Apply any custom styles
   for (style_element in names(tbl$styles)) {
     if (style_element == "columns") {
