@@ -1,3 +1,12 @@
+#' add_style_color_scale
+#'
+#' Add a color scale to the table.
+#'
+#' @param styles list with existing styles
+#' @param color_scale vector with two or three color values
+#' @param rows vector with rows to apply the style to
+#' @returns styles with appended color scale
+#' @noRd
 add_style_color_scale <- function(styles, color_scale, rows) {
   if (!length(color_scale) %in% c(2, 3)) {
     stop("color_scale must be of length 2 or 3.")
@@ -12,8 +21,15 @@ add_style_color_scale <- function(styles, color_scale, rows) {
       "rows" = rows
     ))
   )
+  return(styles)
 }
 
+#' create_color_scale_openxlsx
+#'
+#' Create a color scale style for openlslx
+#' @param color_scale vector with two or three color values
+#' @returns openlslx style object
+#' @noRd
 create_color_scale_openxlsx <- function(color_scale) {
   return(
     function(wb, sheet, rows, cols) {
@@ -30,6 +46,11 @@ create_color_scale_openxlsx <- function(color_scale) {
   )
 }
 
+#' create_color_scale_gt
+#'
+#' Create a color scale style for gt
+#' @param color_scale vector with two or three color values
+#' @returns openlslx style object
 #' @importFrom scales col_numeric
 #' @noRd
 create_color_scale_gt <- function(color_scale) {
@@ -52,11 +73,11 @@ create_color_scale_gt <- function(color_scale) {
               columns = gt::all_of(column),
               rows = rows,
               fn = function(x) {
-                color <- ifelse(
+                color <- suppressWarnings(ifelse(
                   x < color_scale[2],
                   lower_scale(x),
                   upper_scale(x)
-                )
+                ))
                 color <- ifelse(is.na(color), "#D3D3D3", color)
                 return(color)
               }

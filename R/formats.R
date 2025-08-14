@@ -37,9 +37,9 @@ initialize_formats <- function(tbl) {
 #' @param tbl tablespan table
 #' @param columns the columns to style. Must be a tidyselect selector expression (e.g., starts_with("hp_"))
 #' @param rows indices of the rows which should be styled. When set to NULL, the style is applied to all rows
-#' @param format formatting used for openxlsx and gt. The easiest option is using one of the predefined
-#' formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
-#' formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")
+#' @param format_gt formatting used for gt. This must be a function with the following signature: function(tbl, columns, rows, ...)
+#' and return the tbl with applied formatting. See examples.
+#' @param format_openxlsx an argument passed to the numFmt field for openxlsx::createStyle.
 #' @param stack When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 #' for openxlsx. When set to FALSE, the new style replaces all previous styling.
 #' @returns the tablespan table with added styles
@@ -69,7 +69,14 @@ initialize_formats <- function(tbl) {
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   format_column(columns = mean_hp) |>
+#'   format_column(columns = mean_hp,
+#'                 rows = c(1,3),
+#'                 format_gt = function(tbl, columns, rows, ...){
+#'                              return(gt::fmt_number(tbl,
+#'                                        columns = columns,
+#'                                        rows = rows,
+#'                                        decimals = 4))},
+#'                 format_openxlsx = "0.0000") |>
 #'   as_gt()
 format_column <- function(
   tbl,
@@ -156,8 +163,14 @@ format_column <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   style_column(columns = mean_hp,
-#'                    bold = TRUE) |>
+#'   format_column(columns = mean_hp,
+#'                 rows = c(1,3),
+#'                 format_gt = function(tbl, columns, rows, ...){
+#'                              return(gt::fmt_number(tbl,
+#'                                        columns = columns,
+#'                                        rows = rows,
+#'                                        decimals = 4))},
+#'                 format_openxlsx = "0.0000") |>
 #'   as_gt()
 create_format_gt_function <- function(
   format
@@ -203,7 +216,14 @@ create_format_gt_function <- function(
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
 #' tbl |>
-#'   format_column(columns = mean_hp) |>
+#'   format_column(columns = mean_hp,
+#'                 rows = c(1,3),
+#'                 format_gt = function(tbl, columns, rows, ...){
+#'                              return(gt::fmt_number(tbl,
+#'                                        columns = columns,
+#'                                        rows = rows,
+#'                                        decimals = 4))},
+#'                 format_openxlsx = "0.0000") |>
 #'   as_excel()
 create_format_openxlsx <- function(
   num_format
@@ -239,35 +259,7 @@ format_auto <- function(data_col) {
 #' @param sep_mark optional symbol used to separate thousands
 #' @param dec_mark symbol used to separate decimals
 #' @returns a list with styles for gt and openxlsx
-#' @export
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' tbl |>
-#'   style_column(columns = mean_hp,
-#'               format = format_number(decimals = 5)) |>
-#'   as_gt()
+#' @noRd
 format_number <- function(decimals = 2, sep_mark = ",", dec_mark = ".") {
   if (decimals == 0) {
     openxlsx_format <- "0"
@@ -308,35 +300,7 @@ format_number <- function(decimals = 2, sep_mark = ",", dec_mark = ".") {
 #'
 #' Implements simple formatting for text in gt and excel exports of tablespan.
 #' @returns a list with styles for gt and openxlsx
-#' @export
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' tbl |>
-#'   style_column(columns = mean_hp,
-#'               format = format_text()) |>
-#'   as_gt()
+#' @noRd
 format_text <- function() {
   return(list(
     gt = function(data, columns, rows) {

@@ -20,12 +20,13 @@ format_column(
 
 \item{rows}{indices of the rows which should be styled. When set to NULL, the style is applied to all rows}
 
+\item{format_gt}{formatting used for gt. This must be a function with the following signature: function(tbl, columns, rows, ...)
+and return the tbl with applied formatting. See examples.}
+
+\item{format_openxlsx}{an argument passed to the numFmt field for openxlsx::createStyle.}
+
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}
-
-\item{format}{formatting used for openxlsx and gt. The easiest option is using one of the predefined
-formats (e.g., format_numeric()). Alternatively, pass a list with (1) a field called gt with a function for
-formatting gt columns and (2) an argument passed to the numFmt field for openxlsx::createStyle. Example: list(gt = gt::fmt_auto, openxlsx = "TEXT")}
 }
 \value{
 the tablespan table with added styles
@@ -58,6 +59,13 @@ tbl <- tablespan(data = summarized_table,
                  footnote = "Data from the infamous mtcars data set.")
 
 tbl |>
-  format_column(columns = mean_hp) |>
+  format_column(columns = mean_hp,
+                rows = c(1,3),
+                format_gt = function(tbl, columns, rows, ...){
+                             return(gt::fmt_number(tbl,
+                                       columns = columns,
+                                       rows = rows,
+                                       decimals = 4))},
+                format_openxlsx = "0.0000") |>
   as_gt()
 }

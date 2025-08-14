@@ -1184,4 +1184,262 @@ test_that("cars - gt styling", {
         )
       )
   ))
+
+  color_scale = c(
+    "#123456" = min(
+      summarized_table |> select(where(is.double)),
+      na.rm = TRUE
+    ),
+    "#B46983" = max(
+      summarized_table |> select(where(is.double)),
+      na.rm = TRUE
+    )
+  )
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_header(background_color = "#B65455", bold = TRUE) |>
+      format_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        format_gt = function(x, columns, rows, ...) {
+          gt::fmt_number(x, columns = columns, rows = rows, decimals = 1)
+        },
+        format_openxlsx = "GENERAL"
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        italic = TRUE,
+        text_color = "#B54321"
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        color_scale = c(
+          "#123456" = min(
+            summarized_table |> select(where(is.double)),
+            na.rm = TRUE
+          ),
+          "#B46983" = max(
+            summarized_table |> select(where(is.double)),
+            na.rm = TRUE
+          )
+        )
+      ) |>
+      as_gt(),
+    expected_base |>
+      gt::fmt_number(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        decimals = 1
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(weight = "lighter"),
+        locations = gt::cells_footnotes()
+      ) |>
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_fill(color = "#B65455")
+        ),
+        locations = gt::cells_column_labels()
+      ) |>
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_fill(color = "#B65455")
+        ),
+        locations = gt::cells_column_spanners()
+      ) |>
+      gt::tab_style(
+        style = list(gt::cell_text(
+          color = "#B54321",
+          style = "italic"
+        )),
+        locations = gt::cells_body(
+          columns = dplyr::where(is.double),
+          rows = 2:3
+        )
+      ) |>
+      gt::data_color(
+        columns = dplyr::where(is.double),
+        method = "numeric",
+        palette = names(color_scale),
+        domain = color_scale
+      )
+  ))
+
+  color_scale = c(
+    "#123456" = min(
+      summarized_table |> select(where(is.double)),
+      na.rm = TRUE
+    ),
+    "#ffffff" = 50,
+    "#B46983" = max(
+      summarized_table |> select(where(is.double)),
+      na.rm = TRUE
+    )
+  )
+
+  lower_scale <- scales::col_numeric(
+    palette = names(color_scale)[1:2],
+    domain = color_scale[1:2]
+  )
+  upper_scale <- scales::col_numeric(
+    palette = names(color_scale)[2:3],
+    domain = color_scale[2:3]
+  )
+
+  testthat::expect_true(compare_tables(
+    tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_header(background_color = "#B65455", bold = TRUE) |>
+      format_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        format_gt = function(x, columns, rows, ...) {
+          gt::fmt_number(x, columns = columns, rows = rows, decimals = 1)
+        },
+        format_openxlsx = "GENERAL"
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        italic = TRUE,
+        text_color = "#B54321"
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        color_scale = c(
+          "#123456" = min(
+            summarized_table |> select(where(is.double)),
+            na.rm = TRUE
+          ),
+          "#ffffff" = 50,
+          "#B46983" = max(
+            summarized_table |> select(where(is.double)),
+            na.rm = TRUE
+          )
+        )
+      ) |>
+      as_gt(),
+    expected_base |>
+      gt::fmt_number(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        decimals = 1
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("title")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "#ffffff",
+          weight = "bold",
+          style = "italic"
+        ),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_fill(color = "#983439"),
+        locations = gt::cells_title("subtitle")
+      ) |>
+      gt::tab_style(
+        style = gt::cell_text(weight = "lighter"),
+        locations = gt::cells_footnotes()
+      ) |>
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_fill(color = "#B65455")
+        ),
+        locations = gt::cells_column_labels()
+      ) |>
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_fill(color = "#B65455")
+        ),
+        locations = gt::cells_column_spanners()
+      ) |>
+      gt::tab_style(
+        style = list(gt::cell_text(
+          color = "#B54321",
+          style = "italic"
+        )),
+        locations = gt::cells_body(
+          columns = dplyr::where(is.double),
+          rows = 2:3
+        )
+      ) |>
+      gt::data_color(
+        columns = dplyr::where(is.double),
+        fn = function(x) {
+          color <- suppressWarnings(ifelse(
+            x < color_scale[2],
+            lower_scale(x),
+            upper_scale(x)
+          ))
+          color <- ifelse(is.na(color), "#D3D3D3", color)
+          return(color)
+        }
+      )
+  ))
 })

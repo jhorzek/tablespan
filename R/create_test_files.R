@@ -71,12 +71,8 @@ create_test_files_cars <- function() {
   bold <- openxlsx::createStyle(textDecoration = "bold")
   wb <- as_excel(
     tbl = tbl |>
-      style_column(mean_hp,
-                   rows = 2:3,
-                   bold = TRUE) |>
-      style_column(c(mean_wt, sd_wt),
-                   rows = 1,
-                   bold = TRUE)
+      style_column(mean_hp, rows = 2:3, bold = TRUE) |>
+      style_column(c(mean_wt, sd_wt), rows = 1, bold = TRUE)
   )
   openxlsx::saveWorkbook(
     wb,
@@ -87,8 +83,11 @@ create_test_files_cars <- function() {
   # custom data type styles
   wb <- as_excel(
     tbl = tbl |>
-      style_column(columns = dplyr::where(is.double),
-                   bold = TRUE, italic = TRUE)
+      style_column(
+        columns = dplyr::where(is.double),
+        bold = TRUE,
+        italic = TRUE
+      )
   )
   openxlsx::saveWorkbook(
     wb,
@@ -99,9 +98,19 @@ create_test_files_cars <- function() {
   # gradient
   wb <- as_excel(
     tbl = tbl |>
-      style_column(columns = dplyr::where(is.double),
-                   color_scale = c("#123456" = min(summarized_table |> select(where(is.double)), na.rm = TRUE),
-                                   "#B46983" = max(summarized_table |> select(where(is.double)), na.rm = TRUE)))
+      style_column(
+        columns = dplyr::where(is.double),
+        color_scale = c(
+          "#123456" = min(
+            summarized_table |> select(where(is.double)),
+            na.rm = TRUE
+          ),
+          "#B46983" = max(
+            summarized_table |> select(where(is.double)),
+            na.rm = TRUE
+          )
+        )
+      )
   )
 
   openxlsx::saveWorkbook(
@@ -112,15 +121,40 @@ create_test_files_cars <- function() {
 
   wb <- as_excel(
     tbl = tbl |>
-      style_column(columns = dplyr::where(is.double),
-                   color_scale = c("#123456" = min(summarized_table |> select(where(is.double)), na.rm = TRUE),
-                                   "#ffffff" = 50,
-                                   "#B46983" = max(summarized_table |> select(where(is.double)), na.rm = TRUE)))
+      style_column(
+        columns = dplyr::where(is.double),
+        color_scale = c(
+          "#123456" = min(
+            summarized_table |> select(where(is.double)),
+            na.rm = TRUE
+          ),
+          "#ffffff" = 50,
+          "#B46983" = max(
+            summarized_table |> select(where(is.double)),
+            na.rm = TRUE
+          )
+        )
+      )
   )
 
   openxlsx::saveWorkbook(
     wb,
     file = paste0(target_dir, "cars_data_gradient_3.xlsx"),
+    overwrite = TRUE
+  )
+
+  # Custom formatting
+  wb <- as_excel(
+    tbl = tbl |>
+      format_column(
+        columns = dplyr::where(is.double),
+        format_openxlsx = "0.00000"
+      )
+  )
+
+  openxlsx::saveWorkbook(
+    wb,
+    file = paste0(target_dir, "cars_data_formatting.xlsx"),
     overwrite = TRUE
   )
 
