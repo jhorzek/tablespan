@@ -319,7 +319,7 @@ tbl |>
 
 ### Custom styles
 
-The current interface only exports a small amount of the styles available in `gt` and `openxlsx`. However, users can also provide custom styles:
+The current interface only exports a small amount of the styles available in `gt` and `openxlsx`. However, you can also provide custom styles:
 
 ```{r, eval = FALSE}
 tbl |> 
@@ -335,6 +335,34 @@ tbl |>
 <p align="center">
 <img src="man/figures/tablespan_example_gt_cars_costum.png" alt="Standard table" width="50%">
 </p>
+
+## Formatting
+
+In addition to applying specific styles to the table, you can also adapt the number formatting.
+The current setup is slightly more complicated because unifying all of the possible
+styles supported by `gt` and `openxlsx` is challenging.
+
+```{r, eval = FALSE}
+tbl |> 
+  format_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        # For great tables, we need a function that 
+        # takes in the table, columns, and rows and then
+        # applies the style
+        format_gt = function(x, columns, rows, ...) {
+          gt::fmt_number(x, columns = columns, rows = rows, decimals = 4)
+        },
+        # For openxlsx, we have to provide the style that will be passed
+        # to numFmt in openxlsx::createStyle
+        format_openxlsx = "0.0000"
+      ) |> 
+  as_gt()
+```
+<p align="center">
+<img src="man/figures/tablespan_example_styling.png" alt="Standard table" width="50%">
+</p>
+
 
 ## Adapting Great Tables
 

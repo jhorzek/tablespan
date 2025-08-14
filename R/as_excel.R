@@ -105,7 +105,8 @@ as_excel <- function(
     header = tbl$header,
     table_data = tbl$table_data,
     locations = locations,
-    styles = styles
+    styles = styles,
+    formats = tbl$formats
   )
 
   write_footnote(
@@ -452,9 +453,18 @@ write_header_entry <- function(
 #' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
+#' @param formats formatting applied to the data
 #' @import openxlsx
 #' @noRd
-write_data <- function(workbook, sheet, header, table_data, locations, styles) {
+write_data <- function(
+  workbook,
+  sheet,
+  header,
+  table_data,
+  locations,
+  styles,
+  formats
+) {
   if (!is.null(header$lhs)) {
     # Row names
     openxlsx::writeData(
@@ -489,21 +499,21 @@ write_data <- function(workbook, sheet, header, table_data, locations, styles) {
   )
 
   # Add user defined formats
-  column_formats <- styles$formats
+  column_formats <- formats$columns
   for (column_name in names(column_formats)) {
     for (format in column_formats[[column_name]]) {
       if (is.null(format$format$openxlsx)) {
         next
       } else {
-        if (is.null(style$rows)) {
+        if (is.null(format$rows)) {
           data_rows <- locations$row$start_row_data:(locations$row$end_row_data)
         } else {
-          data_rows <- locations$row$start_row_data + style$rows - 1
+          data_rows <- (locations$row$start_row_data + format$rows) - 1
         }
         data_cols <- locations$col$start_col_header_lhs +
-          which(names(column_styles) == column_name) -
+          which(names(column_formats) == column_name) -
           1
-        if (is(style$style$openxlsx, "Style")) {
+        if (is(format$format$openxlsx, "Style")) {
           openxlsx::addStyle(
             wb = workbook,
             sheet = sheet,
