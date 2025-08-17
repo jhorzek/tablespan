@@ -10,7 +10,7 @@ as_excel(
   sheet = "Table",
   start_row = 1,
   start_col = 1,
-  styles = tbl_styles()
+  merge_rownames = TRUE
 )
 }
 \arguments{
@@ -24,9 +24,7 @@ as_excel(
 
 \item{start_col}{column at which to start the table}
 
-\item{styles}{openxlsx style for the different table elements (see ?tablespan::tbl_styles).
-The styles element also allows applying custom styles to parts of the data shown in the
-table body.}
+\item{merge_rownames}{should row names with identical entries be merged?}
 }
 \value{
 openxlsx workbook object that can be edited and saved with openxlsx
@@ -45,20 +43,6 @@ tbl <- tablespan(data = iris[iris$Species == "setosa", ],
 
 wb <- as_excel(tbl = tbl)
 
-# saveWorkbook(wb, "iris.xlsx")
-
-# To apply a custom style to some elements use the styles argument. The following
-# applies the "bold" style to the rows 1-5 of the Sepal.Length column and
-# the rows 9-10 of the Petal.Width column.
-bold <- openxlsx::createStyle(textDecoration = "bold")
-
-wb <- as_excel(tbl = tbl,
-               styles = tbl_styles(cell_styles = list(cell_style(rows = 1:5,
-                                                                colnames = "Sepal.Length",
-                                                                style = bold),
-                                                     cell_style(rows = 9:10,
-                                                                colnames = "Petal.Width",
-                                                                style = bold))))
 # saveWorkbook(wb, "iris.xlsx")
 
 # The main use case for tablespan is when you already have a summarized table

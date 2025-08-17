@@ -103,6 +103,11 @@
 #'
 #' tbl
 #'
+#' # Add styling:
+#' tbl <- tbl |>
+#'     style_header(background_color = "#000000", text_color = "#ffffff") |>
+#'     style_column(columns = where(is.double), bold = TRUE)
+#'
 #' # Export as Excel table:
 #' wb <- as_excel(tbl = tbl)
 #'
@@ -112,37 +117,53 @@
 #' # Export as gt:
 #' gt_tbl <- as_gt(tbl = tbl)
 #' gt_tbl
-tablespan <- function(data,
-                      formula,
-                      title = NULL,
-                      subtitle = NULL,
-                      footnote = NULL){
-
-  if(!tibble::is_tibble(data)){
+tablespan <- function(
+  data,
+  formula,
+  title = NULL,
+  subtitle = NULL,
+  footnote = NULL
+) {
+  if (!tibble::is_tibble(data)) {
     warning("Tablespan uses tibble internally. Translating data to tibble")
     data <- tibble::as_tibble(data)
   }
+
+  # ensure that the data is not grouped
+  data <- data |>
+    dplyr::ungroup()
 
   deparsed <- deparse_formula(formula)
 
   variables <- get_variables(deparsed)
 
-  check_variables(data = data,
-                  variables = variables)
+  check_variables(data = data, variables = variables)
 
-  table_data <- list(row_data = get_row_data(data = data,
-                                             row_variables = variables$row_variables),
-                     col_data = get_col_data(data = data,
-                                             col_variables = variables$col_variables))
+  table_data <- list(
+    row_data = get_row_data(
+      data = data,
+      row_variables = variables$row_variables
+    ),
+    col_data = get_col_data(
+      data = data,
+      col_variables = variables$col_variables
+    )
+  )
 
   header <- construct_header(deparsed)
 
-  bt_result <- list(title = title,
-                    subtitle = subtitle,
-                    header = header,
-                    table_data = table_data,
-                    footnote = footnote)
+  bt_result <- list(
+    title = title,
+    subtitle = subtitle,
+    header = header,
+    table_data = table_data,
+    footnote = footnote
+  )
   class(bt_result) <- "Tablespan"
+
+  bt_result <- initialize_formats(tbl = bt_result)
+  bt_result <- initialize_styles(tbl = bt_result)
+
   return(bt_result)
 }
 
@@ -153,18 +174,24 @@ tablespan <- function(data,
 #' @param data data set
 #' @param variables variable names from formula
 #' @noRd
-check_variables <- function(data, variables){
-  if(!is.null(variables$row_variables)){
+check_variables <- function(data, variables) {
+  if (!is.null(variables$row_variables)) {
     check_row_variables <- setdiff(variables$row_variables, colnames(data))
-    if(length(check_row_variables) != 0)
-      stop(paste0("The following variables were not found in the data set: ",
-                  paste0(check_row_variables, collapse = ",")))
+    if (length(check_row_variables) != 0) {
+      stop(paste0(
+        "The following variables were not found in the data set: ",
+        paste0(check_row_variables, collapse = ",")
+      ))
+    }
   }
 
   check_col_variables <- setdiff(variables$col_variables, colnames(data))
-  if(length(check_col_variables) != 0)
-    stop(paste0("The following variables were not found in the data set: ",
-                paste0(check_col_variables, collapse = ",")))
+  if (length(check_col_variables) != 0) {
+    stop(paste0(
+      "The following variables were not found in the data set: ",
+      paste0(check_col_variables, collapse = ",")
+    ))
+  }
 }
 
 #' get_col_data
@@ -174,8 +201,8 @@ check_variables <- function(data, variables){
 #' @param data data set
 #' @param col_variables variable names from formula
 #' @noRd
-get_col_data <- function(data, col_variables){
-  return(data[,col_variables, drop = FALSE])
+get_col_data <- function(data, col_variables) {
+  return(data[, col_variables, drop = FALSE])
 }
 
 #' get_row_data
@@ -185,9 +212,10 @@ get_col_data <- function(data, col_variables){
 #' @param data data set
 #' @param row_variables variable names from formula
 #' @noRd
-get_row_data <- function(data, row_variables){
-  if(!is.null(row_variables))
-    return(data[,row_variables, drop = FALSE])
+get_row_data <- function(data, row_variables) {
+  if (!is.null(row_variables)) {
+    return(data[, row_variables, drop = FALSE])
+  }
   return(NULL)
 }
 
@@ -199,8 +227,7 @@ get_row_data <- function(data, row_variables){
 #' @param deparsed table formula translated in nested list
 #' @returns deparsed with widht and levels fields
 #' @noRd
-construct_header <- function(deparsed){
-
+construct_header <- function(deparsed) {
   deparsed$rhs <- add_header_width(deparsed$rhs)
   deparsed$rhs <- add_header_level(deparsed$rhs)
 
@@ -235,18 +262,22 @@ construct_header <- function(deparsed){
 #' deparsed <- tablespan:::add_header_width(deparsed$rhs)
 #' str(deparsed)
 #' deparsed$width
-add_header_width <- function(parsed_partial){
-  if(is.null(parsed_partial))
+add_header_width <- function(parsed_partial) {
+  if (is.null(parsed_partial)) {
     return(NULL)
-  if(is.null(parsed_partial$entries)){
+  }
+  if (is.null(parsed_partial$entries)) {
     parsed_partial$width <- 1
     return(parsed_partial)
   }
 
   parsed_partial$width <- 0
-  for(entry in 1:length(parsed_partial$entries)){
-    parsed_partial$entries[[entry]] <- add_header_width(parsed_partial$entries[[entry]])
-    parsed_partial$width <- parsed_partial$width + parsed_partial$entries[[entry]]$width
+  for (entry in 1:length(parsed_partial$entries)) {
+    parsed_partial$entries[[entry]] <- add_header_width(parsed_partial$entries[[
+      entry
+    ]])
+    parsed_partial$width <- parsed_partial$width +
+      parsed_partial$entries[[entry]]$width
   }
 
   return(parsed_partial)
@@ -278,21 +309,35 @@ add_header_width <- function(parsed_partial){
 #' deparsed <- tablespan:::add_header_level(deparsed$rhs)
 #' str(deparsed)
 #' deparsed$level
-add_header_level <- function(parsed_partial){
-  if(is.null(parsed_partial))
+add_header_level <- function(parsed_partial) {
+  if (is.null(parsed_partial)) {
     return(NULL)
+  }
 
-  if(is.null(parsed_partial$entries)){
+  if (is.null(parsed_partial$entries)) {
     parsed_partial$level <- 1
     return(parsed_partial)
   }
 
   parsed_partial$level <- 0
-  for(entry in seq_along(parsed_partial$entries)){
-    parsed_partial$entries[[entry]] <- add_header_level(parsed_partial$entries[[entry]])
-    parsed_partial$level <- max(parsed_partial$level,
-                                parsed_partial$entries[[entry]]$level + 1)
+  for (entry in seq_along(parsed_partial$entries)) {
+    parsed_partial$entries[[entry]] <- add_header_level(parsed_partial$entries[[
+      entry
+    ]])
+    parsed_partial$level <- max(
+      parsed_partial$level,
+      parsed_partial$entries[[entry]]$level + 1
+    )
   }
 
   return(parsed_partial)
+}
+
+extract_data <- function(tbl) {
+  if (!is.null(tbl$table_data$row_data)) {
+    data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
+  } else {
+    data <- tbl$table_data$col_data
+  }
+  return(data)
 }

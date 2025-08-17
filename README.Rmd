@@ -28,6 +28,32 @@ library(tablespan)
 The objective of `tablespan` is to provide a "good enough" approach to creating tables by 
 leveraging R's formulas.
 
+The following shows an example, where we define a relatively complex table header setup with
+a single formula. The details of the syntax will be explained below.
+```{r}
+library(dplyr)
+library(tablespan)
+data("mtcars")
+
+summarized_table <- mtcars |>
+  group_by(cyl, vs) |>
+  summarise(N = n(),
+            mean_hp = mean(hp),
+            sd_hp = sd(hp),
+            mean_wt = mean(wt),
+            sd_wt = sd(wt))
+
+tbl <- tablespan(data = summarized_table,
+                 formula = Cylinder:cyl + Engine:vs ~
+                   N +
+                   (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                   (`Weight` = Mean:mean_wt + SD:sd_wt),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tablespan",
+                 footnote = "Data from the infamous mtcars data set.")
+tbl
+```
+
 `tablespan` builds on the awesome packages [`openxlsx`](https://ycphs.github.io/openxlsx/) and [`gt`](https://gt.rstudio.com/), which allows tables created with `tablespan`
 to be exported to the following formats:
 
@@ -50,7 +76,6 @@ The development version of `tablespan` can be installed from GitHub with:
 library(remotes)
 remotes::install_github("jhorzek/tablespan")
 ```
-
 
 ## Introduction
 
@@ -163,6 +188,16 @@ tbl <- tablespan(data = summarized_table,
 tbl
 ```
 
+### Tables without row names
+
+Using `1` on the left hand side of the formula creates a table without row names.
+For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` defines:
+
+```{r}
+tablespan(data = summarized_table,
+          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+```
+
 ## Exporting to Excel
 
 Tables created with `tablespan` can now be translated to xlsx tables with [`openxlsx`](https://ycphs.github.io/openxlsx/) using the `as_excel` function:
@@ -179,100 +214,6 @@ wb <- as_excel(tbl = tbl)
 
 ![](man/figures/tablespan_example_cars.png)
 
-### Styling
-
-While `tablespan` provides limited styling options, some elements can be adjusted.
-For example, we may want to print some elements in bold or format numbers differently.
-In `tablespan`, styling happens when translating the table to an `openxlsx` workbook
-with `as_excel`.
-To this end, `tablespan` provides a `styles` argument.
-
-#### Changing the Overall Look
-
-The easiest way to customize tables is to change the default color scheme.
-The function `tbl_styles` provides control over most elements in the table,
-but in many cases `style_color` may be sufficient. The following creates a 
-table with teal-colored backgrounds for the title, header, and row names:
-
-```{r}
-wb <- as_excel(tbl = tbl, 
-               styles = style_color(primary_color = "#008080"))
-
-# Save the workbook as an xlsx file:
-# openxlsx::saveWorkbook(wb,
-#                        file = "cars.xlsx", 
-#                        overwrite = TRUE)
-```
-
-![](man/figures/tablespan_example_cars_color.png)
-
-Similarly, a dark background can be defined as follows:
-
-```{r}
-wb <- as_excel(tbl = tbl, 
-               styles = style_color(primary_color = "#000000"))
-
-# Save the workbook as an xlsx file:
-# openxlsx::saveWorkbook(wb,
-#                        file = "cars.xlsx", 
-#                        overwrite = TRUE)
-```
-
-#### Formatting Cells
-
-Let's assume we want all `mean_hp` values with a value $\geq 100$ to be printed 
-in bold. To this end, we first create a new style object using `openxlsx`:
-
-```{r}
-bold <- openxlsx::createStyle(textDecoration = "bold")
-```
-
-Next, we create a cell style with `tablespan`:
-
-```{r}
-hp_ge_100 <- cell_style(rows = which(summarized_table$mean_hp >= 100), 
-                        colnames = "mean_hp", 
-                        style = bold,
-                        gridExpand = FALSE)
-```
-Note that we specify the indices of the rows that we want to be in bold and the
-column name of the item.
-
-Finally, we pass this style as part of a list to `as_excel`:
-
-```{r}
-# as_excel creates an openxlsx workbook
-wb <- as_excel(tbl = tbl, 
-               styles = tbl_styles(cell_styles = list(hp_ge_100)))
-
-# Save the workbook as an xlsx file:
-# openxlsx::saveWorkbook(wb,
-#                        file = "cars.xlsx", 
-#                        overwrite = TRUE)
-```
-
-![](man/figures/tablespan_example_cars_styled.png)
-
-#### Formatting Data Types
-
-`tablespan` also allows formatting specific data types. Let's assume that we want
-to round all doubles to 3 instead of the default 2 digits.
-To this end, we use the `create_data_styles` function, where we specify (1) a 
-function that checks for the data type we want to style (here `is.double`) and
-(2) a style for all columns that match that style:
-```{r}
-double_style <- create_data_styles(double = list(test = is.double, 
-                                                 style = openxlsx::createStyle(numFmt = "0.000")))
-wb <- as_excel(tbl = tbl, styles = tbl_styles(data_styles = double_style))
-
-# Save the workbook as an xlsx file:
-# openxlsx::saveWorkbook(wb,
-#                        file = "cars.xlsx", 
-#                        overwrite = TRUE)
-```
-
-![](man/figures/tablespan_example_cars_styled_data.png)
-
 ## Exporting to HTML, LaTeX, and RTF
 
 Tables created with `tablespan` can also be exported to `gt` which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call `as_gt` on our table:
@@ -287,10 +228,143 @@ gt_tbl <- as_gt(tbl = tbl)
 gt_tbl
 ```
 <p align="center">
-    <img src="man/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%">
+<img src="man/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%">
 </p>
 
-### Styling Great Tables
+## Styling
+
+`tablespan` allows adding styles to tables that are automatically exported to `gt` and `openxlsx`. The workflow is heavily inspired by `gt`.
+
+All functions used to style `tablespan` tables start with `style_`:
+
+- `style_title`: Adapt the style of the title
+- `style_subtitle`: Adapt the style of the subtitle
+- `style_header`: Adapt the style of the header
+- `style_header_cells`: Stlye the header cells in openxlsx. Used to create the borders around header cells (only relevant for openxlsx exports)
+- `style_column`: Add styling to the body of the table
+- `style_footnote`: Adapt the style of the footnotes
+- `style_vline`: Adapt the style of the vertical lines in the table. Only relevant for openxlsx
+- `style_hline`: Adapt the style of the horizontal lines in the table. Only relevant for openxlsx
+
+### Styling the title and subtitle
+
+Use the `style_title` and `style_subtitle` options to style title and subtitle:
+
+```{r, eval=FALSE}
+tbl |> 
+  style_title(background_color = "#000000",
+              text_color = "#ffffff",
+              bold = TRUE,
+              italic = TRUE) |> 
+  style_subtitle(italic = TRUE) |> 
+  as_gt()
+```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_title.png" alt="Standard table" width="50%">
+</p>
+
+All of the styles applied in the following would also be exported to .xlsx files when using `as_excel` and saving the workbook with `openxlsx`.
+
+### Styling the header
+
+To adapt the header, use `style_header`:
+
+```{r, eval=FALSE}
+tbl |> 
+  style_header(background_color = "#000000",
+               text_color = "#ffffff",
+               bold = TRUE,
+               italic = TRUE) |> 
+  as_gt()
+```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_header.png" alt="Standard table" width="50%">
+</p>
+
+### Styling the body
+
+The body is adapted with `style_column`. This function also allows styling only specific cells in the
+body or styling multiple columns at once. Columns are selected with tidy expressions. Please note
+that you will have to reference the columns with their respective names in the raw data set, not the names shown in the spanner:
+
+```{r, eval = FALSE}
+tbl |> 
+  style_column(
+    columns = starts_with("mean_"),
+    rows = 2:3,
+    background_color = "#000000",
+    text_color = "#ffffff",
+    bold = TRUE,
+    italic = TRUE) |> 
+  as_gt()
+```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_column.png" alt="Standard table" width="50%">
+</p>
+
+### Styling the footnote
+
+```{r, eval = FALSE}
+tbl |> 
+  style_footnote(
+    background_color = "#000000",
+    text_color = "#ffffff",
+    bold = TRUE,
+    italic = TRUE) |> 
+  as_gt()
+```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_footnote.png" alt="Standard table" width="50%">
+</p>
+
+### Custom styles
+
+The current interface only exports a small amount of the styles available in `gt` and `openxlsx`. However, you can also provide custom styles:
+
+```{r, eval = FALSE}
+tbl |> 
+  style_column(
+    columns = dplyr::where(is.double),
+    # custom style for the gt table export:
+    gt_style = gt::cell_text(decorate = "underline"),
+    # custom style for the excel table export:
+    openxlsx_style = openxlsx::createStyle(textDecoration = "underline")
+  ) |> 
+  as_gt()
+```
+<p align="center">
+<img src="man/figures/tablespan_example_gt_cars_costum.png" alt="Standard table" width="50%">
+</p>
+
+## Formatting
+
+In addition to applying specific styles to the table, you can also adapt the number formatting.
+The current setup is slightly more complicated because unifying all of the possible
+styles supported by `gt` and `openxlsx` is challenging.
+
+```{r, eval = FALSE}
+tbl |> 
+  format_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        # For great tables, we need a function that 
+        # takes in the table, columns, and rows and then
+        # applies the style
+        format_gt = function(x, columns, rows, ...) {
+          gt::fmt_number(x, columns = columns, rows = rows, decimals = 4)
+        },
+        # For openxlsx, we have to provide the style that will be passed
+        # to numFmt in openxlsx::createStyle
+        format_openxlsx = "0.0000"
+      ) |> 
+  as_gt()
+```
+<p align="center">
+<img src="man/figures/tablespan_example_styling.png" alt="Standard table" width="50%">
+</p>
+
+
+## Adapting Great Tables
 
 The `gt` package provides a wide range of functions to adapt the style of the 
 table created with `as_gt`. For instance, `opt_stylize` adds a pre-defined style 
@@ -303,7 +377,7 @@ gt_tbl |>
 ```
 
 <p align="center">
-    <img src="man/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%">
+<img src="man/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%">
 </p>
 
 When adapting the `gt` object, there is an important detail to keep in mind: To 
@@ -324,7 +398,7 @@ gt_tbl |>
   gt::tab_info()
 ```
 <p align="center">
-    <img src="man/figures/tablespan_example_tab_info.png" alt="Table spanner IDs" width="50%">
+<img src="man/figures/tablespan_example_tab_info.png" alt="Table spanner IDs" width="50%">
 </p>
 
 The IDs for the spanners can be found at the very bottom. To add another spanner
@@ -337,20 +411,8 @@ gt_tbl |>
 ```
 
 <p align="center">
-    <img src="man/figures/tablespan_example_new_spanner.png" alt="Table with additional spanner" width="50%">
+<img src="man/figures/tablespan_example_new_spanner.png" alt="Table with additional spanner" width="50%">
 </p>
-
-
-
-## Tables without row names
-
-Using `1` on the left hand side of the formula creates a table without row names.
-For example, `1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)` defines
-
-```{r}
-tablespan(data = summarized_table,
-          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
-```
 
 
 ## References
