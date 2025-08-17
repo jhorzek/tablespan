@@ -5,12 +5,17 @@
 <url><loc>https://jhorzek.github.io/tablespan/index.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/as_excel.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/as_gt.html</loc></url>
-<url><loc>https://jhorzek.github.io/tablespan/reference/cell_style.html</loc></url>
-<url><loc>https://jhorzek.github.io/tablespan/reference/create_data_styles.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/format_column.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/index.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/print.Tablespan.html</loc></url>
-<url><loc>https://jhorzek.github.io/tablespan/reference/style_color.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/style_column.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/style_footnote.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/style_header.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/style_header_cells.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/style_hline.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/style_subtitle.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/style_title.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/style_vline.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/tablespan.html</loc></url>
-<url><loc>https://jhorzek.github.io/tablespan/reference/tbl_styles.html</loc></url>
 </urlset>
 
