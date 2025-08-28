@@ -884,6 +884,7 @@ create_style_gt <- function(
   }
   style <- if (italic) "italic" else NULL
   weight <- if (bold) "bold" else NULL
+  font_size <- if(!is.null(font_size)) gt::px(1.3333343412075*font_size) else NULL
 
   style = list(
     gt::cell_text(
