@@ -119,7 +119,7 @@
 #' gt_tbl
 tablespan <- function(
   data,
-  formula,
+  formula = 1 ~ .,
   title = NULL,
   subtitle = NULL,
   footnote = NULL
@@ -128,6 +128,8 @@ tablespan <- function(
     warning("Tablespan uses tibble internally. Translating data to tibble")
     data <- tibble::as_tibble(data)
   }
+
+  formula <- preprocess_formula(formula = formula, data = data)
 
   # ensure that the data is not grouped
   data <- data |>
@@ -165,6 +167,30 @@ tablespan <- function(
   bt_result <- initialize_styles(tbl = bt_result)
 
   return(bt_result)
+}
+
+preprocess_formula <- function(formula, data) {
+  all_variables_in_data <- colnames(data)
+  all_variables_in_formula <- all.vars(formula)
+  if (
+    ("." %in% all_variables_in_formula) &
+      (length(setdiff(all_variables_in_data, all_variables_in_formula)) > 0)
+  ) {
+    # We replace "." with all variables not used in the formulas, but
+    # available from the data
+    replace_with <- parse(
+      text = paste0(
+        setdiff(all_variables_in_data, all_variables_in_formula),
+        collapse = " + "
+      )
+    )[[1]]
+
+    formula <- as.formula(do.call(
+      'substitute',
+      list(formula, list(`.` = replace_with))
+    ))
+  }
+  return(formula)
 }
 
 #' check_variables
