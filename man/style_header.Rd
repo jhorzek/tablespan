@@ -6,8 +6,8 @@
 \usage{
 style_header(
   tbl,
-  background_color = "#ffffff",
-  text_color = "#000000",
+  background_color = NULL,
+  text_color = NULL,
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,

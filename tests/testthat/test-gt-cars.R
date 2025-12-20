@@ -33,8 +33,8 @@ test_that("cars", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -85,20 +85,6 @@ test_that("cars", {
       columns = dplyr::where(is.double),
       decimals = 2
     ) |>
-    gt::tab_style(
-      data = _,
-      style = list(
-        gt::cell_text(
-          color = "#000000",
-          style = NULL,
-          weight = NULL
-        ),
-        gt::cell_fill(color = "#ffffff")
-      ),
-      locations = gt::cells_body(
-        columns = gt::everything()
-      )
-    ) |>
     gt::sub_missing(missing_text = "")
 
   testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
@@ -139,8 +125,8 @@ test_that("cars - no autostyle", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -189,20 +175,6 @@ test_that("cars - no autostyle", {
     gt::fmt_number(
       columns = dplyr::where(is.double),
       decimals = 2
-    ) |>
-    gt::tab_style(
-      data = _,
-      style = list(
-        gt::cell_text(
-          color = "#000000",
-          style = NULL,
-          weight = NULL
-        ),
-        gt::cell_fill(color = "#ffffff")
-      ),
-      locations = gt::cells_body(
-        columns = gt::everything()
-      )
     )
 
   testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
@@ -318,20 +290,6 @@ test_that("cars-additional_spanners", {
     gt::fmt_number(
       columns = dplyr::where(is.double),
       decimals = 2
-    ) |>
-    gt::tab_style(
-      data = _,
-      style = list(
-        gt::cell_text(
-          color = "#000000",
-          style = NULL,
-          weight = NULL
-        ),
-        gt::cell_fill(color = "#ffffff")
-      ),
-      locations = gt::cells_body(
-        columns = gt::everything()
-      )
     )
 
   testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
@@ -440,20 +398,6 @@ test_that("cars-no_row_names", {
     gt::fmt_number(
       columns = dplyr::where(is.double),
       decimals = 2
-    ) |>
-    gt::tab_style(
-      data = _,
-      style = list(
-        gt::cell_text(
-          color = "#000000",
-          style = NULL,
-          weight = NULL
-        ),
-        gt::cell_fill(color = "#ffffff")
-      ),
-      locations = gt::cells_body(
-        columns = gt::everything()
-      )
     )
 
   testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
@@ -494,8 +438,8 @@ test_that("cars-no_titles", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     footnote = "Data from the infamous mtcars data set."
   )
 
@@ -540,20 +484,6 @@ test_that("cars-no_titles", {
     gt::fmt_number(
       columns = dplyr::where(is.double),
       decimals = 2
-    ) |>
-    gt::tab_style(
-      data = _,
-      style = list(
-        gt::cell_text(
-          color = "#000000",
-          style = NULL,
-          weight = NULL
-        ),
-        gt::cell_fill(color = "#ffffff")
-      ),
-      locations = gt::cells_body(
-        columns = gt::everything()
-      )
     )
 
   testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
@@ -594,8 +524,8 @@ test_that("cars-no_titles_no_footnotes", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt)
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt)
   )
 
   gt_tbl <- as_gt(tbl = tbl)
@@ -638,20 +568,6 @@ test_that("cars-no_titles_no_footnotes", {
     gt::fmt_number(
       columns = dplyr::where(is.double),
       decimals = 2
-    ) |>
-    gt::tab_style(
-      data = _,
-      style = list(
-        gt::cell_text(
-          color = "#000000",
-          style = NULL,
-          weight = NULL
-        ),
-        gt::cell_fill(color = "#ffffff")
-      ),
-      locations = gt::cells_body(
-        columns = gt::everything()
-      )
     )
 
   testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
@@ -696,8 +612,8 @@ test_that("cars-duplicated_spanner_names", {
       formula = Parameter ~
         (`Model 1` = Estimate:Estimate.x +
           (Significance = `t-value`:`t value.x` + `p-value`:`Pr(>|t|).x`)) +
-          (`Model 2` = Estimate:Estimate.y +
-            (Significance = `t-value`:`t value.y` + `p-value`:`Pr(>|t|).y`))
+        (`Model 2` = Estimate:Estimate.y +
+          (Significance = `t-value`:`t value.y` + `p-value`:`Pr(>|t|).y`))
     )
 
   gt_tbl <- as_gt(tbl)
@@ -761,20 +677,6 @@ test_that("cars-duplicated_spanner_names", {
     gt::fmt_number(
       columns = dplyr::where(is.double),
       decimals = 2
-    ) |>
-    gt::tab_style(
-      data = _,
-      style = list(
-        gt::cell_text(
-          color = "#000000",
-          style = NULL,
-          weight = NULL
-        ),
-        gt::cell_fill(color = "#ffffff")
-      ),
-      locations = gt::cells_body(
-        columns = gt::everything()
-      )
     )
 
   testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
@@ -816,8 +718,8 @@ test_that("cars - gt styling", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -868,20 +770,6 @@ test_that("cars - gt styling", {
       columns = dplyr::where(is.double),
       decimals = 2
     ) |>
-    gt::tab_style(
-      data = _,
-      style = list(
-        gt::cell_text(
-          color = "#000000",
-          style = NULL,
-          weight = NULL
-        ),
-        gt::cell_fill(color = "#ffffff")
-      ),
-      locations = gt::cells_body(
-        columns = gt::everything()
-      )
-    ) |>
     gt::sub_missing(missing_text = "")
 
   testthat::expect_true(compare_tables(
@@ -892,7 +780,7 @@ test_that("cars - gt styling", {
   # title
   testthat::expect_true(compare_tables(
     tbl |>
-      style_title(background_color = "#983439") |>
+      style_title(text_color = "#000000", background_color = "#983439") |>
       as_gt(),
     expected_base |>
       gt::tab_style(
@@ -1080,14 +968,14 @@ test_that("cars - gt styling", {
       ) |>
       gt::tab_style(
         style = list(
-          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_text(weight = "bold"),
           gt::cell_fill(color = "#B65455")
         ),
         locations = gt::cells_column_labels()
       ) |>
       gt::tab_style(
         style = list(
-          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_text(weight = "bold"),
           gt::cell_fill(color = "#B65455")
         ),
         locations = gt::cells_column_spanners()
@@ -1161,14 +1049,14 @@ test_that("cars - gt styling", {
       ) |>
       gt::tab_style(
         style = list(
-          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_text(weight = "bold"),
           gt::cell_fill(color = "#B65455")
         ),
         locations = gt::cells_column_labels()
       ) |>
       gt::tab_style(
         style = list(
-          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_text(weight = "bold"),
           gt::cell_fill(color = "#B65455")
         ),
         locations = gt::cells_column_spanners()
@@ -1227,16 +1115,7 @@ test_that("cars - gt styling", {
       ) |>
       style_column(
         columns = dplyr::where(is.double),
-        color_scale = c(
-          "#123456" = min(
-            summarized_table |> select(where(is.double)),
-            na.rm = TRUE
-          ),
-          "#B46983" = max(
-            summarized_table |> select(where(is.double)),
-            na.rm = TRUE
-          )
-        )
+        color_scale = color_scale
       ) |>
       as_gt(),
     expected_base |>
@@ -1275,14 +1154,14 @@ test_that("cars - gt styling", {
       ) |>
       gt::tab_style(
         style = list(
-          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_text(weight = "bold"),
           gt::cell_fill(color = "#B65455")
         ),
         locations = gt::cells_column_labels()
       ) |>
       gt::tab_style(
         style = list(
-          gt::cell_text(weight = "bold", color = "#000000"),
+          gt::cell_text(weight = "bold"),
           gt::cell_fill(color = "#B65455")
         ),
         locations = gt::cells_column_spanners()
@@ -1358,17 +1237,7 @@ test_that("cars - gt styling", {
       ) |>
       style_column(
         columns = dplyr::where(is.double),
-        color_scale = c(
-          "#123456" = min(
-            summarized_table |> select(where(is.double)),
-            na.rm = TRUE
-          ),
-          "#ffffff" = 50,
-          "#B46983" = max(
-            summarized_table |> select(where(is.double)),
-            na.rm = TRUE
-          )
-        )
+        color_scale = color_scale
       ) |>
       as_gt(),
     expected_base |>

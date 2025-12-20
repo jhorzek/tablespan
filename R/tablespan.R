@@ -172,10 +172,14 @@ tablespan <- function(
 preprocess_formula <- function(formula, data) {
   all_variables_in_data <- colnames(data)
   all_variables_in_formula <- all.vars(formula)
-  if (
-    ("." %in% all_variables_in_formula) &
-      (length(setdiff(all_variables_in_data, all_variables_in_formula)) > 0)
-  ) {
+  if (("." %in% all_variables_in_formula)) {
+    if (
+      (length(setdiff(all_variables_in_data, all_variables_in_formula)) == 0)
+    ) {
+      stop(
+        "You used the placeholder `.` in your table formula, but all items of the data set are already referenced explicitly. Consider removing the `.`."
+      )
+    }
     # We replace "." with all variables not used in the formulas, but
     # available from the data
     replace_with <- parse(

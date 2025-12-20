@@ -4,7 +4,13 @@
 \alias{tablespan}
 \title{tablespan}
 \usage{
-tablespan(data, formula, title = NULL, subtitle = NULL, footnote = NULL)
+tablespan(
+  data,
+  formula = 1 ~ .,
+  title = NULL,
+  subtitle = NULL,
+  footnote = NULL
+)
 }
 \arguments{
 \item{data}{data set}

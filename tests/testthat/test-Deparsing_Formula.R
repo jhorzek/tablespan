@@ -1,47 +1,92 @@
 test_that("Deparsing table formula", {
-  library(testthat)
-  library(tablespan)
-  formula <- (`Row Name` = `New item name`:`Row 1` + `Row 2`) ~ `Column 1` + (`Column Banner` = `Column 2` + `Column 3` + (`Sub Banner` = `Column 4` + `Column 5`))
-  deparsed <- tablespan:::deparse_formula(formula)
+     library(testthat)
+     library(tablespan)
+     formula <- (`Row Name` = `New item name`:`Row 1` + `Row 2`) ~ `Column 1` +
+          (`Column Banner` = `Column 2` +
+               `Column 3` +
+               (`Sub Banner` = `Column 4` + `Column 5`))
+     deparsed <- tablespan:::deparse_formula(formula)
 
-  lhs <- list(
-    name = "_BASE_LEVEL_",
-    entries = list(list(name = "Row Name",
-                        entries = list(list(name = "New item name",
-                                            item_name = "Row 1",
-                                            entries = NULL),
-                                       list(name = "Row 2",
-                                            item_name = "Row 2",
-                                            entries = NULL)))))
+     lhs <- list(
+          name = "_BASE_LEVEL_",
+          entries = list(list(
+               name = "Row Name",
+               entries = list(
+                    list(
+                         name = "New item name",
+                         item_name = "Row 1",
+                         entries = NULL
+                    ),
+                    list(name = "Row 2", item_name = "Row 2", entries = NULL)
+               )
+          ))
+     )
 
-  rhs <- list(
-    name = "_BASE_LEVEL_",
-    entries = list(
-      list(name = "Column 1",
-           item_name = "Column 1",
-           entries = NULL),
-      list(name = "Column Banner",
-           entries = list(
-             list(name = "Column 2",
-                  item_name = "Column 2",
-                  entries = NULL),
-             list(name = "Column 3",
-                  item_name = "Column 3",
-                  entries = NULL),
-             list(name = "Sub Banner",
-                  entries = list(
-                    list(name = "Column 4",
-                         item_name = "Column 4",
-                         entries = NULL),
-                    list(name = "Column 5",
-                         item_name = "Column 5",
-                         entries = NULL)
-                  ))
-           ))
-    )
-  )
+     rhs <- list(
+          name = "_BASE_LEVEL_",
+          entries = list(
+               list(name = "Column 1", item_name = "Column 1", entries = NULL),
+               list(
+                    name = "Column Banner",
+                    entries = list(
+                         list(
+                              name = "Column 2",
+                              item_name = "Column 2",
+                              entries = NULL
+                         ),
+                         list(
+                              name = "Column 3",
+                              item_name = "Column 3",
+                              entries = NULL
+                         ),
+                         list(
+                              name = "Sub Banner",
+                              entries = list(
+                                   list(
+                                        name = "Column 4",
+                                        item_name = "Column 4",
+                                        entries = NULL
+                                   ),
+                                   list(
+                                        name = "Column 5",
+                                        item_name = "Column 5",
+                                        entries = NULL
+                                   )
+                              )
+                         )
+                    )
+               )
+          )
+     )
 
-  testthat::expect_true(identical(deparsed$lhs, lhs))
-  testthat::expect_true(identical(deparsed$rhs, rhs))
+     testthat::expect_true(identical(deparsed$lhs, lhs))
+     testthat::expect_true(identical(deparsed$rhs, rhs))
+})
 
+
+test_that("default formula works", {
+     library(tablespan)
+     library(dplyr)
+     data("mtcars")
+
+     # We want to report the following table:
+     summarized_table <- mtcars |>
+          group_by(cyl, vs) |>
+          summarise(
+               N = n(),
+               mean_hp = mean(hp),
+               sd_hp = sd(hp),
+               mean_wt = mean(wt),
+               sd_wt = sd(wt)
+          )
+
+     tbl_default <- summarized_table |>
+          tablespan()
+
+     tbl_comparison <- summarized_table |>
+          tablespan(
+               formula = 1 ~ cyl + vs + N + mean_hp + sd_hp + mean_wt + sd_wt
+          )
+
+     expect_true(identical(print(tbl_default), print(tbl_comparison)))
 })

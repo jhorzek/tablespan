@@ -158,8 +158,8 @@ default_styles <- function() {
 #'   as_gt()
 style_title <- function(
   tbl,
-  background_color = "#ffffff",
-  text_color = "#000000",
+  background_color = NULL,
+  text_color = NULL,
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
@@ -247,8 +247,8 @@ style_title <- function(
 #'   as_gt()
 style_subtitle <- function(
   tbl,
-  background_color = "#ffffff",
-  text_color = "#000000",
+  background_color = NULL,
+  text_color = NULL,
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
@@ -339,8 +339,8 @@ style_subtitle <- function(
 #'   as_gt()
 style_header <- function(
   tbl,
-  background_color = "#ffffff",
-  text_color = "#000000",
+  background_color = NULL,
+  text_color = NULL,
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
@@ -430,8 +430,8 @@ style_header <- function(
 #' # save workbook to see the effect
 style_header_cells <- function(
   tbl,
-  background_color = "#ffffff",
-  text_color = "#000000",
+  background_color = NULL,
+  text_color = NULL,
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
@@ -502,8 +502,8 @@ style_header_cells <- function(
 #'   as_gt()
 style_footnote <- function(
   tbl,
-  background_color = "#ffffff",
-  text_color = "#000000",
+  background_color = NULL,
+  text_color = NULL,
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
@@ -696,8 +696,8 @@ style_column <- function(
   tbl,
   columns = dplyr::everything(),
   rows = NULL,
-  background_color = "#ffffff",
-  text_color = "#000000",
+  background_color = NULL,
+  text_color = NULL,
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
@@ -884,7 +884,11 @@ create_style_gt <- function(
   }
   style <- if (italic) "italic" else NULL
   weight <- if (bold) "bold" else NULL
-  font_size <- if(!is.null(font_size)) gt::px(1.3333343412075*font_size) else NULL
+  font_size <- if (!is.null(font_size)) {
+    gt::px(1.3333343412075 * font_size)
+  } else {
+    NULL
+  }
 
   style = list(
     gt::cell_text(
@@ -892,9 +896,12 @@ create_style_gt <- function(
       color = text_color,
       style = style,
       weight = weight
-    ),
-    gt::cell_fill(color = background_color)
+    )
   )
+  if (!is.null(background_color)) {
+    style[[length(style) + 1]] <- gt::cell_fill(color = background_color)
+  }
+  return(style)
 }
 
 #' create_style_openxlsx
