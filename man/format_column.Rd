@@ -10,6 +10,7 @@ format_column(
   rows = NULL,
   format_gt = gt::fmt_auto,
   format_openxlsx = "GENERAL",
+  format_hux = NULL,
   stack = TRUE
 )
 }
@@ -24,6 +25,8 @@ format_column(
 and return the tbl with applied formatting. See examples.}
 
 \item{format_openxlsx}{an argument passed to the numFmt field for openxlsx::createStyle.}
+
+\item{format_hux}{set to NULL to use default formatting. Alternative, use a value that can be passed to huxtable::set_number_format()}
 
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}

@@ -73,6 +73,7 @@
 #' @param title string specifying the title of the table
 #' @param subtitle string specifying the subtitle of the table
 #' @param footnote string specifying the footnote of the table
+#' @param max_digits the maximal number of digits to print for floating point numbers
 #' @returns Object of class Tablespan with title, subtitle, header info, data, and footnote.
 #' @importFrom tibble as_tibble
 #' @importFrom tibble is_tibble
@@ -122,7 +123,8 @@ tablespan <- function(
   formula = 1 ~ .,
   title = NULL,
   subtitle = NULL,
-  footnote = NULL
+  footnote = NULL,
+  max_digits = 4
 ) {
   if (!tibble::is_tibble(data)) {
     warning("Tablespan uses tibble internally. Translating data to tibble")
@@ -163,12 +165,13 @@ tablespan <- function(
   )
   class(bt_result) <- "Tablespan"
 
-  bt_result <- initialize_formats(tbl = bt_result)
+  bt_result <- initialize_formats(tbl = bt_result, max_digits = max_digits)
   bt_result <- initialize_styles(tbl = bt_result)
 
   return(bt_result)
 }
 
+#' @importFrom stats as.formula
 preprocess_formula <- function(formula, data) {
   all_variables_in_data <- colnames(data)
   all_variables_in_formula <- all.vars(formula)

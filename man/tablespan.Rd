@@ -9,7 +9,8 @@ tablespan(
   formula = 1 ~ .,
   title = NULL,
   subtitle = NULL,
-  footnote = NULL
+  footnote = NULL,
+  max_digits = 4
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ tablespan(
 \item{subtitle}{string specifying the subtitle of the table}
 
 \item{footnote}{string specifying the footnote of the table}
+
+\item{max_digits}{the maximal number of digits to print for floating point numbers}
 }
 \value{
 Object of class Tablespan with title, subtitle, header info, data, and footnote.

@@ -7,8 +7,7 @@
 as_gt(
   tbl,
   groupname_col = NULL,
-  separator_style = gt::cell_borders(sides = c("right"), weight = gt::px(1), color =
-    "gray"),
+  separator_style = NULL,
   auto_format = TRUE,
   ...
 )

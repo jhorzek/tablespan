@@ -16,6 +16,7 @@ style_column(
   color_scale = NULL,
   openxlsx_style = NULL,
   gt_style = NULL,
+  hux_style = NULL,
   stack = TRUE
 )
 }
@@ -42,6 +43,9 @@ Example for three colors: color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65
 \item{openxlsx_style}{optional custom openxlsx style. When provided, all other arguments are ignored}
 
 \item{gt_style}{optional custom gt style. When provided, all other arguments are ignored}
+
+\item{hux_style}{optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}}
 
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}

@@ -23,6 +23,7 @@ Config/testthat/edition: 3
 Imports: 
     dplyr,
     gt,
+    huxtable,
     methods,
     openxlsx,
     rlang,

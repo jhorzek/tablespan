@@ -14,7 +14,7 @@
 #' @param auto_format should the table be formatted automatically?
 #' @param ... additional arguments passed to gt::gt().
 #' @returns gt table that can be further adapted with the gt package.
-#' @import gt
+#' @importFrom gt gt
 #' @export
 #' @examples
 #' library(tablespan)
@@ -40,14 +40,24 @@
 as_gt <- function(
   tbl,
   groupname_col = NULL,
-  separator_style = gt::cell_borders(
-    sides = c("right"),
-    weight = gt::px(1),
-    color = "gray"
-  ),
+  separator_style = NULL,
   auto_format = TRUE,
   ...
 ) {
+  if (!requireNamespace("gt", quietly = TRUE)) {
+    stop(
+      "Using as_gt requires the gt package. Please install with install.packages('gt')"
+    )
+  }
+
+  if (is.null(separator_style)) {
+    separator_style <- gt::cell_borders(
+      sides = c("right"),
+      weight = gt::px(1),
+      color = "gray"
+    )
+  }
+
   if (!is.null(tbl$header$lhs)) {
     data_set <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
   } else {
