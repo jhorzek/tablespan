@@ -72,8 +72,8 @@ tbl <- tablespan(data = summarized_table,
                  title = "Motor Trend Car Road Tests",
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
-
-tbl |>
-  style_title(bold = TRUE) |>
-  as_gt()
+if(require_gt(throw = FALSE))
+  tbl |>
+    style_title(bold = TRUE) |>
+    as_gt()
 }

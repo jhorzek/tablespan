@@ -132,12 +132,15 @@ tbl <- tbl |>
     style_column(columns = where(is.double), bold = TRUE)
 
 # Export as Excel table:
-wb <- as_excel(tbl = tbl)
+if(require_openxlsx(throw = FALSE))
+  wb <- as_excel(tbl = tbl)
 
 # Save using openxlsx
 # openxlsx::saveWorkbook(wb, "cars.xlsx")
 
 # Export as gt:
-gt_tbl <- as_gt(tbl = tbl)
-gt_tbl
+if(require_gt(throw = FALSE)) {
+  gt_tbl <- as_gt(tbl = tbl)
+  gt_tbl
+}
 }

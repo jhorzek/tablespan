@@ -9,7 +9,6 @@
 #' @param start_col column at which to start the table
 #' @param merge_rownames should row names with identical entries be merged?
 #' @returns openxlsx workbook object that can be edited and saved with openxlsx
-#' @import openxlsx
 #' @export
 #' @examples
 #' library(tablespan)
@@ -48,8 +47,8 @@
 #'           title = "Motor Trend Car Road Tests",
 #'           subtitle = "A table created with tablespan",
 #'           footnote = "Data from the infamous mtcars data set.")
-#'
-#' wb <- as_excel(tbl = tbl)
+#' if(require_openxlsx(throw = FALSE))
+#'   wb <- as_excel(tbl = tbl)
 #'
 #' # Create the excel table:
 #' # openxlsx::saveWorkbook(wb,
@@ -62,6 +61,8 @@ as_excel <- function(
   start_col = 1,
   merge_rownames = TRUE
 ) {
+  require_openxlsx()
+
   if (is.character(sheet) && !(sheet %in% workbook$sheet_names)) {
     openxlsx::addWorksheet(sheetName = sheet, wb = workbook)
   }
@@ -137,7 +138,6 @@ as_excel <- function(
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
 #' @param styles openxlsx style for the different table elements
-#' @import openxlsx
 #' @noRd
 initialize_styles_openxlsx <- function(
   tbl,
@@ -146,6 +146,7 @@ initialize_styles_openxlsx <- function(
   locations,
   styles
 ) {
+  require_openxlsx()
   # Title
   if (!is.null(tbl$title)) {
     openxlsx::addStyle(
@@ -218,9 +219,9 @@ initialize_styles_openxlsx <- function(
 #' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
-#' @import openxlsx
 #' @noRd
 create_outlines <- function(tbl, workbook, sheet, locations, styles) {
+  require_openxlsx()
   if (!is.null(tbl$header$lhs)) {
     left_most <- locations$col$start_col_header_lhs
   } else {
@@ -286,9 +287,9 @@ create_outlines <- function(tbl, workbook, sheet, locations, styles) {
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @import openxlsx
 #' @noRd
 write_title <- function(tbl, workbook, sheet, locations) {
+  require_openxlsx()
   if (!is.null(tbl$title)) {
     openxlsx::writeData(
       wb = workbook,
@@ -336,7 +337,6 @@ write_title <- function(tbl, workbook, sheet, locations) {
 #' @param table_data data for rownames and the actual data for the body of the table
 #' @param locations list with overview of row and col locations for different table elements
 #' @param styles openxlsx style for the different table elements
-#' @import openxlsx
 #' @noRd
 write_header <- function(
   workbook,
@@ -346,6 +346,7 @@ write_header <- function(
   locations,
   styles
 ) {
+  require_openxlsx()
   if (!is.null(header$lhs)) {
     max_level <- max(header$lhs$level, header$rhs$level)
 
@@ -385,7 +386,6 @@ write_header <- function(
 #' @param start_row integer specifying row to write to
 #' @param start_col integer specifying column to write to
 #' @param styles openxlsx style for the different table elements
-#' @import openxlsx
 #' @noRd
 write_header_entry <- function(
   workbook,
@@ -396,6 +396,7 @@ write_header_entry <- function(
   start_col,
   styles
 ) {
+  require_openxlsx()
   # write current entry name into table
   if (header_entry$name != "_BASE_LEVEL_") {
     openxlsx::writeData(
@@ -454,7 +455,6 @@ write_header_entry <- function(
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
 #' @param formats formatting applied to the data
-#' @import openxlsx
 #' @noRd
 write_data <- function(
   workbook,
@@ -465,6 +465,7 @@ write_data <- function(
   styles,
   formats
 ) {
+  require_openxlsx()
   if (!is.null(header$lhs)) {
     # Row names
     openxlsx::writeData(
@@ -575,9 +576,9 @@ write_data <- function(
 #' @param workbook Excel workbook created with openxlsx::createWorkbook()
 #' @param sheet name of the sheet to which the table should be written to
 #' @param locations list with overview of row and col locations for different table elements
-#' @import openxlsx
 #' @noRd
 write_footnote <- function(tbl, workbook, sheet, locations, styles) {
+  require_openxlsx()
   if (is.null(tbl$footnote)) {
     return()
   }
@@ -610,9 +611,9 @@ write_footnote <- function(tbl, workbook, sheet, locations, styles) {
 #' @param styles openxlsx style for the different table elements (see ?tablespan::tbl_styles).
 #' The styles element also allows applying custom styles to parts of the data shown in the
 #' table body.
-#' @import openxlsx
 #' @noRd
 merge_rownames <- function(workbook, sheet, table_data, locations, styles) {
+  require_openxlsx()
   cell_ids <- row_data_cell_ids(table_data$row_data)
 
   # We merge all cells within a column that have the same id.
@@ -656,6 +657,7 @@ merge_rownames <- function(workbook, sheet, table_data, locations, styles) {
 #'                            vs  = c(0,1,1,0,0))
 #' tablespan:::row_data_cell_ids(row_data)
 row_data_cell_ids <- function(row_data) {
+  require_openxlsx()
   if (!tibble::is_tibble(row_data)) {
     row_data <- tibble::as_tibble(row_data)
   }
@@ -672,4 +674,25 @@ row_data_cell_ids <- function(row_data) {
     }
   }
   return(ids)
+}
+
+#' require_openxlsx
+#'
+#' Check that openxlsx is installed
+#' @param throw throw error if the package is not installed
+#' @returns boolean or error
+#' @export
+#' @examples
+#' library(tablespan)
+#' require_openxlsx()
+require_openxlsx <- function(throw = TRUE) {
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+    if (throw) {
+      stop(
+        "Using as_excel requires the openxlsx package. Please install with install.packages('openxlsx')"
+      )
+    }
+    return(FALSE)
+  }
+  return(TRUE)
 }

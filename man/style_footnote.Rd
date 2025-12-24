@@ -73,6 +73,7 @@ tbl <- tablespan(data = summarized_table,
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
 
+if(require_gt(throw = FALSE))
 tbl |>
   style_footnote(bold = TRUE) |>
   as_gt()

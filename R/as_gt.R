@@ -14,7 +14,6 @@
 #' @param auto_format should the table be formatted automatically?
 #' @param ... additional arguments passed to gt::gt().
 #' @returns gt table that can be further adapted with the gt package.
-#' @importFrom gt gt
 #' @export
 #' @examples
 #' library(tablespan)
@@ -34,9 +33,10 @@
 #'                    N +
 #'                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
 #'                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
-#'
-#' gt_tbl <- as_gt(tbl)
-#' gt_tbl
+#' if(require_gt(throw = FALSE)){
+#'   gt_tbl <- as_gt(tbl)
+#'   gt_tbl
+#' }
 as_gt <- function(
   tbl,
   groupname_col = NULL,
@@ -44,11 +44,7 @@ as_gt <- function(
   auto_format = TRUE,
   ...
 ) {
-  if (!requireNamespace("gt", quietly = TRUE)) {
-    stop(
-      "Using as_gt requires the gt package. Please install with install.packages('gt')"
-    )
-  }
+  require_gt()
 
   if (is.null(separator_style)) {
     separator_style <- gt::cell_borders(
@@ -98,7 +94,6 @@ as_gt <- function(
 #' implementing the same headers in gt.
 #' @param tbl table created with tablespan::tablespan
 #' @keywords internal
-#' @import gt
 #' @noRd
 #' @examples
 #' library(tablespan)
@@ -141,7 +136,6 @@ flatten_table <- function(tbl) {
 #' all parents of the spanners as well to ensure that each spanner has a unique, but
 #' reproducible id.
 #' @param flattened list filled recursively
-#' @import gt
 #' @keywords internal
 #' @noRd
 #' @examples
@@ -201,7 +195,6 @@ flatten_table_partial <- function(tbl_partial, id = "", flattened = list()) {
 #'
 #' @param gt_tbl gt table without spanners
 #' @param tbl table created with tablespan::tablespan
-#' @import gt
 #' @keywords internal
 #' @noRd
 add_gt_spanners <- function(gt_tbl, tbl) {
@@ -230,12 +223,12 @@ add_gt_spanners <- function(gt_tbl, tbl) {
 #' @param gt_tbl gt table without spanners
 #' @param tbl_partial left or right hand side header of a table created with
 #' tablespan::tablespan
-#' @import gt
 #' @importFrom dplyr all_of
 #' @importFrom rlang :=
 #' @keywords internal
 #' @noRd
 add_gt_spanner_partial <- function(gt_tbl, tbl_partial) {
+  require_gt()
   # The table spanners need to be added in the correct order. All children of
   # a spanner must already be in the table, otherwise we get an error.
   # The level tells us the order; we have to start with the lowest one
@@ -290,10 +283,10 @@ add_gt_spanner_partial <- function(gt_tbl, tbl_partial) {
 #' data starts
 #' @param separator_style style of the vertical line that separates the row names
 #' from the data.
-#' @import gt
 #' @keywords internal
 #' @noRd
 add_gt_rowname_separator <- function(gt_tbl, right_of, separator_style) {
+  require_gt()
   gt_tbl <- gt_tbl |>
     gt::tab_style(
       style = separator_style,
@@ -310,9 +303,9 @@ add_gt_rowname_separator <- function(gt_tbl, right_of, separator_style) {
 #' @param subtitle subtitle text
 #' @return gt
 #' @keywords internal
-#' @importFrom gt tab_header
 #' @noRd
 add_gt_titles <- function(gt_tbl, title, subtitle) {
+  require_gt()
   return(
     gt_tbl |>
       gt::tab_header(title = title, subtitle = subtitle) |>
@@ -327,17 +320,17 @@ add_gt_titles <- function(gt_tbl, title, subtitle) {
 #' @param footnote footnote text
 #' @returns gt
 #' @keywords internal
-#' @importFrom gt tab_header
 #' @noRd
 add_gt_footnote <- function(gt_tbl, footnote) {
+  require_gt()
   return(
     gt_tbl |>
       gt::tab_footnote(footnote = footnote)
   )
 }
 
-
 format_gt <- function(gt_tbl, tbl, auto_format) {
+  require_gt()
   if (auto_format) {
     gt_tbl <- gt_tbl |>
       gt::fmt_auto() |>
@@ -382,4 +375,25 @@ format_gt <- function(gt_tbl, tbl, auto_format) {
   }
 
   return(gt_tbl)
+}
+
+#' require_gt
+#'
+#' Check that gt is installed
+#' @param throw throw error if the package is not installed
+#' @returns boolean or error
+#' @export
+#' @examples
+#' library(tablespan)
+#' require_gt()
+require_gt <- function(throw = TRUE) {
+  if (!requireNamespace("gt", quietly = TRUE)) {
+    if (throw) {
+      stop(
+        "Using as_gt requires the gt package. Please install with install.packages('gt')"
+      )
+    }
+    return(FALSE)
+  }
+  return(TRUE)
 }

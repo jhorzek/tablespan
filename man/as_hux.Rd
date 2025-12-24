@@ -37,7 +37,8 @@ tbl <- tablespan(data = summarized_table,
                    N +
                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
-
-hux_tbl <- as_hux(tbl)
-hux_tbl
+if(require_huxtable(throw = FALSE)){
+  hux_tbl <- as_hux(tbl)
+  hux_tbl
+}
 }

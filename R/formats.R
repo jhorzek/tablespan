@@ -99,6 +99,7 @@ smart_round <- function(x, max_digits = 4) {
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_gt(throw = FALSE))
 #' tbl |>
 #'   format_column(columns = mean_hp,
 #'                 rows = c(1,3),
@@ -191,6 +192,7 @@ format_column <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_gt(throw = FALSE))
 #' tbl |>
 #'   format_column(columns = mean_hp,
 #'                 rows = c(1,3),
@@ -249,6 +251,7 @@ create_format_gt_function <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_openxlsx(throw = FALSE))
 #' tbl |>
 #'   format_column(columns = mean_hp,
 #'                 rows = c(1,3),

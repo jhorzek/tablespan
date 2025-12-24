@@ -7,7 +7,6 @@
 #'
 #' @param tbl table created with tablespan::tablespan
 #' @returns huxtable that can be further adapted with the gt package.
-#' @importFrom huxtable as_hux
 #' @export
 #' @examples
 #' library(tablespan)
@@ -27,10 +26,13 @@
 #'                    N +
 #'                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
 #'                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
-#'
-#' hux_tbl <- as_hux(tbl)
-#' hux_tbl
+#' if(require_huxtable(throw = FALSE)){
+#'   hux_tbl <- as_hux(tbl)
+#'   hux_tbl
+#' }
 as_hux <- function(tbl) {
+  require_huxtable()
+
   if (!is.null(tbl$header$lhs)) {
     tbl_body <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
   } else {
@@ -80,6 +82,7 @@ hux_insert_header_entries <- function(
   column_offset,
   header_table
 ) {
+  require_huxtable()
   if (header_partial$name != "_BASE_LEVEL_") {
     header_table[
       max_level - header_partial$level,
@@ -110,6 +113,7 @@ hux_insert_header_entries <- function(
 }
 
 hux_add_headers <- function(tbl, tbl_hux) {
+  require_huxtable()
   if (!is.null(tbl$header$lhs)) {
     max_level <- max(tbl$header$lhs$level, tbl$header$rhs$level)
     max_col <- tbl$header$lhs$width + tbl$header$rhs$width
@@ -159,6 +163,7 @@ hux_add_headers <- function(tbl, tbl_hux) {
 }
 
 hux_add_borders <- function(tbl, tbl_hux, header_table) {
+  require_huxtable()
   # Add borders
   # All header borders
   tbl_hux <- tbl_hux |>
@@ -220,6 +225,7 @@ hux_add_merged_row <- function(
   number_format = NA,
   ...
 ) {
+  require_huxtable()
   # Copied from huxtable::add_footnote to style merged rows
   nr <- 1
   nc <- ncol(ht)
@@ -242,6 +248,7 @@ hux_add_merged_row <- function(
 }
 
 hux_add_title <- function(tbl, tbl_hux) {
+  require_huxtable()
   if (!is.null(tbl$subtitle)) {
     tbl_hux <- hux_add_merged_row(ht = tbl_hux, text = tbl$subtitle)
   }
@@ -257,6 +264,7 @@ hux_add_title <- function(tbl, tbl_hux) {
 }
 
 hux_add_footnote <- function(tbl, tbl_hux) {
+  require_huxtable()
   if (!is.null(tbl$footnote)) {
     tbl_hux <- tbl_hux |>
       huxtable::add_footnote(text = tbl$footnote)
@@ -265,6 +273,7 @@ hux_add_footnote <- function(tbl, tbl_hux) {
 }
 
 style_hux <- function(tbl_hux, tbl) {
+  require_huxtable()
   # Style the title
   if (!is.null(tbl$styles$title$hux) & !is.null(tbl$title)) {
     for (sty in tbl$styles$title$hux) {
@@ -372,4 +381,25 @@ style_hux <- function(tbl_hux, tbl) {
   }
 
   return(tbl_hux)
+}
+
+#' require_huxtable
+#'
+#' Check that huxtable is installed
+#' @param throw throw error if the package is not installed
+#' @returns boolean or error
+#' @export
+#' @examples
+#' library(tablespan)
+#' require_huxtable()
+require_huxtable <- function(throw = TRUE) {
+  if (!requireNamespace("huxtable", quietly = TRUE)) {
+    if (throw) {
+      stop(
+        "Using as_hux requires the huxtable package. Please install with install.packages('huxtable')"
+      )
+    }
+    return(FALSE)
+  }
+  return(TRUE)
 }

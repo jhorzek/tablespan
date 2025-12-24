@@ -169,10 +169,10 @@ default_styles_openxlsx <- function(default_styles) {
 #'                  title = "Motor Trend Car Road Tests",
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' tbl |>
-#'   style_title(bold = TRUE) |>
-#'   as_gt()
+#' if(require_gt(throw = FALSE))
+#'   tbl |>
+#'     style_title(bold = TRUE) |>
+#'     as_gt()
 style_title <- function(
   tbl,
   background_color = NULL,
@@ -211,15 +211,18 @@ style_title <- function(
     openxlsx_style = openxlsx_style
   )
 
-  tbl$styles$title$gt <- function(tbl) {
-    return(
-      tbl |>
-        gt::tab_style(
-          style = gt_style,
-          locations = gt::cells_title(groups = "title")
-        )
-    )
+  if (requireNamespace("gt", quietly = TRUE)) {
+    tbl$styles$title$gt <- function(tbl) {
+      return(
+        tbl |>
+          gt::tab_style(
+            style = gt_style,
+            locations = gt::cells_title(groups = "title")
+          )
+      )
+    }
   }
+
   tbl$styles$title$hux <- hux_style
   tbl$styles$title$openxlsx <- openxlsx_style
   return(tbl)
@@ -272,6 +275,7 @@ style_title <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_gt(throw = FALSE))
 #' tbl |>
 #'   style_subtitle(bold = TRUE) |>
 #'   as_gt()
@@ -313,15 +317,18 @@ style_subtitle <- function(
     openxlsx_style = openxlsx_style
   )
 
-  tbl$styles$subtitle$gt <- function(tbl) {
-    return(
-      tbl |>
-        gt::tab_style(
-          style = gt_style,
-          locations = gt::cells_title(groups = "subtitle")
-        )
-    )
+  if (requireNamespace("gt", quietly = TRUE)) {
+    tbl$styles$subtitle$gt <- function(tbl) {
+      return(
+        tbl |>
+          gt::tab_style(
+            style = gt_style,
+            locations = gt::cells_title(groups = "subtitle")
+          )
+      )
+    }
   }
+
   tbl$styles$subtitle$hux <- hux_style
   tbl$styles$subtitle$openxlsx <- openxlsx_style
   return(tbl)
@@ -373,6 +380,7 @@ style_subtitle <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_gt(throw = FALSE))
 #' tbl |>
 #'   style_header(
 #'     openxlsx_style = openxlsx::createStyle(
@@ -418,18 +426,20 @@ style_header <- function(
     openxlsx_style = openxlsx_style
   )
 
-  tbl$styles$header$gt <- function(tbl) {
-    return(
-      tbl |>
-        gt::tab_style(
-          style = gt_style,
-          locations = gt::cells_column_labels()
-        ) |>
-        gt::tab_style(
-          style = gt_style,
-          locations = gt::cells_column_spanners()
-        )
-    )
+  if (requireNamespace("gt", quietly = TRUE)) {
+    tbl$styles$header$gt <- function(tbl) {
+      return(
+        tbl |>
+          gt::tab_style(
+            style = gt_style,
+            locations = gt::cells_column_labels()
+          ) |>
+          gt::tab_style(
+            style = gt_style,
+            locations = gt::cells_column_spanners()
+          )
+      )
+    }
   }
 
   tbl$styles$header$hux <- hux_style
@@ -480,6 +490,7 @@ style_header <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_openxlsx(throw = FALSE))
 #' wb <- tbl |>
 #'   style_header_cells(text_color = "#345364") |>
 #'   as_excel()
@@ -555,6 +566,7 @@ style_header_cells <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_gt(throw = FALSE))
 #' tbl |>
 #'   style_footnote(bold = TRUE) |>
 #'   as_gt()
@@ -595,6 +607,19 @@ style_footnote <- function(
     background_color = background_color,
     openxlsx_style = openxlsx_style
   )
+
+  if (requireNamespace("gt", quietly = TRUE)) {
+    tbl$styles$footnote$gt <- function(tbl) {
+      return(
+        tbl |>
+          gt::tab_style(
+            style = gt_style,
+            locations = gt::cells_footnotes()
+          )
+      )
+    }
+  }
+
   tbl$styles$footnote$gt <- function(tbl) {
     return(
       tbl |>
@@ -645,6 +670,7 @@ style_footnote <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_openxlsx(throw = FALSE))
 #' wb <- tbl |>
 #'   style_hline(
 #'     openxlsx_style = openxlsx::createStyle(
@@ -697,6 +723,7 @@ style_hline <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_openxlsx(throw = FALSE))
 #' wb <- tbl |>
 #'   style_vline(
 #'     openxlsx_style = openxlsx::createStyle(
@@ -759,6 +786,7 @@ style_vline <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_gt(throw = FALSE))
 #' tbl |>
 #'   style_column(columns = mean_hp,
 #'                bold = TRUE) |>
@@ -877,6 +905,7 @@ style_column <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_gt(throw = FALSE))
 #' tbl |>
 #'   style_column(columns = mean_hp,
 #'                    bold = TRUE) |>
@@ -889,6 +918,10 @@ create_style_gt_function <- function(
   background_color,
   gt_style
 ) {
+  if (!requireNamespace("gt", quietly = TRUE)) {
+    return(NULL)
+  }
+
   styles <- create_style_gt(
     font_size,
     text_color,
@@ -949,6 +982,7 @@ create_style_gt_function <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_gt(throw = FALSE))
 #' tbl |>
 #'   style_column(columns = mean_hp,
 #'                    bold = TRUE) |>
@@ -961,6 +995,9 @@ create_style_gt <- function(
   background_color,
   gt_style = NULL
 ) {
+  if (!requireNamespace("gt", quietly = TRUE)) {
+    return(NULL)
+  }
   if (!is.null(gt_style)) {
     return(gt_style)
   }
@@ -1021,6 +1058,7 @@ create_style_gt <- function(
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
+#' if(require_openxlsx(throw = FALSE))
 #' tbl |>
 #'   style_column(columns = mean_hp,
 #'                bold = TRUE) |>
@@ -1033,6 +1071,9 @@ create_style_openxlsx <- function(
   background_color,
   openxlsx_style = NULL
 ) {
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+    return(NULL)
+  }
   if (!is.null(openxlsx_style)) {
     return(openxlsx_style)
   }
@@ -1073,6 +1114,9 @@ create_style_hux <- function(
   background_color,
   hux_style
 ) {
+  if (!requireNamespace("huxtable", quietly = TRUE)) {
+    return(NULL)
+  }
   if (!is.null(hux_style)) {
     return(list(hux_style))
   }
