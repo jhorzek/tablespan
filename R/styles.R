@@ -39,10 +39,22 @@ default_styles <- function() {
   ) |>
     default_styles_gt() |>
     default_styles_openxlsx() |>
-    default_styles_hux()
+    default_styles_hux() |>
+    default_styles_flex()
+
   return(default)
 }
 
+#' default_styles_gt
+#'
+#' Sets the default styles for gt tables in a tablespan table.
+#'
+#' This function adds default styling for gt tables to the provided default_styles list.
+#' If the gt package is not available, the original default_styles are returned unchanged.
+#'
+#' @param default_styles a list containing default styles for different table elements
+#' @returns a list with default styles for gt tables added to the input default_styles
+#' @noRd
 default_styles_gt <- function(default_styles) {
   if (!requireNamespace("gt", quietly = TRUE)) {
     return(default_styles)
@@ -63,6 +75,16 @@ default_styles_gt <- function(default_styles) {
   return(default_styles)
 }
 
+#' default_styles_hux
+#'
+#' Sets the default styles for huxtable tables in a tablespan table.
+#'
+#' This function adds default styling for huxtable tables to the provided default_styles list.
+#' If the huxtable package is not available, the original default_styles are returned unchanged.
+#'
+#' @param default_styles a list containing default styles for different table elements
+#' @returns a list with default styles for huxtable tables added to the input default_styles
+#' @noRd
 default_styles_hux <- function(default_styles) {
   if (!requireNamespace("huxtable", quietly = TRUE)) {
     return(default_styles)
@@ -81,6 +103,44 @@ default_styles_hux <- function(default_styles) {
   return(default_styles)
 }
 
+#' default_styles_flex
+#'
+#' Sets the default styles for flextable tables in a tablespan table.
+#'
+#' This function adds default styling for flextable tables to the provided default_styles list.
+#' If the flextable package is not available, the original default_styles are returned unchanged.
+#'
+#' @param default_styles a list containing default styles for different table elements
+#' @returns a list with default styles for flextable tables added to the input default_styles
+#' @noRd
+default_styles_flex <- function(default_styles) {
+  if (!requireNamespace("flextable", quietly = TRUE)) {
+    return(default_styles)
+  }
+
+  default <- list(function(tbl, row, col, part) {
+    return(tbl)
+  })
+  default_styles$title$flex <- default
+  default_styles$subtitle$flex <- default
+  default_styles$header$flex <- default
+  default_styles$header_cells$flex <- default
+  default_styles$footnote$flex <- default
+  default_styles$hline$flex <- default
+  default_styles$vline$flex <- default
+  return(default_styles)
+}
+
+#' default_styles_openxlsx
+#'
+#' Sets the default styles for openxlsx tables in a tablespan table.
+#'
+#' This function adds default styling for openxlsx tables to the provided default_styles list.
+#' If the openxlsx package is not available, the original default_styles are returned unchanged.
+#'
+#' @param default_styles a list containing default styles for different table elements
+#' @returns a list with default styles for openxlsx tables added to the input default_styles
+#' @noRd
 default_styles_openxlsx <- function(default_styles) {
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
     return(default_styles)
@@ -144,6 +204,8 @@ default_styles_openxlsx <- function(default_styles) {
 #' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @param hux_style optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
+#' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+#' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -182,7 +244,8 @@ style_title <- function(
   italic = FALSE,
   openxlsx_style = NULL,
   gt_style = NULL,
-  hux_style = NULL
+  hux_style = NULL,
+  flex_style = NULL
 ) {
   gt_style <- create_style_gt(
     font_size = font_size,
@@ -200,6 +263,15 @@ style_title <- function(
     italic = italic,
     background_color = background_color,
     hux_style = hux_style
+  )
+
+  flex_style <- create_style_flex(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    flex_style = flex_style
   )
 
   openxlsx_style <- create_style_openxlsx(
@@ -224,6 +296,7 @@ style_title <- function(
   }
 
   tbl$styles$title$hux <- hux_style
+  tbl$styles$title$flex <- flex_style
   tbl$styles$title$openxlsx <- openxlsx_style
   return(tbl)
 }
@@ -249,6 +322,8 @@ style_title <- function(
 #' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @param hux_style optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
+#' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+#' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -288,7 +363,8 @@ style_subtitle <- function(
   italic = FALSE,
   openxlsx_style = NULL,
   gt_style = NULL,
-  hux_style = NULL
+  hux_style = NULL,
+  flex_style = NULL
 ) {
   gt_style <- create_style_gt(
     font_size = font_size,
@@ -306,6 +382,15 @@ style_subtitle <- function(
     italic = italic,
     background_color = background_color,
     hux_style = hux_style
+  )
+
+  flex_style <- create_style_flex(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    flex_style = flex_style
   )
 
   openxlsx_style <- create_style_openxlsx(
@@ -329,6 +414,7 @@ style_subtitle <- function(
     }
   }
 
+  tbl$styles$subtitle$flex <- flex_style
   tbl$styles$subtitle$hux <- hux_style
   tbl$styles$subtitle$openxlsx <- openxlsx_style
   return(tbl)
@@ -354,6 +440,8 @@ style_subtitle <- function(
 #' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @param hux_style optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
+#' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+#' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -397,7 +485,8 @@ style_header <- function(
   italic = FALSE,
   openxlsx_style = NULL,
   gt_style = NULL,
-  hux_style = NULL
+  hux_style = NULL,
+  flex_style = NULL
 ) {
   gt_style <- create_style_gt(
     font_size = font_size,
@@ -415,6 +504,15 @@ style_header <- function(
     italic = italic,
     background_color = background_color,
     hux_style = hux_style
+  )
+
+  flex_style <- create_style_flex(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    flex_style = flex_style
   )
 
   openxlsx_style <- create_style_openxlsx(
@@ -443,7 +541,7 @@ style_header <- function(
   }
 
   tbl$styles$header$hux <- hux_style
-
+  tbl$styles$header$flex <- flex_style
   tbl$styles$header$openxlsx <- openxlsx_style
   return(tbl)
 }
@@ -540,6 +638,8 @@ style_header_cells <- function(
 #' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @param hux_style optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
+#' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+#' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -579,7 +679,8 @@ style_footnote <- function(
   italic = FALSE,
   openxlsx_style = NULL,
   gt_style = NULL,
-  hux_style = NULL
+  hux_style = NULL,
+  flex_style = NULL
 ) {
   gt_style <- create_style_gt(
     font_size = font_size,
@@ -597,6 +698,15 @@ style_footnote <- function(
     italic = italic,
     background_color = background_color,
     hux_style = hux_style
+  )
+
+  flex_style <- create_style_flex(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    flex_style = flex_style
   )
 
   openxlsx_style <- create_style_openxlsx(
@@ -630,6 +740,7 @@ style_footnote <- function(
     )
   }
   tbl$styles$footnote$hux <- hux_style
+  tbl$styles$footnote$flex <- flex_style
   tbl$styles$footnote$openxlsx <- openxlsx_style
   return(tbl)
 }
@@ -758,6 +869,8 @@ style_vline <- function(
 #' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @param hux_style optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
+#' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+#' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
 #' @param stack When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 #' for openxlsx. When set to FALSE, the new style replaces all previous styling.
 #' @returns the tablespan table with added styles
@@ -804,6 +917,7 @@ style_column <- function(
   openxlsx_style = NULL,
   gt_style = NULL,
   hux_style = NULL,
+  flex_style = NULL,
   stack = TRUE
 ) {
   columns_expr <- rlang::enquo(columns)
@@ -820,6 +934,15 @@ style_column <- function(
     italic = italic,
     background_color = background_color,
     gt_style = gt_style
+  )
+
+  flex_style <- create_style_flex(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    flex_style = flex_style
   )
 
   hux_style <- create_style_hux(
@@ -843,6 +966,7 @@ style_column <- function(
   style <- list(
     gt = gt_style,
     hux = hux_style,
+    flex = flex_style,
     openxlsx = openxlsx_style
   )
 
@@ -1123,10 +1247,10 @@ create_style_hux <- function(
   styles <- list()
 
   if (!is.null(font_size)) {
-    styles[[length(styles) + 1]] <- function(ht, row, col) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col) {
       return(
         huxtable::set_font_size(
-          ht = ht,
+          ht = tbl,
           row = row,
           col = col,
           value = font_size
@@ -1136,10 +1260,10 @@ create_style_hux <- function(
   }
 
   if (!is.null(text_color)) {
-    styles[[length(styles) + 1]] <- function(ht, row, col) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col) {
       return(
         huxtable::set_text_color(
-          ht = ht,
+          ht = tbl,
           row = row,
           col = col,
           value = text_color
@@ -1149,10 +1273,10 @@ create_style_hux <- function(
   }
 
   if (!is.null(background_color)) {
-    styles[[length(styles) + 1]] <- function(ht, row, col) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col) {
       return(
         huxtable::set_background_color(
-          ht = ht,
+          ht = tbl,
           row = row,
           col = col,
           value = background_color
@@ -1162,10 +1286,10 @@ create_style_hux <- function(
   }
 
   if (bold) {
-    styles[[length(styles) + 1]] <- function(ht, row, col) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col) {
       return(
         huxtable::set_bold(
-          ht = ht,
+          ht = tbl,
           row = row,
           col = col
         )
@@ -1174,12 +1298,111 @@ create_style_hux <- function(
   }
 
   if (italic) {
-    styles[[length(styles) + 1]] <- function(ht, row, col) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col) {
       return(
         huxtable::set_italic(
-          ht = ht,
+          ht = tbl,
           row = row,
           col = col
+        )
+      )
+    }
+  }
+
+  return(styles)
+}
+
+#' create_style_flex
+#'
+#' Create a new style to be applied to the body of the table.
+#'
+#' @param background_color hex code for the background color
+#' @param text_color hex code for the text color
+#' @param font_size font size
+#' @param bold set to TRUE for bold
+#' @param italic set to TRUE for italic
+#' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+#' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> flextable::color(i = row, j = col, color = "red")\}
+#' @noRd
+create_style_flex <- function(
+  font_size,
+  text_color,
+  bold,
+  italic,
+  background_color,
+  flex_style
+) {
+  if (!requireNamespace("flextable", quietly = TRUE)) {
+    return(NULL)
+  }
+  if (!is.null(flex_style)) {
+    return(list(flex_style))
+  }
+  styles <- list()
+
+  if (!is.null(font_size)) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col, part) {
+      return(
+        flextable::fontsize(
+          x = tbl,
+          i = row,
+          j = col,
+          size = font_size,
+          part = part
+        )
+      )
+    }
+  }
+
+  if (!is.null(text_color)) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col, part) {
+      return(
+        flextable::color(
+          x = tbl,
+          i = row,
+          j = col,
+          color = text_color,
+          part = part
+        )
+      )
+    }
+  }
+
+  if (!is.null(background_color)) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col, part) {
+      return(
+        flextable::bg(
+          x = tbl,
+          i = row,
+          j = col,
+          bg = background_color,
+          part = part
+        )
+      )
+    }
+  }
+
+  if (bold) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col, part) {
+      return(
+        flextable::bold(
+          x = tbl,
+          i = row,
+          j = col,
+          part = part
+        )
+      )
+    }
+  }
+
+  if (italic) {
+    styles[[length(styles) + 1]] <- function(tbl, row, col, part) {
+      return(
+        flextable::italic(
+          x = tbl,
+          i = row,
+          j = col,
+          part = part
         )
       )
     }

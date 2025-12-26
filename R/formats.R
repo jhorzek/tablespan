@@ -321,7 +321,7 @@ format_auto <- function(data_col, max_digits) {
 #' @param dec_mark symbol used to separate decimals
 #' @returns a list with styles for gt and openxlsx
 #' @noRd
-format_number <- function(decimals = 2, sep_mark = ",", dec_mark = ".") {
+format_number <- function(decimals, sep_mark = ",", dec_mark = ".") {
   styles_list <- list()
   styles_list$openxlsx <- format_number_openxlsx(
     decimals = decimals,

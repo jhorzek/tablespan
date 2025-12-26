@@ -2,9 +2,11 @@
 
 S3method(print,Tablespan)
 export(as_excel)
+export(as_flextable)
 export(as_gt)
 export(as_hux)
 export(format_column)
+export(require_flextable)
 export(require_gt)
 export(require_huxtable)
 export(require_openxlsx)

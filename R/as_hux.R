@@ -162,6 +162,19 @@ hux_add_headers <- function(tbl, tbl_hux) {
   return(list(tbl_hux = tbl_hux, header_table = header_table))
 }
 
+#' hux_add_borders
+#'
+#' Adds borders to a huxtable based on the structure of the original tablespan table.
+#'
+#' This function adds borders to the huxtable to match the visual structure of the original
+#' tablespan table, including borders between header sections, around the entire table,
+#' and between empty cells.
+#'
+#' @param tbl tablespan table object
+#' @param tbl_hux huxtable object to add borders to
+#' @param header_table matrix containing the header structure
+#' @returns huxtable with borders added
+#' @noRd
 hux_add_borders <- function(tbl, tbl_hux, header_table) {
   require_huxtable()
   # Add borders
@@ -218,6 +231,21 @@ hux_add_borders <- function(tbl, tbl_hux, header_table) {
   return(tbl_hux)
 }
 
+#' hux_add_merged_row
+#'
+#' Adds a merged row to a huxtable with specified text and styling options.
+#'
+#' This function creates a new row in the huxtable that spans all columns,
+#' with the specified text content and optional styling. It's used primarily
+#' for adding titles, subtitles, and footnotes to tables.
+#'
+#' @param ht huxtable object to modify
+#' @param text text content for the merged row
+#' @param border optional border thickness (NULL for no border)
+#' @param number_format optional number format for the cell
+#' @param ... additional arguments passed to huxtable::set_cell_properties
+#' @returns modified huxtable with the new merged row
+#' @noRd
 hux_add_merged_row <- function(
   ht,
   text,
@@ -247,6 +275,17 @@ hux_add_merged_row <- function(
   return(ht)
 }
 
+#' hux_add_title
+#'
+#' Adds a title to a huxtable based on the structure of the original tablespan table.
+#'
+#' This function adds a title row to the huxtable if the original tablespan table has a title.
+#' The title is added as a merged row spanning all columns, with appropriate styling.
+#'
+#' @param tbl tablespan table object containing the title information
+#' @param tbl_hux huxtable object to add the title to
+#' @returns huxtable with title added if applicable
+#' @noRd
 hux_add_title <- function(tbl, tbl_hux) {
   require_huxtable()
   if (!is.null(tbl$subtitle)) {
@@ -263,6 +302,17 @@ hux_add_title <- function(tbl, tbl_hux) {
   return(tbl_hux)
 }
 
+#' hux_add_footnote
+#'
+#' Adds a footnote to a huxtable based on the structure of the original tablespan table.
+#'
+#' This function adds a footnote to the huxtable if the original tablespan table has a footnote.
+#' The footnote is added using huxtable's add_footnote function with the specified text.
+#'
+#' @param tbl tablespan table object containing the footnote information
+#' @param tbl_hux huxtable object to add the footnote to
+#' @returns huxtable with footnote added if applicable
+#' @noRd
 hux_add_footnote <- function(tbl, tbl_hux) {
   require_huxtable()
   if (!is.null(tbl$footnote)) {
@@ -272,6 +322,22 @@ hux_add_footnote <- function(tbl, tbl_hux) {
   return(tbl_hux)
 }
 
+#' style_hux
+#'
+#' Applies custom styling to a huxtable based on the structure of the original tablespan table.
+#'
+#' This function applies various styling elements to the huxtable, including:
+#' - Title styling
+#' - Subtitle styling
+#' - Footnote styling
+#' - Header styling
+#' - Column-specific styling
+#' - Column-specific formatting
+#'
+#' @param tbl_hux huxtable object to style
+#' @param tbl tablespan table object containing styling information
+#' @returns huxtable with custom styling applied
+#' @noRd
 style_hux <- function(tbl_hux, tbl) {
   require_huxtable()
   # Style the title

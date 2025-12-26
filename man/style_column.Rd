@@ -17,6 +17,7 @@ style_column(
   openxlsx_style = NULL,
   gt_style = NULL,
   hux_style = NULL,
+  flex_style = NULL,
   stack = TRUE
 )
 }
@@ -46,6 +47,9 @@ Example for three colors: color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65
 
 \item{hux_style}{optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}}
+
+\item{flex_style}{optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}}
 
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}
