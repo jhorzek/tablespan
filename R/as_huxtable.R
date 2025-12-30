@@ -423,6 +423,8 @@ style_hux <- function(tbl_hux, tbl) {
       if (is.null(c_style$rows)) {
         end_at <- nrow(tbl_hux) - 1 * (!is.null(tbl$footnote))
         rows <- start_at:end_at
+      } else {
+        rows <- c_style$rows + start_at - 1 # need to take offset into account
       }
       for (style_fun in c_style$style$hux) {
         tbl_hux <- tbl_hux |>
