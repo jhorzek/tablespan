@@ -1,13 +1,15 @@
-#' as_hux
+#' as_huxtable
 #'
 #' Translates a table created with tablespan to a huxtable. See <https://hughjonesd.github.io/huxtable/index.html>.
 #'
 #' Huxtable is an extremely versatile table creator for R. Once translated to a huxtable, the tablespan table
 #' is easy to export to all formats directly supported by huxtable.
 #'
-#' @param tbl table created with tablespan::tablespan
+#' @param x table created with tablespan::tablespan
+#' @param ... additional arguments passed to huxtable::as_huxtable
 #' @returns huxtable that can be further adapted with the gt package.
-#' @export
+#' @exportS3Method huxtable::as_huxtable
+#' @method as_huxtable Tablespan
 #' @examples
 #' library(tablespan)
 #' library(dplyr)
@@ -27,40 +29,41 @@
 #'                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
 #'                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
 #' if(require_huxtable(throw = FALSE)){
-#'   hux_tbl <- as_hux(tbl)
+#'   library(huxtable)
+#'   hux_tbl <- as_huxtable(tbl)
 #'   hux_tbl
 #' }
-as_hux <- function(tbl) {
+as_huxtable.Tablespan <- function(x, ...) {
   require_huxtable()
-
-  if (!is.null(tbl$header$lhs)) {
-    tbl_body <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
+  if (!is.null(x$header$lhs)) {
+    tbl_body <- cbind(x$table_data$row_data, x$table_data$col_data)
   } else {
-    tbl_body <- tbl$table_data$col_data
+    tbl_body <- x$table_data$col_data
   }
 
-  tbl_hux <- huxtable::as_hux(
+  tbl_hux <- huxtable::as_huxtable(
     tbl_body,
     add_colnames = FALSE,
-    add_rownames = FALSE
+    add_rownames = FALSE,
+    ...
   )
 
-  updated_tables <- hux_add_headers(tbl, tbl_hux)
+  updated_tables <- hux_add_headers(x, tbl_hux)
   tbl_hux <- updated_tables$tbl_hux
   header_table <- updated_tables$header_table
 
   tbl_hux <- hux_add_borders(
-    tbl = tbl,
+    tbl = x,
     tbl_hux = tbl_hux,
     header_table = header_table
   )
 
-  tbl_hux <- hux_add_title(tbl = tbl, tbl_hux = tbl_hux)
+  tbl_hux <- hux_add_title(tbl = x, tbl_hux = tbl_hux)
 
-  tbl_hux <- hux_add_footnote(tbl = tbl, tbl_hux = tbl_hux)
+  tbl_hux <- hux_add_footnote(tbl = x, tbl_hux = tbl_hux)
 
   tbl_hux <- tbl_hux |>
-    style_hux(tbl = tbl)
+    style_hux(tbl = x)
 
   return(tbl_hux)
 }
@@ -143,7 +146,11 @@ hux_add_headers <- function(tbl, tbl_hux) {
   header_table <- hux_insert_header_entries(
     header_partial = tbl$header$rhs,
     max_level = max_level,
-    column_offset = tbl$header$lhs$width + 1,
+    column_offset = ifelse(
+      !is.null(tbl$header$lhs$width),
+      tbl$header$lhs$width + 1,
+      1
+    ),
     header_table = header_table
   )
 

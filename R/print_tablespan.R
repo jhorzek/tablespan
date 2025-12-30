@@ -24,7 +24,7 @@ print.Tablespan <- function(
 ) {
   if (use_hux) {
     require_huxtable()
-    huxtable::print_screen(as_hux(x), ...)
+    huxtable::print_screen(as_huxtable.Tablespan(x), ...)
     return(invisible(NULL))
   }
   if (!is.null(x$header$lhs)) {

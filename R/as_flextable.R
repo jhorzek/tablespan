@@ -4,10 +4,12 @@
 #'
 #' Flextable is an extremely versatile table creator for R with great support to export to a variety of formats.
 #'
-#' @param tbl table created with tablespan::tablespan
+#' @param x table created with tablespan::tablespan
 #' @param theme a theme to apply to the flextable. Use one of the flextable::theme_* functions
+#' @param ... additional arguments passed to flextable::as_flextable
 #' @returns flextable that can be further adapted with the gt package.
-#' @export
+#' @exportS3Method flextable::as_flextable
+#' @method as_flextable Tablespan
 #' @examples
 #' library(tablespan)
 #' library(dplyr)
@@ -27,23 +29,25 @@
 #'                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
 #'                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
 #' if(require_flextable(throw = FALSE)){
+#'   library(flextable)
 #'   flex_tbl <- as_flextable(tbl)
 #'   flex_tbl
 #' }
-as_flextable <- function(tbl, theme = flextable::theme_booktabs) {
+as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
   require_flextable()
 
-  if (!is.null(tbl$header$lhs)) {
-    tbl_body <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
+  if (!is.null(x$header$lhs)) {
+    tbl_body <- cbind(x$table_data$row_data, x$table_data$col_data)
   } else {
-    tbl_body <- tbl$table_data$col_data
+    tbl_body <- x$table_data$col_data
   }
 
   tbl_flex <- flextable::as_flextable(
-    tbl_body
+    tbl_body,
+    ...
   )
 
-  updated_tables <- flex_add_headers(tbl, tbl_flex)
+  updated_tables <- flex_add_headers(x, tbl_flex)
   tbl_flex <- updated_tables$tbl_flex
   header_table <- updated_tables$header_table
   header_width <- updated_tables$header_width
@@ -54,12 +58,12 @@ as_flextable <- function(tbl, theme = flextable::theme_booktabs) {
   tbl_flex <- tbl_flex |>
     theme()
 
-  tbl_flex <- flex_add_title(tbl = tbl, tbl_flex = tbl_flex)
+  tbl_flex <- flex_add_title(tbl = x, tbl_flex = tbl_flex)
 
-  tbl_flex <- flex_add_footnote(tbl = tbl, tbl_flex = tbl_flex)
+  tbl_flex <- flex_add_footnote(tbl = x, tbl_flex = tbl_flex)
 
   tbl_flex <- tbl_flex |>
-    style_flex(tbl = tbl)
+    style_flex(tbl = x)
 
   tbl_flex <- tbl_flex |>
     flextable::autofit()

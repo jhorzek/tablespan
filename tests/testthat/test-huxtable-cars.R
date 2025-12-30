@@ -1,23 +1,8 @@
 test_that("cars", {
   library(tablespan)
+  library(huxtable)
   library(testthat)
   library(dplyr)
-
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
 
   summarized_table <- mtcars |>
     group_by(cyl, vs) |>
@@ -40,10 +25,110 @@ test_that("cars", {
     footnote = "Data from the infamous mtcars data set."
   )
 
-  gt_tbl <- as_gt(tbl = tbl)
+  hux_tbl <- as_huxtable(x = tbl) |>
+    huxtable::as_html()
+
+  expected <-
+    '<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><col><col><col><col><col><col><tbody>
+<tr>
+<td class="huxtable-cell" colspan="7" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">Motor Trend Car Road Tests</td></tr>
+<tr>
+<td class="huxtable-cell" colspan="7" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;">A table created with tablespan</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0.4pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.8pt 0.4pt 0.4pt 0pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.8pt 0.4pt 0.4pt 0.4pt;"></td><td class="huxtable-cell" colspan="2" style="border-style: solid solid solid solid; border-width: 0.8pt 0.4pt 0.4pt 0.4pt;">Horse Power</td><td class="huxtable-cell" colspan="2" style="border-style: solid solid solid solid; border-width: 0.8pt 0.4pt 0.4pt 0.4pt;">Weight</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">Cylinder</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">Engine</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">N</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">Mean</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">SD</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">Mean</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">SD</td></tr>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0.4pt;">4</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0pt 0pt;">0</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0.4pt;">1</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;">91.00</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;">&nbsp;&nbsp;&nbsp;&nbsp;</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;">2.1400</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0pt 0pt;">&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;">4</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;">1</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;">10</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">81.80</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">21.872</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">2.3003</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;">0.60</td></tr>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;">6</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;">0</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;">3</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">131.67</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">37.528</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">2.7550</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;">0.13</td></tr>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;">6</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;">1</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;">4</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">115.25</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">9.179</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">3.3887</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;">0.12</td></tr>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0.4pt;">8</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.8pt 0pt;">0</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0.4pt;">14</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;">209.21</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;">50.977</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;">3.9992</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.8pt 0pt;">0.76</td></tr>
+<tr>
+<td class="huxtable-cell" colspan="7" style="border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;">Data from the infamous mtcars data set.</td></tr>
+</tbody>
+</table>
+'
+
+  testthat::expect_identical(
+    object = huxtable::as_html(hux_tbl),
+    expected = expected
+  )
 
   expected <- summarized_table |>
-    gt::gt(groupname_col = NULL) |>
+    huxtable::as_huxtable(add_colnames = FALSE, add_rownames = FALSE) |>
+    huxtable::insert_row(
+      c("Cylinder", "Engine", "N", "Mean", "SD", "Mean", "SD"),
+      after = 0
+    ) |>
+    huxtable::insert_row(
+      c("", "", "", "Horse Power", "", "Weight", ""),
+      after = 0
+    ) |>
+    huxtable::merge_cells(row = 1, col = 4:5) |>
+    huxtable::merge_cells(row = 1, col = 6:7) |>
+    tablespan:::hux_add_merged_row(text = "A table created with tablespan") |>
+    tablespan:::hux_add_merged_row(
+      text = "Motor Trend Car Road Tests",
+      border = NULL
+    ) |>
+    huxtable::add_footnote(text = "Data from the infamous mtcars data set.") |>
+    huxtable::set_all_borders(row = 3:4, col = 1:7) |>
+    huxtable::set_right_border(col = 2) |>
+    huxtable::set_bottom_border(col = 1:7, row = 9) |>
+    huxtable::set_left_border(row = 3:9, col = 1) |>
+    huxtable::set_right_border(row = 3:9, col = 7)
+
+  # Remove vertical borders between empty neighbor cells
+  for (row in 3:4) {
+    for (col in 1:ncol(expected)) {
+      if (col == 1) {
+        next
+      }
+      left_empty <- expected[row, col - 1] %in% c("", NA)
+      right_empty <- expected[row, col] %in% c("", NA)
+      if (left_empty & right_empty) {
+        huxtable::right_border(expected)[row, col - 1] <- 0
+        huxtable::left_border(expected)[row, col] <- 0
+      }
+    }
+  }
+
+  # Remove horizontal borders between empty neighbor cells
+  for (col in 3:4) {
+    for (row in 1:nrow(expected)) {
+      if (row == nrow(expected)) {
+        next
+      }
+      top_empty <- expected[row, col] %in% c("", NA)
+      bottom_empty <- expected[row + 1, col] %in% c("", NA)
+      if (top_empty & bottom_empty) {
+        huxtable::bottom_border(expected)[row, col] <- 0
+        huxtable::top_border(expected)[row + 1, col] <- 0
+      }
+    }
+  }
+
+  for (co in colnames(summarized_table)) {
+    expected <- expected |>
+      huxtable::set_number_format(
+        i = which(colnames(summarized_table) == co),
+        j = 5:9,
+        value =
+      )
+  }
+
+  # border between row names and data
+  expected <- expected |>
+    huxtable::set_right_border(col = 2)
+
+  huxtable::add_colnames()
+  gt::gt(groupname_col = NULL) |>
     gt::tab_header(
       title = "Motor Trend Car Road Tests",
       subtitle = "A table created with tablespan"
