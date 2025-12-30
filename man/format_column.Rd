@@ -11,6 +11,7 @@ format_column(
   format_gt = gt::fmt_auto,
   format_openxlsx = "GENERAL",
   format_hux = NULL,
+  format_flex = NULL,
   stack = TRUE
 )
 }
@@ -27,6 +28,9 @@ and return the tbl with applied formatting. See examples.}
 \item{format_openxlsx}{an argument passed to the numFmt field for openxlsx::createStyle.}
 
 \item{format_hux}{set to NULL to use default formatting. Alternative, use a value that can be passed to huxtable::set_number_format()}
+
+\item{format_flex}{formatting used for flextable. Must be a function with the following signature: function(tbl, i, j, part) and
+must return the tbl object with applied formatting.}
 
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}
