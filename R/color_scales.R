@@ -29,6 +29,22 @@ add_style_color_scale <- function(styles, color_scale, rows) {
   return(styles)
 }
 
+#' Preprocess color scale for conditional formatting
+#'
+#' Processes a color scale vector to ensure it's properly formatted for conditional
+#' formatting across different table packages. Handles NA values by automatically
+#' filling them with appropriate values (min, mean, or max) from the data.
+#'
+#' @param tbl A table object (gt, flextable, huxtable, or openxlsx) containing the data
+#' @param color_scale A named vector of length 2 or 3 specifying the color scale.
+#'   Values should be numeric and colors should be hex codes. Example:
+#'   `c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1)`. NA values will be automatically
+#'   filled with appropriate values from the data.
+#' @param column_names Character vector of column names to apply the color scale to
+#' @param rows Numeric vector of row indices to apply the color scale to. If NULL,
+#'   applies to all rows.
+#' @returns A properly formatted color scale vector with all NA values filled in
+#' @noRd
 preprocess_color_scale <- function(tbl, color_scale, column_names, rows) {
   if (is.null(color_scale)) {
     return(color_scale)
@@ -44,6 +60,7 @@ preprocess_color_scale <- function(tbl, color_scale, column_names, rows) {
   }
 
   if (!anyNA(color_scale)) {
+    check_color_scale_increasing(color_scale = color_scale)
     return(color_scale)
   }
 
@@ -81,7 +98,11 @@ preprocess_color_scale <- function(tbl, color_scale, column_names, rows) {
     }
   }
 
-  # final check: make sure all values are increasing and unique
+  check_color_scale_increasing(color_scale = color_scale)
+  return(color_scale)
+}
+
+check_color_scale_increasing <- function(color_scale) {
   for (i in 2:length(color_scale)) {
     if (color_scale[i] <= color_scale[i - 1]) {
       stop(
@@ -91,9 +112,7 @@ preprocess_color_scale <- function(tbl, color_scale, column_names, rows) {
       )
     }
   }
-  return(color_scale)
 }
-
 
 #' create_color_scale_openxlsx
 #'

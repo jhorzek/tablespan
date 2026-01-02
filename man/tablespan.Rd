@@ -143,20 +143,14 @@ if(require_openxlsx(throw = FALSE))
 
 # Export as gt:
 if(require_gt(throw = FALSE)) {
-  library(gt)
-  gt_tbl <- as_gt(tbl = tbl)
-  gt_tbl
+  as_gt(tbl)
 }
 # Export as flextable:
 if(require_flextable(throw = FALSE)) {
-  library(flextable)
-  gt_tbl <- as_flextable(tbl = tbl)
-  gt_tbl
+  flextable::as_flextable(tbl)
 }
 # Export as gt:
 if(require_huxtable(throw = FALSE)) {
-  library(huxtable)
-  gt_tbl <- as_huxtable(tbl = tbl)
-  gt_tbl
+  huxtable::as_huxtable(tbl)
 }
 }
