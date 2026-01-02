@@ -569,9 +569,9 @@ gt_tbl |>
   <https://ycphs.github.io/openxlsx/>.
 - flextable: Gohel D, Skintzos P (2025). *flextable: Functions for
   Tabular Reporting*. R package version 0.9.10,
-  [https://CRAN.R-project.org/package=flextable](vscode-file://vscode-app/Applications/Positron.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html#)
+  <https://CRAN.R-project.org/package=flextable>
 - huxtable: Hugh-Jones D (2025). *huxtable: Easily Create and Style
   Tables for LaTeX, HTML and Other Formats*. R package version 5.8.0,
-  [https://CRAN.R-project.org/package=huxtable](vscode-file://vscode-app/Applications/Positron.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html#)
+  <https://CRAN.R-project.org/package=huxtable>
 - tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R
   package version 0.9.31, <https://dmurdoch.github.io/tables/>.

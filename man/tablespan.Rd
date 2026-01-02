@@ -99,6 +99,8 @@ References:
  \item{gt: Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.11.1.9000, <https://github.com/rstudio/gt>, <https://gt.rstudio.com>.}
  \item{tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R package version 0.9.31, <https://dmurdoch.github.io/tables/>.}
  \item{openxlsx: Schauberger P, Walker A (2023). _openxlsx: Read, Write and Edit xlsx Files_. R package version 4.2.5.2, <https://ycphs.github.io/openxlsx/>.}
+ \item{flextable: Gohel D, Skintzos P (2025). _flextable: Functions for Tabular Reporting_. R package version 0.9.10, <https://CRAN.R-project.org/package=flextable>.}
+ \item{huxtable: Hugh-Jones D (2025). _huxtable: Easily Create and Style Tables for LaTeX, HTML and Other Formats_. R package version 5.8.0, <https://CRAN.R-project.org/package=huxtable>.}
 }
 }
 \examples{
@@ -141,16 +143,19 @@ if(require_openxlsx(throw = FALSE))
 
 # Export as gt:
 if(require_gt(throw = FALSE)) {
+  library(gt)
   gt_tbl <- as_gt(tbl = tbl)
   gt_tbl
 }
 # Export as flextable:
 if(require_flextable(throw = FALSE)) {
+  library(flextable)
   gt_tbl <- as_flextable(tbl = tbl)
   gt_tbl
 }
 # Export as gt:
 if(require_huxtable(throw = FALSE)) {
+  library(huxtable)
   gt_tbl <- as_huxtable(tbl = tbl)
   gt_tbl
 }
