@@ -35,8 +35,9 @@ Create complex table spanners with a simple formula.
 \details{
 \code{tablespan} provides a formula based approach to adding headers and spanners
 to an existing data.frame. The objective is to provide a unified, easy to use, but good
-enough approach to building and exporting tables to Excel, HTML, and LaTeX. To this end,
-\code{tablespan} leverages the awesome packages \code{openxlsx} and \code{gt}.
+enough approach to building and exporting tables to Excel, HTML, and LaTeX and other formats.
+To this end,
+\code{tablespan} leverages the awesome packages \code{openxlsx}, \code{gt}, \code{flextabe}, and \code{huxtable}.
 
 Following the \code{tibble} approach, \code{tablespan} assumes that all items that you may
 want to use as row names are just columns in your data set (see example). That
@@ -141,6 +142,16 @@ if(require_openxlsx(throw = FALSE))
 # Export as gt:
 if(require_gt(throw = FALSE)) {
   gt_tbl <- as_gt(tbl = tbl)
+  gt_tbl
+}
+# Export as flextable:
+if(require_flextable(throw = FALSE)) {
+  gt_tbl <- as_flextable(tbl = tbl)
+  gt_tbl
+}
+# Export as gt:
+if(require_huxtable(throw = FALSE)) {
+  gt_tbl <- as_huxtable(tbl = tbl)
   gt_tbl
 }
 }

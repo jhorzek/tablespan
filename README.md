@@ -81,7 +81,7 @@ allows `tablespan` tables to be exported to a large number of formats:
 | **gt** | `as_gt()` | The **gt** package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout. | HTML, PDF, PNG, LaTeX, RTF, Word ([docs](https://gt.rstudio.com/reference/gtsave.html)) |
 | **openxlsx** | `as_excel()` | The **openxlsx** package offers Excel file creation and manipulation. Great for reporting tables to end-users. | Excel ([docs](https://ycphs.github.io/openxlsx/index.html)) |
 | **flextable** | `as_flextable()` | **flextable** specializes in creating complex, publication-quality tables with extensive formatting capabilities. Integrates well with Word/PowerPoint workflows. | HTML, Word, RTF, PowerPoint, PDF, PNG ([docs](https://ardata-fr.github.io/flextable-book/rendering.html)) |
-| **huxtable** | `as_hux()` | **huxtable** provides a unified interface for creating tables in multiple output formats. Also provides styled printing to the console. | LaTeX, Typst, HTML, Word, Excel, RTF, markdown, console ([docs](https://hughjonesd.github.io/huxtable/reference/index.html)) |
+| **huxtable** | `as_huxtable()` | **huxtable** provides a unified interface for creating tables in multiple output formats. Also provides styled printing to the console. | LaTeX, Typst, HTML, Word, Excel, RTF, markdown, console ([docs](https://hughjonesd.github.io/huxtable/reference/index.html)) |
 
 ## Installation
 
