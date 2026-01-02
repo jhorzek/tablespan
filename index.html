@@ -50,10 +50,15 @@
 </h1></div>
 <!-- badges: start -->
 
+<!-- badges: end -->
 <blockquote>
 <p>Create satisficing tables in R the formula way.</p>
 </blockquote>
-<p>The objective of <code>tablespan</code> is to provide a “good enough” approach to creating tables by leveraging R’s formulas.</p>
+<p>The core objective of <code>tablespan</code> is to:</p>
+<ol style="list-style-type: decimal">
+<li>provide a “good enough” approach to easily create tables by leveraging R’s formulas.</li>
+<li>provide direct exports to other, more flexible table packages such as <code>gt</code>, <code>flextable</code>, and <code>huxtable</code>.</li>
+</ol>
 <p>The following shows an example, where we define a relatively complex table header setup with a single formula. The details of the syntax will be explained below.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -78,7 +83,8 @@
 <span>                 title <span class="op">=</span> <span class="st">"Motor Trend Car Road Tests"</span>,</span>
 <span>                 subtitle <span class="op">=</span> <span class="st">"A table created with tablespan"</span>,</span>
 <span>                 footnote <span class="op">=</span> <span class="st">"Data from the infamous mtcars data set."</span><span class="op">)</span></span>
-<span><span class="va">tbl</span></span>
+<span><span class="va">tbl</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Motor Trend Car Road Tests</span></span>
 <span><span class="co">#&gt; A table created with tablespan</span></span>
 <span><span class="co">#&gt;                                                         </span></span>
@@ -90,17 +96,54 @@
 <span><span class="co">#&gt;  | 6        0      | 3   131.67      37.53 2.76   0.13 |</span></span>
 <span><span class="co">#&gt;  | ...      ...    | ... ...         ...   ...    ...  |</span></span>
 <span><span class="co">#&gt; Data from the infamous mtcars data set.</span></span></code></pre></div>
-<p><code>tablespan</code> builds on the awesome packages <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> and <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>, which allows tables created with <code>tablespan</code> to be exported to the following formats:</p>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Excel</strong> (using <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a>)</li>
-<li>
-<strong>HTML</strong> (using <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>)</li>
-<li>
-<strong>LaTeX</strong> (using <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>)</li>
-<li>
-<strong>RTF</strong> (using <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>)</li>
-</ol>
+<p>This basic table can now be easily exported to other table formats.</p>
+</div>
+<div class="section level1">
+<h1 id="r-packages-for-table-conversion-and-export">R Packages for Table Conversion and Export<a class="anchor" aria-label="anchor" href="#r-packages-for-table-conversion-and-export"></a>
+</h1>
+<p><code>tablespan</code> builds on the awesome packages <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>, <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> , <a href="https://ardata-fr.github.io/flextable-book/index.html" class="external-link"><code>flextable</code></a>, and <a href="https://hughjonesd.github.io/huxtable/index.html" class="external-link"><code>huxtable</code></a>. This allows <code>tablespan</code> tables to be exported to a large number of formats:</p>
+<table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr class="header">
+<th>Package</th>
+<th>Conversion Function</th>
+<th>Description</th>
+<th>Export Formats</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>gt</strong></td>
+<td><code><a href="reference/as_gt.html">as_gt()</a></code></td>
+<td>The <strong>gt</strong> package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout.</td>
+<td>HTML, PDF, PNG, LaTeX, RTF, Word (<a href="https://gt.rstudio.com/reference/gtsave.html" class="external-link">docs</a>)</td>
+</tr>
+<tr class="even">
+<td><strong>openxlsx</strong></td>
+<td><code><a href="reference/as_excel.html">as_excel()</a></code></td>
+<td>The <strong>openxlsx</strong> package offers Excel file creation and manipulation. Great for reporting tables to end-users.</td>
+<td>Excel (<a href="https://ycphs.github.io/openxlsx/index.html" class="external-link">docs</a>)</td>
+</tr>
+<tr class="odd">
+<td><strong>flextable</strong></td>
+<td><code>as_flextable()</code></td>
+<td>
+<strong>flextable</strong> specializes in creating complex, publication-quality tables with extensive formatting capabilities. Integrates well with Word/PowerPoint workflows.</td>
+<td>HTML, Word, RTF, PowerPoint, PDF, PNG (<a href="https://ardata-fr.github.io/flextable-book/rendering.html" class="external-link">docs</a>)</td>
+</tr>
+<tr class="even">
+<td><strong>huxtable</strong></td>
+<td><code>as_huxtable()</code></td>
+<td>
+<strong>huxtable</strong> provides a unified interface for creating tables in multiple output formats. Also provides styled printing to the console.</td>
+<td>LaTeX, Typst, HTML, Word, Excel, RTF, markdown, console (<a href="https://hughjonesd.github.io/huxtable/reference/index.html" class="external-link">docs</a>)</td>
+</tr>
+</tbody>
+</table>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -131,7 +174,7 @@
 <span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span></span>
 <span><span class="co">#&gt; argument.</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">summarized_table</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">summarized_table</span>, use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 5 × 7</span></span>
 <span><span class="co">#&gt; # Groups:   cyl [3]</span></span>
 <span><span class="co">#&gt;     cyl    vs     N mean_hp sd_hp mean_wt  sd_wt</span></span>
@@ -154,7 +197,8 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jhorzek/tablespan" class="external-link">tablespan</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         </span></span>
 <span><span class="co">#&gt;  | cyl | mean_hp sd_hp |</span></span>
 <span><span class="co">#&gt;  | --- - ------- ----- |</span></span>
@@ -170,7 +214,8 @@
 <p>Spanners are defined using braces and spanner names. For example, the following defines a spanner for <code>mean_hp</code> and <code>sd_hp</code> with the name <code>Horsepower</code>: <code>cyl ~ (Horsepower = mean_hp + sd_hp)</code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | cyl | mean_hp    sd_hp |</span></span>
@@ -182,7 +227,8 @@
 <p>Spanners can also be nested:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="op">(</span><span class="va">Mean</span> <span class="op">=</span> <span class="va">mean_hp</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">SD</span>  <span class="op">=</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="op">(</span><span class="va">Mean</span> <span class="op">=</span> <span class="va">mean_hp</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">SD</span>  <span class="op">=</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  |     | Mean       SD    |</span></span>
@@ -199,7 +245,8 @@
 <p>Variable names in an R <code>data.frame</code> are often very technical (e.g., <code>mean_hp</code> and <code>sd_hp</code>). When sharing the table, we may want to replace those names. In the example above, we may want to replace <code>mean_hp</code> and <code>sd_hp</code> with “Mean” and “SD”. In <code>tablespan</code> renaming variables is achieved with <code>new_name:old_name</code>. For example, <code>cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)</code> renames <code>mean_hp</code> to <code>Mean</code> and <code>sd_hp</code> to <code>SD</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | cyl | Mean       SD    |</span></span>
@@ -236,7 +283,8 @@
 <span>                 title <span class="op">=</span> <span class="st">"Motor Trend Car Road Tests"</span>,</span>
 <span>                 subtitle <span class="op">=</span> <span class="st">"A table created with tablespan"</span>,</span>
 <span>                 footnote <span class="op">=</span> <span class="st">"Data from the infamous mtcars data set."</span><span class="op">)</span></span>
-<span><span class="va">tbl</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tbl</span>, use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Motor Trend Car Road Tests</span></span>
 <span><span class="co">#&gt; A table created with tablespan</span></span>
 <span><span class="co">#&gt;                                                         </span></span>
@@ -255,7 +303,8 @@
 <p>Using <code>1</code> on the left hand side of the formula creates a table without row names. For example, <code>1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)</code> defines:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
-<span>          formula <span class="op">=</span> <span class="fl">1</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span></span>
+<span>          formula <span class="op">=</span> <span class="fl">1</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                      </span></span>
 <span><span class="co">#&gt;  | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | Mean       SD    |</span></span>
@@ -269,7 +318,7 @@
 <div class="section level2">
 <h2 id="exporting-to-excel">Exporting to Excel<a class="anchor" aria-label="anchor" href="#exporting-to-excel"></a>
 </h2>
-<p>Tables created with <code>tablespan</code> can now be translated to xlsx tables with <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> using the <code>as_excel</code> function:</p>
+<p>Tables created with <code>tablespan</code> can now be translated to xlsx tables with <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> using the <code>as_excel</code> function (alternatively, tables can also be exported to <code>huxtable</code> and then exported to <code>openxlsx</code>; see <code><a href="https://hughjonesd.github.io/huxtable/reference/as_Workbook.html" class="external-link">?huxtable::as_Workbook</a></code>):</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># as_excel creates an openxlsx workbook</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_excel.html">as_excel</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
@@ -281,20 +330,22 @@
 <p><img src="reference/figures/tablespan_example_cars.png"></p>
 </div>
 <div class="section level2">
-<h2 id="exporting-to-html-latex-and-rtf">Exporting to HTML, LaTeX, and RTF<a class="anchor" aria-label="anchor" href="#exporting-to-html-latex-and-rtf"></a>
+<h2 id="exporting-to-html-pdf-png-latex-rtf-word-powerpoint-markdown-or-console">Exporting to HTML, PDF, PNG, LaTeX, RTF, Word, PowerPoint, Markdown, or Console<a class="anchor" aria-label="anchor" href="#exporting-to-html-pdf-png-latex-rtf-word-powerpoint-markdown-or-console"></a>
 </h2>
-<p>Tables created with <code>tablespan</code> can also be exported to <code>gt</code> which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call <code>as_gt</code> on our table:</p>
+<p>Tables created with <code>tablespan</code> can also be exported to a variety of other, more flexible table packages. <code>gt</code> which allows saving as HTML, LaTeX, or RTF file. To this end, we simply have to call <code>as_gt</code> on our table:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Translate to gt:</span></span>
 <span><span class="va">gt_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">)</span></span>
 <span><span class="va">gt_tbl</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%"></p>
+
 </div>
 <div class="section level2">
 <h2 id="styling">Styling<a class="anchor" aria-label="anchor" href="#styling"></a>
 </h2>
-<p><code>tablespan</code> allows adding styles to tables that are automatically exported to <code>gt</code> and <code>openxlsx</code>. The workflow is heavily inspired by <code>gt</code>.</p>
+<p><code>tablespan</code> allows adding styles to tables that are automatically exported to all exported tables (<code>gt</code>, <code>openxlsx</code>, <code>flextable</code>, and <code>huxtable</code>). The workflow is heavily inspired by <code>gt</code>.</p>
 <p>All functions used to style <code>tablespan</code> tables start with <code>style_</code>:</p>
 <ul>
 <li>
@@ -327,7 +378,9 @@
 <span>  <span class="fu"><a href="reference/style_subtitle.html">style_subtitle</a></span><span class="op">(</span>italic <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars_title.png" alt="Standard table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars_title.png" alt="Standard table" width="50%"></p>
+
 <p>All of the styles applied in the following would also be exported to .xlsx files when using <code>as_excel</code> and saving the workbook with <code>openxlsx</code>.</p>
 </div>
 <div class="section level3">
@@ -342,7 +395,9 @@
 <span>               italic <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars_header.png" alt="Standard table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars_header.png" alt="Standard table" width="50%"></p>
+
 </div>
 <div class="section level3">
 <h3 id="styling-the-body">Styling the body<a class="anchor" aria-label="anchor" href="#styling-the-body"></a>
@@ -359,7 +414,9 @@
 <span>    italic <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars_column.png" alt="Standard table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars_column.png" alt="Standard table" width="50%"></p>
+
 </div>
 <div class="section level3">
 <h3 id="styling-the-footnote">Styling the footnote<a class="anchor" aria-label="anchor" href="#styling-the-footnote"></a>
@@ -373,7 +430,9 @@
 <span>    italic <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars_footnote.png" alt="Standard table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars_footnote.png" alt="Standard table" width="50%"></p>
+
 </div>
 <div class="section level3">
 <h3 id="custom-styles">Custom styles<a class="anchor" aria-label="anchor" href="#custom-styles"></a>
@@ -390,7 +449,9 @@
 <span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars_costum.png" alt="Standard table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars_costum.png" alt="Standard table" width="50%"></p>
+
 </div>
 </div>
 <div class="section level2">
@@ -414,7 +475,9 @@
 <span>      <span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_styling.png" alt="Standard table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_styling.png" alt="Standard table" width="50%"></p>
+
 </div>
 <div class="section level2">
 <h2 id="adapting-great-tables">Adapting Great Tables<a class="anchor" aria-label="anchor" href="#adapting-great-tables"></a>
@@ -425,7 +488,9 @@
 <span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/opt_stylize.html" class="external-link">opt_stylize</a></span><span class="op">(</span>style <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>                  color <span class="op">=</span> <span class="st">'gray'</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%"></p>
+
 <p>When adapting the <code>gt</code> object, there is an important detail to keep in mind: To ensure that each table spanner has a unique ID, <code>tablespan</code> will create IDs that differ from the text shown in the spanner. To demonstrate this, Let’s assume that we want to add a spanner above <code>Horse Power</code> and <code>Weight</code>:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
@@ -440,7 +505,9 @@
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_info.html" class="external-link">tab_info</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_tab_info.png" alt="Table spanner IDs" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_tab_info.png" alt="Table spanner IDs" width="50%"></p>
+
 <p>The IDs for the spanners can be found at the very bottom. To add another spanner above <code>Horse Power</code> and <code>Weight</code>, we have to use these IDs:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt_tbl</span> <span class="op">|&gt;</span> </span>
@@ -448,19 +515,25 @@
 <span>                  spanners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"__BASE_LEVEL__Horse Power"</span>, </span>
 <span>                               <span class="st">"__BASE_LEVEL__Weight"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="reference/figures/tablespan_example_new_spanner.png" alt="Table with additional spanner" width="50%"></p>
+</p>
+<p><img src="reference/figures/tablespan_example_new_spanner.png" alt="Table with additional spanner" width="50%"></p>
+
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <ul>
 <li>gt: Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.11.1.9000, <a href="https://github.com/rstudio/gt" class="external-link uri">https://github.com/rstudio/gt</a>, <a href="https://gt.rstudio.com" class="external-link uri">https://gt.rstudio.com</a>.</li>
-<li>expss: Gregory D et al. (2024). expss: Tables with Labels in R. R package version 0.9.31, <a href="https://gdemin.github.io/expss/" class="external-link uri">https://gdemin.github.io/expss/</a>.</li>
-<li>tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R package version 0.9.31, <a href="https://dmurdoch.github.io/tables/" class="external-link uri">https://dmurdoch.github.io/tables/</a>.</li>
 <li>openxlsx: Schauberger P, Walker A (2023). <em>openxlsx: Read, Write and Edit xlsx Files</em>. R package version 4.2.5.2, <a href="https://ycphs.github.io/openxlsx/" class="external-link uri">https://ycphs.github.io/openxlsx/</a>.</li>
+<li>flextable: Gohel D, Skintzos P (2025). <em>flextable: Functions for Tabular Reporting</em>. R package version 0.9.10, <a href="https://CRAN.R-project.org/package=flextable" class="external-link uri">https://CRAN.R-project.org/package=flextable</a>
+</li>
+<li>huxtable: Hugh-Jones D (2025). <em>huxtable: Easily Create and Style Tables for LaTeX, HTML and Other Formats</em>. R package version 5.8.0, <a href="https://CRAN.R-project.org/package=huxtable" class="external-link uri">https://CRAN.R-project.org/package=huxtable</a>
+</li>
+<li>tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R package version 0.9.31, <a href="https://dmurdoch.github.io/tables/" class="external-link uri">https://dmurdoch.github.io/tables/</a>.</li>
 </ul>
 </div>
 </div>
+
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
@@ -511,7 +584,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

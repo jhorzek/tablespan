@@ -1,0 +1,93 @@
+# style_header_cells
+
+Set the style used for the cells in the openxlsx export. This function
+is used to create the borders around cells in openxlsx.
+
+## Usage
+
+``` r
+style_header_cells(
+  tbl,
+  background_color = NULL,
+  text_color = NULL,
+  font_size = NULL,
+  bold = FALSE,
+  italic = FALSE,
+  openxlsx_style = NULL
+)
+```
+
+## Arguments
+
+- tbl:
+
+  tablespan table
+
+- background_color:
+
+  hex code for the background color
+
+- text_color:
+
+  hex code for the text color
+
+- font_size:
+
+  font size
+
+- bold:
+
+  set to TRUE for bold
+
+- italic:
+
+  set to TRUE for italic
+
+- openxlsx_style:
+
+  optional custom openxlsx style. When provided, all other arguments are
+  ignored
+
+## Value
+
+the tablespan table with added styles
+
+## Details
+
+\- openxlsx_style must be a style object created with
+openxlsx::createStyle. This style will then be applied to the header
+
+## Examples
+
+``` r
+library(tablespan)
+library(dplyr)
+data("mtcars")
+
+# We want to report the following table:
+summarized_table <- mtcars |>
+  group_by(cyl, vs) |>
+  summarise(N = n(),
+            mean_hp = mean(hp),
+            sd_hp = sd(hp),
+            mean_wt = mean(wt),
+            sd_wt = sd(wt))
+#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
+#> argument.
+
+# Create a tablespan:
+tbl <- tablespan(data = summarized_table,
+                 formula = Cylinder:cyl + Engine:vs ~
+                   N +
+                   (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+                   (`Weight` = Mean:mean_wt + SD:sd_wt),
+                 title = "Motor Trend Car Road Tests",
+                 subtitle = "A table created with tablespan",
+                 footnote = "Data from the infamous mtcars data set.")
+
+if(require_openxlsx(throw = FALSE))
+wb <- tbl |>
+  style_header_cells(text_color = "#345364") |>
+  as_excel()
+# save workbook to see the effect
+```

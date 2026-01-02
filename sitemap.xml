@@ -4,10 +4,16 @@
 <url><loc>https://jhorzek.github.io/tablespan/authors.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/index.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/as_excel.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/as_flextable.Tablespan.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/as_gt.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/as_huxtable.Tablespan.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/format_column.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/index.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/print.Tablespan.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/require_flextable.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/require_gt.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/require_huxtable.html</loc></url>
+<url><loc>https://jhorzek.github.io/tablespan/reference/require_openxlsx.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/style_column.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/style_footnote.html</loc></url>
 <url><loc>https://jhorzek.github.io/tablespan/reference/style_header.html</loc></url>
