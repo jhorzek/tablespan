@@ -46,6 +46,7 @@ tbl <- tablespan(data = summarized_table,
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
 
+if(require_openxlsx(throw = FALSE))
 wb <- tbl |>
   style_hline(
     openxlsx_style = openxlsx::createStyle(

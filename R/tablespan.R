@@ -4,8 +4,9 @@
 #'
 #' \code{tablespan} provides a formula based approach to adding headers and spanners
 #' to an existing data.frame. The objective is to provide a unified, easy to use, but good
-#' enough approach to building and exporting tables to Excel, HTML, and LaTeX. To this end,
-#' \code{tablespan} leverages the awesome packages \code{openxlsx} and \code{gt}.
+#' enough approach to building and exporting tables to Excel, HTML, and LaTeX and other formats.
+#' To this end,
+#' \code{tablespan} leverages the awesome packages \code{openxlsx}, \code{gt}, \code{flextabe}, and \code{huxtable}.
 #'
 #' Following the \code{tibble} approach, \code{tablespan} assumes that all items that you may
 #' want to use as row names are just columns in your data set (see example). That
@@ -67,12 +68,15 @@
 #'  \item{gt: Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.11.1.9000, <https://github.com/rstudio/gt>, <https://gt.rstudio.com>.}
 #'  \item{tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R package version 0.9.31, <https://dmurdoch.github.io/tables/>.}
 #'  \item{openxlsx: Schauberger P, Walker A (2023). _openxlsx: Read, Write and Edit xlsx Files_. R package version 4.2.5.2, <https://ycphs.github.io/openxlsx/>.}
+#'  \item{flextable: Gohel D, Skintzos P (2025). _flextable: Functions for Tabular Reporting_. R package version 0.9.10, <https://CRAN.R-project.org/package=flextable>.}
+#'  \item{huxtable: Hugh-Jones D (2025). _huxtable: Easily Create and Style Tables for LaTeX, HTML and Other Formats_. R package version 5.8.0, <https://CRAN.R-project.org/package=huxtable>.}
 #' }
 #' @param data data set
 #' @param formula formula to create table
 #' @param title string specifying the title of the table
 #' @param subtitle string specifying the subtitle of the table
 #' @param footnote string specifying the footnote of the table
+#' @param max_digits the maximal number of digits to print for floating point numbers
 #' @returns Object of class Tablespan with title, subtitle, header info, data, and footnote.
 #' @importFrom tibble as_tibble
 #' @importFrom tibble is_tibble
@@ -109,25 +113,38 @@
 #'     style_column(columns = where(is.double), bold = TRUE)
 #'
 #' # Export as Excel table:
-#' wb <- as_excel(tbl = tbl)
+#' if(require_openxlsx(throw = FALSE))
+#'   wb <- as_excel(tbl = tbl)
 #'
 #' # Save using openxlsx
 #' # openxlsx::saveWorkbook(wb, "cars.xlsx")
 #'
 #' # Export as gt:
-#' gt_tbl <- as_gt(tbl = tbl)
-#' gt_tbl
+#' if(require_gt(throw = FALSE)) {
+#'   as_gt(tbl)
+#' }
+#' # Export as flextable:
+#' if(require_flextable(throw = FALSE)) {
+#'   flextable::as_flextable(tbl)
+#' }
+#' # Export as gt:
+#' if(require_huxtable(throw = FALSE)) {
+#'   huxtable::as_huxtable(tbl)
+#' }
 tablespan <- function(
   data,
-  formula,
+  formula = 1 ~ .,
   title = NULL,
   subtitle = NULL,
-  footnote = NULL
+  footnote = NULL,
+  max_digits = 4
 ) {
   if (!tibble::is_tibble(data)) {
     warning("Tablespan uses tibble internally. Translating data to tibble")
     data <- tibble::as_tibble(data)
   }
+
+  formula <- preprocess_formula(formula = formula, data = data)
 
   # ensure that the data is not grouped
   data <- data |>
@@ -161,10 +178,39 @@ tablespan <- function(
   )
   class(bt_result) <- "Tablespan"
 
-  bt_result <- initialize_formats(tbl = bt_result)
+  bt_result <- initialize_formats(tbl = bt_result, max_digits = max_digits)
   bt_result <- initialize_styles(tbl = bt_result)
 
   return(bt_result)
+}
+
+#' @importFrom stats as.formula
+preprocess_formula <- function(formula, data) {
+  all_variables_in_data <- colnames(data)
+  all_variables_in_formula <- all.vars(formula)
+  if (("." %in% all_variables_in_formula)) {
+    if (
+      (length(setdiff(all_variables_in_data, all_variables_in_formula)) == 0)
+    ) {
+      stop(
+        "You used the placeholder `.` in your table formula, but all items of the data set are already referenced explicitly. Consider removing the `.`."
+      )
+    }
+    # We replace "." with all variables not used in the formulas, but
+    # available from the data
+    replace_with <- parse(
+      text = paste0(
+        setdiff(all_variables_in_data, all_variables_in_formula),
+        collapse = " + "
+      )
+    )[[1]]
+
+    formula <- as.formula(do.call(
+      'substitute',
+      list(formula, list(`.` = replace_with))
+    ))
+  }
+  return(formula)
 }
 
 #' check_variables

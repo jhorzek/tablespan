@@ -7,8 +7,7 @@
 as_gt(
   tbl,
   groupname_col = NULL,
-  separator_style = gt::cell_borders(sides = c("right"), weight = gt::px(1), color =
-    "gray"),
+  separator_style = NULL,
   auto_format = TRUE,
   ...
 )
@@ -55,7 +54,8 @@ tbl <- tablespan(data = summarized_table,
                    N +
                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
-
-gt_tbl <- as_gt(tbl)
-gt_tbl
+if(require_gt(throw = FALSE)){
+  gt_tbl <- as_gt(tbl)
+  gt_tbl
+}
 }

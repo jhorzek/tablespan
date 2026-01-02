@@ -69,8 +69,8 @@ tbl <- tablespan(data = summarized_table,
           title = "Motor Trend Car Road Tests",
           subtitle = "A table created with tablespan",
           footnote = "Data from the infamous mtcars data set.")
-
-wb <- as_excel(tbl = tbl)
+if(require_openxlsx(throw = FALSE))
+  wb <- as_excel(tbl = tbl)
 
 # Create the excel table:
 # openxlsx::saveWorkbook(wb,

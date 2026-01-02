@@ -4,7 +4,14 @@
 \alias{tablespan}
 \title{tablespan}
 \usage{
-tablespan(data, formula, title = NULL, subtitle = NULL, footnote = NULL)
+tablespan(
+  data,
+  formula = 1 ~ .,
+  title = NULL,
+  subtitle = NULL,
+  footnote = NULL,
+  max_digits = 4
+)
 }
 \arguments{
 \item{data}{data set}
@@ -16,6 +23,8 @@ tablespan(data, formula, title = NULL, subtitle = NULL, footnote = NULL)
 \item{subtitle}{string specifying the subtitle of the table}
 
 \item{footnote}{string specifying the footnote of the table}
+
+\item{max_digits}{the maximal number of digits to print for floating point numbers}
 }
 \value{
 Object of class Tablespan with title, subtitle, header info, data, and footnote.
@@ -26,8 +35,9 @@ Create complex table spanners with a simple formula.
 \details{
 \code{tablespan} provides a formula based approach to adding headers and spanners
 to an existing data.frame. The objective is to provide a unified, easy to use, but good
-enough approach to building and exporting tables to Excel, HTML, and LaTeX. To this end,
-\code{tablespan} leverages the awesome packages \code{openxlsx} and \code{gt}.
+enough approach to building and exporting tables to Excel, HTML, and LaTeX and other formats.
+To this end,
+\code{tablespan} leverages the awesome packages \code{openxlsx}, \code{gt}, \code{flextabe}, and \code{huxtable}.
 
 Following the \code{tibble} approach, \code{tablespan} assumes that all items that you may
 want to use as row names are just columns in your data set (see example). That
@@ -89,6 +99,8 @@ References:
  \item{gt: Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.11.1.9000, <https://github.com/rstudio/gt>, <https://gt.rstudio.com>.}
  \item{tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R package version 0.9.31, <https://dmurdoch.github.io/tables/>.}
  \item{openxlsx: Schauberger P, Walker A (2023). _openxlsx: Read, Write and Edit xlsx Files_. R package version 4.2.5.2, <https://ycphs.github.io/openxlsx/>.}
+ \item{flextable: Gohel D, Skintzos P (2025). _flextable: Functions for Tabular Reporting_. R package version 0.9.10, <https://CRAN.R-project.org/package=flextable>.}
+ \item{huxtable: Hugh-Jones D (2025). _huxtable: Easily Create and Style Tables for LaTeX, HTML and Other Formats_. R package version 5.8.0, <https://CRAN.R-project.org/package=huxtable>.}
 }
 }
 \examples{
@@ -123,12 +135,22 @@ tbl <- tbl |>
     style_column(columns = where(is.double), bold = TRUE)
 
 # Export as Excel table:
-wb <- as_excel(tbl = tbl)
+if(require_openxlsx(throw = FALSE))
+  wb <- as_excel(tbl = tbl)
 
 # Save using openxlsx
 # openxlsx::saveWorkbook(wb, "cars.xlsx")
 
 # Export as gt:
-gt_tbl <- as_gt(tbl = tbl)
-gt_tbl
+if(require_gt(throw = FALSE)) {
+  as_gt(tbl)
+}
+# Export as flextable:
+if(require_flextable(throw = FALSE)) {
+  flextable::as_flextable(tbl)
+}
+# Export as gt:
+if(require_huxtable(throw = FALSE)) {
+  huxtable::as_huxtable(tbl)
+}
 }

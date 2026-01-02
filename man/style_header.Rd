@@ -6,13 +6,15 @@
 \usage{
 style_header(
   tbl,
-  background_color = "#ffffff",
-  text_color = "#000000",
+  background_color = NULL,
+  text_color = NULL,
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
   openxlsx_style = NULL,
-  gt_style = NULL
+  gt_style = NULL,
+  hux_style = NULL,
+  flex_style = NULL
 )
 }
 \arguments{
@@ -31,6 +33,12 @@ style_header(
 \item{openxlsx_style}{optional custom openxlsx style. When provided, all other arguments are ignored}
 
 \item{gt_style}{optional custom gt style. When provided, all other arguments are ignored}
+
+\item{hux_style}{optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}}
+
+\item{flex_style}{optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
+function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}}
 }
 \value{
 the tablespan table with added styles
@@ -69,6 +77,7 @@ tbl <- tablespan(data = summarized_table,
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
 
+if(require_gt(throw = FALSE))
 tbl |>
   style_header(
     openxlsx_style = openxlsx::createStyle(
