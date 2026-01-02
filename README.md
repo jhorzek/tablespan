@@ -11,12 +11,17 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://www.r-pkg.org/badges/version/tablespan)](https://CRAN.R-project.org/package=tablespan)
 [![Total
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/tablespan)](https://cranlogs.r-pkg.org/badges/grand-total/tablespan)
+
 <!-- badges: end -->
 
 > Create satisficing tables in R the formula way.
 
-The objective of `tablespan` is to provide a “good enough” approach to
-creating tables by leveraging R’s formulas.
+The core objective of `tablespan` is to:
+
+1.  provide a “good enough” approach to easily create tables by
+    leveraging R’s formulas.
+2.  provide direct exports to other, more flexible table packages such
+    as `gt`, `flextable`, and `huxtable`.
 
 The following shows an example, where we define a relatively complex
 table header setup with a single formula. The details of the syntax will
@@ -45,7 +50,8 @@ tbl <- tablespan(data = summarized_table,
                  title = "Motor Trend Car Road Tests",
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
-tbl
+tbl |>
+  print(use_hux = FALSE)
 #> Motor Trend Car Road Tests
 #> A table created with tablespan
 #>                                                         
@@ -59,15 +65,23 @@ tbl
 #> Data from the infamous mtcars data set.
 ```
 
-`tablespan` builds on the awesome packages
-[`openxlsx`](https://ycphs.github.io/openxlsx/) and
-[`gt`](https://gt.rstudio.com/), which allows tables created with
-`tablespan` to be exported to the following formats:
+This basic table can now be easily exported to other table formats.
 
-1.  **Excel** (using [`openxlsx`](https://ycphs.github.io/openxlsx/))
-2.  **HTML** (using [`gt`](https://gt.rstudio.com/))
-3.  **LaTeX** (using [`gt`](https://gt.rstudio.com/))
-4.  **RTF** (using [`gt`](https://gt.rstudio.com/))
+# R Packages for Table Conversion and Export
+
+`tablespan` builds on the awesome packages
+[`gt`](https://gt.rstudio.com/),
+[`openxlsx`](https://ycphs.github.io/openxlsx/) ,
+[`flextable`](https://ardata-fr.github.io/flextable-book/index.html),
+and [`huxtable`](https://hughjonesd.github.io/huxtable/index.html). This
+allows `tablespan` tables to be exported to a large number of formats:
+
+| Package | Conversion Function | Description | Export Formats |
+|----|----|----|----|
+| **gt** | `as_gt()` | The **gt** package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout. | HTML, PDF, PNG, LaTeX, RTF, Word ([docs](https://gt.rstudio.com/reference/gtsave.html)) |
+| **openxlsx** | `as_excel()` | The **openxlsx** package offers Excel file creation and manipulation. Great for reporting tables to end-users. | Excel ([docs](https://ycphs.github.io/openxlsx/index.html)) |
+| **flextable** | `as_flextable()` | **flextable** specializes in creating complex, publication-quality tables with extensive formatting capabilities. Integrates well with Word/PowerPoint workflows. | HTML, Word, RTF, PowerPoint, PDF, PNG ([docs](https://ardata-fr.github.io/flextable-book/rendering.html)) |
+| **huxtable** | `as_hux()` | **huxtable** provides a unified interface for creating tables in multiple output formats. Also provides styled printing to the console. | LaTeX, Typst, HTML, Word, Excel, RTF, markdown, console ([docs](https://hughjonesd.github.io/huxtable/reference/index.html)) |
 
 ## Installation
 
@@ -108,7 +122,7 @@ summarized_table <- mtcars |>
 #> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
 #> argument.
 
-print(summarized_table)
+print(summarized_table, use_hux = FALSE)
 #> # A tibble: 5 × 7
 #> # Groups:   cyl [3]
 #>     cyl    vs     N mean_hp sd_hp mean_wt  sd_wt
@@ -140,7 +154,8 @@ names and `mean_hp` and `sd_hp` as columns:
 ``` r
 library(tablespan)
 tablespan(data = summarized_table,
-          formula = cyl ~ mean_hp + sd_hp)
+          formula = cyl ~ mean_hp + sd_hp) |>
+  print(use_hux = FALSE)
 #>                         
 #>  | cyl | mean_hp sd_hp |
 #>  | --- - ------- ----- |
@@ -160,7 +175,8 @@ following defines a spanner for `mean_hp` and `sd_hp` with the name
 
 ``` r
 tablespan(data = summarized_table,
-          formula = cyl ~ (Horsepower = mean_hp + sd_hp))
+          formula = cyl ~ (Horsepower = mean_hp + sd_hp)) |>
+  print(use_hux = FALSE)
 #>                            
 #>  |     | Horsepower       |
 #>  | cyl | mean_hp    sd_hp |
@@ -175,7 +191,8 @@ Spanners can also be nested:
 
 ``` r
 tablespan(data = summarized_table,
-          formula = cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp)))
+          formula = cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))) |>
+  print(use_hux = FALSE)
 #>                            
 #>  |     | Horsepower       |
 #>  |     | Mean       SD    |
@@ -199,7 +216,8 @@ achieved with `new_name:old_name`. For example,
 
 ``` r
 tablespan(data = summarized_table,
-          formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+          formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)) |>
+  print(use_hux = FALSE)
 #>                            
 #>  |     | Horsepower       |
 #>  | cyl | Mean       SD    |
@@ -238,7 +256,8 @@ tbl <- tablespan(data = summarized_table,
                  title = "Motor Trend Car Road Tests",
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
-tbl
+
+print(tbl, use_hux = FALSE)
 #> Motor Trend Car Road Tests
 #> A table created with tablespan
 #>                                                         
@@ -260,7 +279,8 @@ defines:
 
 ``` r
 tablespan(data = summarized_table,
-          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp))
+          formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)) |>
+  print(use_hux = FALSE)
 #>                      
 #>  | Horsepower       |
 #>  | Mean       SD    |
@@ -275,7 +295,9 @@ tablespan(data = summarized_table,
 
 Tables created with `tablespan` can now be translated to xlsx tables
 with [`openxlsx`](https://ycphs.github.io/openxlsx/) using the
-`as_excel` function:
+`as_excel` function (alternatively, tables can also be exported to
+`huxtable` and then exported to `openxlsx`; see
+`?huxtable::as_Workbook`):
 
 ``` r
 # as_excel creates an openxlsx workbook
@@ -289,11 +311,12 @@ wb <- as_excel(tbl = tbl)
 
 ![](man/figures/tablespan_example_cars.png)
 
-## Exporting to HTML, LaTeX, and RTF
+## Exporting to HTML, PDF, PNG, LaTeX, RTF, Word, PowerPoint, Markdown, or Console
 
-Tables created with `tablespan` can also be exported to `gt` which
-allows saving as HTML, LaTeX, or RTF file. To this end, we simply have
-to call `as_gt` on our table:
+Tables created with `tablespan` can also be exported to a variety of
+other, more flexible table packages. `gt` which allows saving as HTML,
+LaTeX, or RTF file. To this end, we simply have to call `as_gt` on our
+table:
 
 ``` r
 # Translate to gt:
@@ -302,14 +325,16 @@ gt_tbl
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%">
+
+<img src="man/figures/tablespan_example_gt_cars.png" alt="Standard table" width="50%"/>
+
 </p>
 
 ## Styling
 
 `tablespan` allows adding styles to tables that are automatically
-exported to `gt` and `openxlsx`. The workflow is heavily inspired by
-`gt`.
+exported to all exported tables (`gt`, `openxlsx`, `flextable`, and
+`huxtable`). The workflow is heavily inspired by `gt`.
 
 All functions used to style `tablespan` tables start with `style_`:
 
@@ -342,7 +367,9 @@ tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_gt_cars_title.png" alt="Standard table" width="50%">
+
+<img src="man/figures/tablespan_example_gt_cars_title.png" alt="Standard table" width="50%"/>
+
 </p>
 
 All of the styles applied in the following would also be exported to
@@ -363,7 +390,9 @@ tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_gt_cars_header.png" alt="Standard table" width="50%">
+
+<img src="man/figures/tablespan_example_gt_cars_header.png" alt="Standard table" width="50%"/>
+
 </p>
 
 ### Styling the body
@@ -387,7 +416,9 @@ tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_gt_cars_column.png" alt="Standard table" width="50%">
+
+<img src="man/figures/tablespan_example_gt_cars_column.png" alt="Standard table" width="50%"/>
+
 </p>
 
 ### Styling the footnote
@@ -403,7 +434,9 @@ tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_gt_cars_footnote.png" alt="Standard table" width="50%">
+
+<img src="man/figures/tablespan_example_gt_cars_footnote.png" alt="Standard table" width="50%"/>
+
 </p>
 
 ### Custom styles
@@ -425,7 +458,9 @@ tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_gt_cars_costum.png" alt="Standard table" width="50%">
+
+<img src="man/figures/tablespan_example_gt_cars_costum.png" alt="Standard table" width="50%"/>
+
 </p>
 
 ## Formatting
@@ -454,7 +489,9 @@ tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_styling.png" alt="Standard table" width="50%">
+
+<img src="man/figures/tablespan_example_styling.png" alt="Standard table" width="50%"/>
+
 </p>
 
 ## Adapting Great Tables
@@ -470,7 +507,9 @@ gt_tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%">
+
+<img src="man/figures/tablespan_example_gt_cars_styled.png" alt="Styled table" width="50%"/>
+
 </p>
 
 When adapting the `gt` object, there is an important detail to keep in
@@ -498,7 +537,9 @@ gt_tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_tab_info.png" alt="Table spanner IDs" width="50%">
+
+<img src="man/figures/tablespan_example_tab_info.png" alt="Table spanner IDs" width="50%"/>
+
 </p>
 
 The IDs for the spanners can be found at the very bottom. To add another
@@ -512,7 +553,9 @@ gt_tbl |>
 ```
 
 <p align="center">
-<img src="man/figures/tablespan_example_new_spanner.png" alt="Table with additional spanner" width="50%">
+
+<img src="man/figures/tablespan_example_new_spanner.png" alt="Table with additional spanner" width="50%"/>
+
 </p>
 
 ## References
@@ -521,10 +564,14 @@ gt_tbl |>
   Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready Display
   Tables. R package version 0.11.1.9000,
   <https://github.com/rstudio/gt>, <https://gt.rstudio.com>.
-- expss: Gregory D et al. (2024). expss: Tables with Labels in R. R
-  package version 0.9.31, <https://gdemin.github.io/expss/>.
-- tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R
-  package version 0.9.31, <https://dmurdoch.github.io/tables/>.
 - openxlsx: Schauberger P, Walker A (2023). *openxlsx: Read, Write and
   Edit xlsx Files*. R package version 4.2.5.2,
   <https://ycphs.github.io/openxlsx/>.
+- flextable: Gohel D, Skintzos P (2025). *flextable: Functions for
+  Tabular Reporting*. R package version 0.9.10,
+  [https://CRAN.R-project.org/package=flextable](vscode-file://vscode-app/Applications/Positron.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html#)
+- huxtable: Hugh-Jones D (2025). *huxtable: Easily Create and Style
+  Tables for LaTeX, HTML and Other Formats*. R package version 5.8.0,
+  [https://CRAN.R-project.org/package=huxtable](vscode-file://vscode-app/Applications/Positron.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html#)
+- tables: Murdoch D (2024). tables: Formula-Driven Table Generation. R
+  package version 0.9.31, <https://dmurdoch.github.io/tables/>.

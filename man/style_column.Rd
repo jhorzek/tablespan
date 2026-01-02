@@ -39,7 +39,8 @@ style_column(
 \item{italic}{set to TRUE for italic}
 
 \item{color_scale}{a named vector of length 2 or 3 to define a color scale. Example for two colors: color_scale = c("#EE2F43" = -1, "#37E65A" = 1).
-Example for three colors: color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1)}
+Example for three colors: color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1). If a value is set as NA, it will be replaced with the minimum, mean, or maximum respectively
+(e.g., color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1) will be replaced by color_scale = c("#EE2F43" = min(data), "#FFFFFF" = 0, "#37E65A" = max(data))).}
 
 \item{openxlsx_style}{optional custom openxlsx style. When provided, all other arguments are ignored}
 

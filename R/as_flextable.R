@@ -42,7 +42,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
     tbl_body <- x$table_data$col_data
   }
 
-  tbl_flex <- flextable::as_flextable(
+  tbl_flex <- flextable::flextable(
     tbl_body,
     ...
   )
@@ -169,7 +169,11 @@ flex_add_headers <- function(tbl, tbl_flex) {
   header_table_width <- flex_insert_header_entries(
     header_partial = tbl$header$rhs,
     max_level = max_level,
-    column_offset = tbl$header$lhs$width + 1,
+    column_offset = ifelse(
+      is.null(tbl$header$lhs$width),
+      1,
+      tbl$header$lhs$width + 1
+    ),
     header_table = header_table,
     header_width = header_width
   )
@@ -308,6 +312,8 @@ style_flex <- function(tbl, tbl_flex) {
       }
       if (is.null(c_style$rows)) {
         rows <- 1:nrow(tbl$table_data$col_data)
+      } else {
+        rows <- c_style$rows
       }
       for (style_fun in c_style$style$flex) {
         tbl_flex <- tbl_flex |>
@@ -327,8 +333,9 @@ style_flex <- function(tbl, tbl_flex) {
       if (is.null(c_format$rows)) {
         # we also don't style the footnote here
         rows <- 1:nrow(tbl$table_data$col_data)
+      } else {
+        rows <- c_format$rows
       }
-      browser()
       tbl_flex <- tbl_flex |>
         c_format$format$flex(col = column_name, row = rows, part = "body")
     }

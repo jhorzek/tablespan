@@ -15,11 +15,13 @@ initialize_formats <- function(tbl, max_digits) {
       data_col = data[[column_name]],
       max_digits = max_digits
     )
+
     tbl <- format_column(
       tbl = tbl,
       format_gt = auto_formatting$gt,
       format_openxlsx = auto_formatting$openxlsx,
       format_hux = auto_formatting$hux,
+      format_flex = auto_formatting$flex,
       columns = dplyr::all_of(column_name),
       rows = seq_len(length(data[[column_name]]))
     )
@@ -28,6 +30,12 @@ initialize_formats <- function(tbl, max_digits) {
     # the evaluation and prevent this overwrite...
     environment(
       environment(tbl$formats$columns[[column_name]][[1]]$format$gt)$format
+    )
+    environment(
+      environment(tbl$formats$columns[[column_name]][[1]]$format$flex)$format
+    )
+    environment(
+      environment(tbl$formats$columns[[column_name]][[1]]$format$hux)$format
     )
   }
 
@@ -136,7 +144,8 @@ format_column <- function(
     openxlsx = create_format_openxlsx(
       num_format = format_openxlsx
     ),
-    hux = create_format_hux(num_format = format_hux)
+    hux = create_format_hux(num_format = format_hux),
+    flex = create_format_flex(format = format_flex)
   )
 
   for (column_name in column_names) {
@@ -396,7 +405,7 @@ create_format_flex <- function(format) {
     return(NULL)
   }
 
-  if (is.null(num_format)) {
+  if (is.null(format)) {
     return(NULL)
   }
   if (!is.function(format)) {
@@ -573,12 +582,12 @@ format_number_hux <- function(decimals, sep_mark, dec_mark) {
 #' @returns a function that applies the specified number formatting to a flextable, or NULL if flextable is not available
 #' @noRd
 format_number_flex <- function(decimals, sep_mark, dec_mark) {
-  if (requireNamespace("huxtable", quietly = TRUE)) {
-    flex_format <- function(tbl, row, col, part) {
+  if (requireNamespace("flextable", quietly = TRUE)) {
+    flex_format <- function(tbl, i, j, part) {
       tbl |>
         flextable::colformat_double(
-          i = row,
-          j = col,
+          i = i,
+          j = j,
           digits = decimals,
           big.mark = sep_mark,
           decimal.mark = dec_mark

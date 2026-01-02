@@ -29,6 +29,72 @@ add_style_color_scale <- function(styles, color_scale, rows) {
   return(styles)
 }
 
+preprocess_color_scale <- function(tbl, color_scale, column_names, rows) {
+  if (is.null(color_scale)) {
+    return(color_scale)
+  }
+  if (!length(color_scale) %in% c(2, 3)) {
+    stop("color_scale must be of length 2 or 3.")
+  }
+
+  if (is.null(names(color_scale))) {
+    stop(
+      'color_scale must be a named vector (e.g., color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1))'
+    )
+  }
+
+  if (!anyNA(color_scale)) {
+    return(color_scale)
+  }
+
+  # fill in NAs
+  if (!is.null(tbl$header$lhs)) {
+    data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
+  } else {
+    data <- tbl$table_data$col_data
+  }
+
+  data <- data |>
+    dplyr::select(dplyr::all_of(column_names))
+  if (!is.null(rows)) {
+    data <- data |>
+      dplyr::slice(rows)
+  }
+
+  min_val <- min(data, na.rm = TRUE)
+  mean_val <- mean(unlist(c(data)), na.rm = TRUE)
+  max_val <- max(data, na.rm = TRUE)
+
+  if (is.na(color_scale[1])) {
+    color_scale[1] <- min_val
+  }
+  if (length(color_scale) == 2) {
+    if (is.na(color_scale[2])) {
+      color_scale[2] <- max_val
+    }
+  } else if (length(color_scale) == 3) {
+    if (is.na(color_scale[2])) {
+      color_scale[2] <- mean_val
+    }
+    if (is.na(color_scale[3])) {
+      color_scale[3] <- max_val
+    }
+  }
+
+  # final check: make sure all values are increasing and unique
+  for (i in 2:length(color_scale)) {
+    if (color_scale[i] <= color_scale[i - 1]) {
+      stop(
+        "The values of the color_scale must be increasing. Got ",
+        color_scale,
+        " instead. Please adjust."
+      )
+    }
+  }
+  return(color_scale)
+}
+
+
 #' create_color_scale_openxlsx
 #'
 #' Create a color scale style for openlslx

@@ -864,7 +864,8 @@ style_vline <- function(
 #' @param bold set to TRUE for bold
 #' @param italic set to TRUE for italic
 #' @param color_scale a named vector of length 2 or 3 to define a color scale. Example for two colors: color_scale = c("#EE2F43" = -1, "#37E65A" = 1).
-#' Example for three colors: color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1)
+#' Example for three colors: color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1). If a value is set as NA, it will be replaced with the minimum, mean, or maximum respectively
+#' (e.g., color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1) will be replaced by color_scale = c("#EE2F43" = min(data), "#FFFFFF" = 0, "#37E65A" = max(data))).
 #' @param gt_style optional custom gt style. When provided, all other arguments are ignored
 #' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
 #' @param hux_style optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
@@ -926,6 +927,13 @@ style_column <- function(
   column_names <- data |>
     dplyr::select(!!columns_expr) |>
     colnames()
+
+  color_scale <- preprocess_color_scale(
+    tbl = tbl,
+    color_scale = color_scale,
+    column_names = column_names,
+    rows = rows
+  )
 
   gt_style <- create_style_gt_function(
     font_size = font_size,

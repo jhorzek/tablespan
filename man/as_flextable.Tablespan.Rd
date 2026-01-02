@@ -41,6 +41,7 @@ tbl <- tablespan(data = summarized_table,
                    (Results = (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
                       (`Weight` = Mean:mean_wt + SD:sd_wt)))
 if(require_flextable(throw = FALSE)){
+  library(flextable)
   flex_tbl <- as_flextable(tbl)
   flex_tbl
 }

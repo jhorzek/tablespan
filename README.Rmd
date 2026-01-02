@@ -57,7 +57,7 @@ tbl |>
   print(use_hux = FALSE)
 ```
 
-This basic table can now be easily exported to other table formats:
+This basic table can now be easily exported to other table formats.
 
 # R Packages for Table Conversion and Export
 
@@ -182,8 +182,9 @@ tbl <- tablespan(data = summarized_table,
                    (`Weight` = Mean:mean_wt + SD:sd_wt),
                  title = "Motor Trend Car Road Tests",
                  subtitle = "A table created with tablespan",
-                 footnote = "Data from the infamous mtcars data set.") |>
-  print(use_hux = FALSE)
+                 footnote = "Data from the infamous mtcars data set.")
+
+print(tbl, use_hux = FALSE)
 ```
 
 ### Tables without row names
