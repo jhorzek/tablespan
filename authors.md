@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/jhorzek/tablespan/blob/main/DESCRIPTION)
 
 Orzek J (2026). *tablespan: Create Satisficing 'Excel', 'HTML', 'LaTeX',
-and 'RTF' Tables using a Simple Formula*. R package version 0.3.2,
+and 'RTF' Tables using a Simple Formula*. R package version 0.4.0,
 <https://github.com/jhorzek/tablespan>.
 
     @Manual{,
       title = {tablespan: Create Satisficing 'Excel', 'HTML', 'LaTeX', and 'RTF' Tables using a Simple Formula},
       author = {Jannik H. Orzek},
       year = {2026},
-      note = {R package version 0.3.2},
+      note = {R package version 0.4.0},
       url = {https://github.com/jhorzek/tablespan},
     }
