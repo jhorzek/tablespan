@@ -10,3 +10,6 @@ CRAN-SUBMISSION
 cran-comments.md
 
 /.quarto/
+inst/doc
+/doc/
+/Meta/

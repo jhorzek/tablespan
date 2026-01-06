@@ -78,9 +78,9 @@ preprocess_color_scale <- function(tbl, color_scale, column_names, rows) {
       dplyr::slice(rows)
   }
 
-  min_val <- min(data, na.rm = TRUE)
+  min_val <- min(data, na.rm = TRUE) - 2e-11 # we add minimal slack to avoid issues with numerical precision
   mean_val <- mean(unlist(c(data)), na.rm = TRUE)
-  max_val <- max(data, na.rm = TRUE)
+  max_val <- max(data, na.rm = TRUE) + 2e-11 # we add minimal slack to avoid issues with numerical precision
 
   if (is.na(color_scale[1])) {
     color_scale[1] <- min_val
