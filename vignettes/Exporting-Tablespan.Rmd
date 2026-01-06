@@ -1,0 +1,212 @@
+---
+title: "Exporting Tablespan"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exporting-Tablespan}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(flextable)
+library(huxtable)
+library(tablespan)
+library(dplyr)
+```
+
+```{r setup}
+library(tablespan)
+```
+
+**tablespan** provides a unified, formula-driven approach to creating complex tables with multi-level headers (spanners) that can be exported to a variety of output formats. The core idea is to define the *structure* of a table once, using a concise formula syntax, and then reuse that structure across multiple reporting outputs such as Excel, HTML, LaTeX, Word, Typst, or PowerPoint.
+
+**Exporting** is a core design goal of **tablespan**: instead of manually recreating tables for different formats, you can generate a single `Tablespan` object and convert it into the format that best fits your reporting workflow.
+
+## Motivations for using tablespan
+
+There are two primary motivations for using tablespan:
+
+1. **Easily create “good enough” tables that can be exported to many formats**.
+   `tablespan` is designed to quickly generate basic tables that work across a wide variety of outputs. This is ideal for internal or semi-formal reporting where the *same table* needs to be delivered as:
+
+   * HTML (dashboards)
+   * PDF, Word or PowerPoint (reports and presentations)
+   * Excel (shared tables)
+
+2. **Easily build a good starting point table that can then be refined with more sophisticated packages (e.g., gt or flextable)**.
+   `tablespan` provides a concise syntax for relatively basic tables with title, subtitle, header, row names, columns and footnotes. Once exported to one of the supported packages (e.g., gt), these tables can easily be refined to be publication ready.
+
+## Example: creating a tablespan object
+
+```{r}
+library(tablespan)
+library(dplyr)
+
+data(mtcars)
+
+summarized_table <- mtcars |>
+  group_by(cyl, vs) |>
+  summarise(
+    N = n(),
+    mean_hp = mean(hp),
+    sd_hp = sd(hp),
+    mean_wt = mean(wt),
+    sd_wt = sd(wt),
+    .groups = "drop")
+
+tbl <- tablespan(
+  data = summarized_table,
+  formula = Cylinder:cyl + Engine:vs ~
+    N +
+    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+    (`Weight` = Mean:mean_wt + SD:sd_wt),
+  title = "Motor Trend Car Road Tests",
+  subtitle = "A table created with tablespan",
+  footnote = "Data from the mtcars data set")
+```
+
+At this point, `tbl` is a `Tablespan` object that contains the complete logical definition of the table and can be exported or further styled.
+
+## Styling with tablespan
+
+Before exporting, basic styling can be applied directly at the tablespan level.
+
+### Column style with a color scale
+
+For example, we can apply a color scale to the `mean_hp` column:
+
+```{r}
+tbl <- tbl |>
+  style_column(
+    columns = mean_hp, 
+    text_color = "#FFFFFF",
+    color_scale = c("#01016f" = NA, "#d8031c" = NA))
+```
+
+Any style applied directly with tablespan will be automatically exported to all other table formats (e.g., gt).
+
+## Exporting tables
+
+Before exporting, keep the following points in mind:
+
+1. **The required backend packages must be installed**
+   tablespan delegates exporting to other packages. If a backend package is not installed, the corresponding export will not work (e.g., make sure that gt is installed to export to gt).
+
+2. **flextable and huxtable must be loaded**
+   For `as_flextable()` and `as_huxtable()` to work, the respective packages must be loaded.
+
+
+## Export to Excel (openxlsx)
+
+**To use the excel export, please make sure that openxlsx is installed.**
+
+### Supported formats
+
+* `.xlsx`
+
+### Example
+
+```{r}
+wb <- as_excel(tbl)
+# openxlsx::saveWorkbook(wb, "cars.xlsx", overwrite = TRUE)
+```
+
+---
+
+## Export to gt and further refinement
+
+> "The `gt` package in R is a powerful tool for creating **elegant and customizable tables** for data visualization and reporting. It offers a user-friendly way to **design and style tables** in RMarkdown documents and Shiny applications."
+>
+> [https://r-graph-gallery.com/package/gt.html](https://r-graph-gallery.com/package/gt.html)
+
+**To use the gt export, please make sure that gt is installed.**
+
+**Supported [export formats](https://gt.rstudio.com/reference/gtsave.html)**:
+
+* HTML
+* LaTeX
+* RTF
+* Word (`.docx`)
+
+### Example
+
+```{r}
+gt_tbl <- as_gt(tbl)
+gt_tbl
+```
+
+Optionally adapt the table with styles not supported directly within `tablespan`:
+```{r}
+gt_tbl <- gt_tbl |>
+  gt::cols_align(
+    align = "left",
+    columns = 1:2)
+
+gt_tbl
+```
+
+## Export to flextable
+
+> "The flextable package provides a framework to easily create tables for reporting and publications. Functions are provided to let users create tables, modify and format their content, and define their content."
+>
+> [https://ardata-fr.github.io/flextable-book/](https://ardata-fr.github.io/flextable-book/)
+
+**To use the flextabe export, please make sure that flextable is installed and loaded.**
+
+### Supported formats
+
+* HTML
+* PDF
+* Word (`.docx`)
+* PowerPoint (`.pptx`)
+
+### Example
+
+```{r}
+ft <- flextable::as_flextable(tbl)
+ft
+```
+
+Optionally post-process the table:
+```{r}
+compose(ft,
+  j = 5,
+  value = flextable::as_paragraph(
+    flextable::minibar(value = sd_hp, 
+    max = max(sd_hp, na.rm = TRUE))),
+  part = "body")
+```
+
+## Export to huxtable
+
+> "Huxtable is an R package to create LaTeX and HTML tables, with a friendly, modern interface. Features include control over text styling, number format, background color, borders, padding and alignment. Cells can span multiple rows and/or columns. Tables can be manipulated with standard R subsetting or `dplyr` functions."
+>
+> [https://hughjonesd.github.io/huxtable/](https://hughjonesd.github.io/huxtable/)
+
+**To use the huxtable export, please make sure that huxtable is installed and loaded.**
+
+### Supported formats
+
+* Console
+* LaTeX
+* HTML
+* RTF
+* Excel (`.xlsx`)
+* Word (`.docx`)
+
+### Example
+
+```{r}
+ht <- huxtable::as_huxtable(tbl)
+ht
+```
+
+Optional post-processing:
+```{r}
+ht <- huxtable::set_background_color(ht, row = 5:9, value = "orange")
+ht
+```
