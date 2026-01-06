@@ -573,3 +573,9 @@ spanner](reference/figures/tablespan_example_new_spanner.png)
 - [`tablespan()`](https://jhorzek.github.io/tablespan/reference/tablespan.md)
   : tablespan
 
+# Articles
+
+### All vignettes
+
+- [Exporting
+  Tablespan](https://jhorzek.github.io/tablespan/articles/Exporting-Tablespan.md):
