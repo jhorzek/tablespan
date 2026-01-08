@@ -52,6 +52,12 @@ test_that("cars", {
       colwidths = c(1, 1, 1, 2, 2)
     ) |>
     flextable::theme_booktabs() |>
+    flextable::vline(
+      x = _,
+      j = ncol(tbl$table_data$row_data),
+      border = officer::fp_border(),
+      part = "body"
+    ) |>
     add_header_lines(
       values = c("Motor Trend Car Road Tests", "A table created with tablespan")
     ) |>
@@ -112,6 +118,12 @@ test_that("cars-additional_spanners", {
       colwidths = c(1, 1, 5)
     ) |>
     flextable::theme_booktabs() |>
+    flextable::vline(
+      x = _,
+      j = ncol(tbl$table_data$row_data),
+      border = officer::fp_border(),
+      part = "body"
+    ) |>
     add_header_lines(
       values = c("Motor Trend Car Road Tests", "A table created with tablespan")
     ) |>
@@ -223,6 +235,12 @@ test_that("cars-no_titles", {
       colwidths = c(1, 1, 1, 2, 2)
     ) |>
     flextable::theme_booktabs() |>
+    flextable::vline(
+      x = _,
+      j = ncol(tbl$table_data$row_data),
+      border = officer::fp_border(),
+      part = "body"
+    ) |>
     flextable::align(align = "left", part = "header") |>
     flextable::add_footer_lines(
       values = "Data from the infamous mtcars data set."
@@ -267,6 +285,12 @@ test_that("cars-no_titles_no_footnotes", {
       colwidths = c(1, 1, 1, 2, 2)
     ) |>
     flextable::theme_booktabs() |>
+    flextable::vline(
+      x = _,
+      j = ncol(tbl$table_data$row_data),
+      border = officer::fp_border(),
+      part = "body"
+    ) |>
     flextable::align(align = "left", part = "header") |>
     flextable::align(align = "left", part = "footer") |>
     autofit()
@@ -335,6 +359,12 @@ test_that("cars - flextable styling", {
       colwidths = c(1, 1, 1, 2, 2)
     ) |>
     flextable::theme_booktabs() |>
+    flextable::vline(
+      x = _,
+      j = ncol(tbl$table_data$row_data),
+      border = officer::fp_border(),
+      part = "body"
+    ) |>
     add_header_lines(
       values = c("Motor Trend Car Road Tests", "A table created with tablespan")
     ) |>

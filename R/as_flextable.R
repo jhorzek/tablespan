@@ -58,6 +58,17 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
   tbl_flex <- tbl_flex |>
     theme()
 
+  # The only thing we want to do is add a vertical bar between the rownames and the
+  # data
+  if (!is.null(x$table_data$row_data)) {
+    tbl_flex <- flextable::vline(
+      x = tbl_flex,
+      j = ncol(x$table_data$row_data),
+      border = officer::fp_border(),
+      part = "body"
+    )
+  }
+
   tbl_flex <- flex_add_title(tbl = x, tbl_flex = tbl_flex)
 
   tbl_flex <- flex_add_footnote(tbl = x, tbl_flex = tbl_flex)

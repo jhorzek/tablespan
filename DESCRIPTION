@@ -22,7 +22,8 @@ Suggests:
     openxlsx,
     flextable,
     knitr,
-    rmarkdown
+    rmarkdown,
+    officer
 Depends:
     R (>= 4.2.0)
 Config/testthat/edition: 3
