@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   Exporting-Tablespan: Exporting-Tablespan.html
-last_built: 2026-01-06T19:30Z
+last_built: 2026-01-08T06:39Z
 urls:
   reference: https://jhorzek.github.io/tablespan/reference
   article: https://jhorzek.github.io/tablespan/articles
