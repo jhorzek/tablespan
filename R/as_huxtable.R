@@ -85,7 +85,6 @@ hux_insert_header_entries <- function(
   column_offset,
   header_table
 ) {
-  require_huxtable()
   if (header_partial$name != "_BASE_LEVEL_") {
     header_table[
       max_level - header_partial$level,

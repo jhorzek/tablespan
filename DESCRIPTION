@@ -23,7 +23,8 @@ Suggests:
     flextable,
     knitr,
     rmarkdown,
-    officer
+    officer,
+    googlesheets4
 Depends:
     R (>= 4.2.0)
 Config/testthat/edition: 3

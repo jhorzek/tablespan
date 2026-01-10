@@ -40,7 +40,8 @@ default_styles <- function() {
     default_styles_gt() |>
     default_styles_openxlsx() |>
     default_styles_hux() |>
-    default_styles_flex()
+    default_styles_flex() |>
+    default_styles_googlesheet()
 
   return(default)
 }
@@ -184,6 +185,123 @@ default_styles_openxlsx <- function(default_styles) {
   return(default_styles)
 }
 
+default_styles_googlesheet <- function(default_styles) {
+  if (!requireNamespace("googlesheets4", quietly = TRUE)) {
+    return(default_styles)
+  }
+
+  default <- list(function(google_sheet, sheet, row, col) {
+    return(list())
+  })
+
+  default_styles$title$googlesheet <- list(
+    function(google_sheet, sheet, row, col) {
+      gs_create_style_request(
+        sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+        row,
+        col,
+        bold = TRUE,
+        italic = FALSE,
+        font_size = 12,
+        background_color = "#ffffff",
+        text_color = NULL,
+        format = NULL
+      )
+    }
+  )
+  default_styles$subtitle$googlesheet <- list(
+    function(google_sheet, sheet, row, col) {
+      gs_create_style_request(
+        sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+        row,
+        col,
+        bold = TRUE,
+        italic = FALSE,
+        font_size = 10,
+        background_color = "#ffffff",
+        text_color = NULL,
+        format = NULL
+      )
+    }
+  )
+
+  default_styles$header$googlesheet <- list(
+    function(google_sheet, sheet, row, col) {
+      gs_create_style_request(
+        sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+        row,
+        col,
+        bold = TRUE,
+        italic = FALSE,
+        font_size = 10,
+        background_color = "#ffffff",
+        text_color = NULL,
+        format = NULL
+      )
+    }
+  )
+
+  warning("Borders for headers missing")
+  default_styles$header_cells$googlesheet <- list(
+    function(google_sheet, sheet, row, col) {
+      gs_create_style_request(
+        sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+        row,
+        col,
+        bold = TRUE,
+        italic = FALSE,
+        font_size = 10,
+        background_color = "#ffffff",
+        text_color = NULL,
+        format = NULL
+      )
+    }
+  )
+  #openxlsx::createStyle(
+  #  fontSize = 11,
+  #  halign = "center",
+  #  border = "BottomLeftRight",
+  #  borderColour = "#000000",
+  #  borderStyle = "thin",
+  #  textDecoration = "bold"
+  #)
+
+  default_styles$footnote$googlesheet <- list(
+    function(google_sheet, sheet, row, col) {
+      gs_create_style_request(
+        sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+        row,
+        col,
+        bold = FALSE,
+        italic = FALSE,
+        font_size = 10,
+        background_color = "#ffffff",
+        text_color = NULL,
+        format = NULL
+      )
+    }
+  )
+
+  warning("TODO: Set hline")
+
+  default_styles$hline$googlesheet <- default
+
+  #openxlsx::createStyle(
+  #  border = "Top",
+  #  borderColour = "#000000",
+  #  borderStyle = "thin"
+  #)
+
+  warning("TODO: Set vline")
+  default_styles$vline$googlesheet <- default
+  #openxlsx::createStyle(
+  #  border = "Left",
+  #  borderColour = "#000000",
+  #  borderStyle = "thin"
+  #)
+  return(default_styles)
+}
+
 #' style_title
 #'
 #' Set the style used for the title of the tablespan table.
@@ -206,6 +324,7 @@ default_styles_openxlsx <- function(default_styles) {
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
 #' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
+#' @param googlesheet_style TODO
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -245,7 +364,8 @@ style_title <- function(
   openxlsx_style = NULL,
   gt_style = NULL,
   hux_style = NULL,
-  flex_style = NULL
+  flex_style = NULL,
+  googlesheet_style = NULL
 ) {
   gt_style <- create_style_gt(
     font_size = font_size,
@@ -283,6 +403,15 @@ style_title <- function(
     openxlsx_style = openxlsx_style
   )
 
+  googlesheet_style <- create_style_googlesheet(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    googlesheet_style = googlesheet_style
+  )
+
   if (requireNamespace("gt", quietly = TRUE)) {
     tbl$styles$title$gt <- function(tbl) {
       return(
@@ -298,6 +427,7 @@ style_title <- function(
   tbl$styles$title$hux <- hux_style
   tbl$styles$title$flex <- flex_style
   tbl$styles$title$openxlsx <- openxlsx_style
+  tbl$styles$title$googlesheet <- googlesheet_style
   return(tbl)
 }
 
@@ -402,6 +532,15 @@ style_subtitle <- function(
     openxlsx_style = openxlsx_style
   )
 
+  googlesheet_style <- create_style_googlesheet(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    googlesheet_style = googlesheet_style
+  )
+
   if (requireNamespace("gt", quietly = TRUE)) {
     tbl$styles$subtitle$gt <- function(tbl) {
       return(
@@ -417,6 +556,7 @@ style_subtitle <- function(
   tbl$styles$subtitle$flex <- flex_style
   tbl$styles$subtitle$hux <- hux_style
   tbl$styles$subtitle$openxlsx <- openxlsx_style
+  tbl$styles$subtitle$googlesheet <- googlesheet_style
   return(tbl)
 }
 
@@ -486,7 +626,8 @@ style_header <- function(
   openxlsx_style = NULL,
   gt_style = NULL,
   hux_style = NULL,
-  flex_style = NULL
+  flex_style = NULL,
+  googlesheet_style = NULL
 ) {
   gt_style <- create_style_gt(
     font_size = font_size,
@@ -524,6 +665,15 @@ style_header <- function(
     openxlsx_style = openxlsx_style
   )
 
+  googlesheet_style <- create_style_googlesheet(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    googlesheet_style = googlesheet_style
+  )
+
   if (requireNamespace("gt", quietly = TRUE)) {
     tbl$styles$header$gt <- function(tbl) {
       return(
@@ -543,6 +693,7 @@ style_header <- function(
   tbl$styles$header$hux <- hux_style
   tbl$styles$header$flex <- flex_style
   tbl$styles$header$openxlsx <- openxlsx_style
+  tbl$styles$header$googlesheet <- googlesheet_style
   return(tbl)
 }
 
@@ -600,7 +751,8 @@ style_header_cells <- function(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
-  openxlsx_style = NULL
+  openxlsx_style = NULL,
+  googlesheet_style = NULL
 ) {
   openxlsx_style <- create_style_openxlsx(
     font_size = font_size,
@@ -610,11 +762,22 @@ style_header_cells <- function(
     background_color = background_color,
     openxlsx_style = openxlsx_style
   )
+
+  googlesheet_style <- create_style_googlesheet(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    googlesheet_style = googlesheet_style
+  )
+
   # does not exist for gt
   tbl$styles$header_cells$gt <- function(tbl) {
     return(tbl)
   }
   tbl$styles$header_cells$openxlsx <- openxlsx_style
+  tbl$styles$header_cells$googlesheets <- googlesheet_style
   return(tbl)
 }
 
@@ -680,7 +843,8 @@ style_footnote <- function(
   openxlsx_style = NULL,
   gt_style = NULL,
   hux_style = NULL,
-  flex_style = NULL
+  flex_style = NULL,
+  googlesheet_style = NULL
 ) {
   gt_style <- create_style_gt(
     font_size = font_size,
@@ -718,6 +882,15 @@ style_footnote <- function(
     openxlsx_style = openxlsx_style
   )
 
+  googlesheet_style <- create_style_googlesheet(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    googlesheet_style = googlesheet_style
+  )
+
   if (requireNamespace("gt", quietly = TRUE)) {
     tbl$styles$footnote$gt <- function(tbl) {
       return(
@@ -742,6 +915,7 @@ style_footnote <- function(
   tbl$styles$footnote$hux <- hux_style
   tbl$styles$footnote$flex <- flex_style
   tbl$styles$footnote$openxlsx <- openxlsx_style
+  tbl$styles$footnote$googlesheet <- googlesheet_style
   return(tbl)
 }
 
@@ -792,9 +966,11 @@ style_footnote <- function(
 #' # save workbook to see effect
 style_hline <- function(
   tbl,
-  openxlsx_style
+  openxlsx_style,
+  googlesheet_style
 ) {
   tbl$styles$hline$openxlsx <- openxlsx_style
+  tbl$styles$hline$googlesheet <- googlesheet_style
   return(tbl)
 }
 
@@ -845,9 +1021,11 @@ style_hline <- function(
 #' # save workbook to see effect
 style_vline <- function(
   tbl,
-  openxlsx_style
+  openxlsx_style,
+  googlesheet_style
 ) {
   tbl$styles$vline$openxlsx <- openxlsx_style
+  tbl$styles$vline$googlesheet <- googlesheet_style
   return(tbl)
 }
 
@@ -919,6 +1097,7 @@ style_column <- function(
   gt_style = NULL,
   hux_style = NULL,
   flex_style = NULL,
+  googlesheet_style = NULL,
   stack = TRUE
 ) {
   columns_expr <- rlang::enquo(columns)
@@ -971,11 +1150,21 @@ style_column <- function(
     openxlsx_style = openxlsx_style
   )
 
+  googlesheet_style <- create_style_googlesheet(
+    font_size = font_size,
+    text_color = text_color,
+    bold = bold,
+    italic = italic,
+    background_color = background_color,
+    googlesheet_style = googlesheet_style
+  )
+
   style <- list(
     gt = gt_style,
     hux = hux_style,
     flex = flex_style,
-    openxlsx = openxlsx_style
+    openxlsx = openxlsx_style,
+    googlesheet = googlesheet_style
   )
 
   for (column_name in column_names) {
@@ -1224,6 +1413,37 @@ create_style_openxlsx <- function(
   )
 
   return(openxlsx_style)
+}
+
+create_style_googlesheet <- function(
+  font_size,
+  text_color,
+  bold,
+  italic,
+  background_color,
+  googlesheet_style = NULL
+) {
+  if (!requireNamespace("googlesheets4", quietly = TRUE)) {
+    return(NULL)
+  }
+  if (!is.null(googlesheet_style)) {
+    return(list(googlesheet_style))
+  }
+
+  styles <- list(
+    function(google_sheet, sheet, row, col) {
+      return(gs_create_style_request(
+        sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+        row = row,
+        col = col,
+        bold = bold,
+        italic = italic,
+        font_size = font_size,
+        background_color = background_color,
+        text_color = text_color
+      ))
+    }
+  )
 }
 
 #' create_style_hux
