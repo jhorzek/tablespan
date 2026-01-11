@@ -241,30 +241,31 @@ default_styles_googlesheet <- function(default_styles) {
     }
   )
 
-  warning("Borders for headers missing")
   default_styles$header_cells$googlesheet <- list(
     function(google_sheet, sheet, row, col) {
-      gs_create_style_request(
+      gs_border_request(
         sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
-        row,
-        col,
-        bold = TRUE,
-        italic = FALSE,
-        font_size = 10,
-        background_color = "#ffffff",
-        text_color = NULL,
-        format = NULL
+        row = row,
+        col = col,
+        top = NULL,
+        bottom = gs_border_style(
+          style = "SOLID",
+          width = 1,
+          color = list(red = 0, green = 0, blue = 0)
+        ),
+        left = gs_border_style(
+          style = "SOLID",
+          width = 1,
+          color = list(red = 0, green = 0, blue = 0)
+        ),
+        right = gs_border_style(
+          style = "SOLID",
+          width = 1,
+          color = list(red = 0, green = 0, blue = 0)
+        )
       )
     }
   )
-  #openxlsx::createStyle(
-  #  fontSize = 11,
-  #  halign = "center",
-  #  border = "BottomLeftRight",
-  #  borderColour = "#000000",
-  #  borderStyle = "thin",
-  #  textDecoration = "bold"
-  #)
 
   default_styles$footnote$googlesheet <- list(
     function(google_sheet, sheet, row, col) {
@@ -282,23 +283,10 @@ default_styles_googlesheet <- function(default_styles) {
     }
   )
 
-  warning("TODO: Set hline")
+  default_styles$hline$googlesheet <- gs_border_style(color = "#000000")
 
-  default_styles$hline$googlesheet <- default
+  default_styles$vline$googlesheet <- gs_border_style(color = "#000000")
 
-  #openxlsx::createStyle(
-  #  border = "Top",
-  #  borderColour = "#000000",
-  #  borderStyle = "thin"
-  #)
-
-  warning("TODO: Set vline")
-  default_styles$vline$googlesheet <- default
-  #openxlsx::createStyle(
-  #  border = "Left",
-  #  borderColour = "#000000",
-  #  borderStyle = "thin"
-  #)
   return(default_styles)
 }
 
@@ -967,7 +955,7 @@ style_footnote <- function(
 style_hline <- function(
   tbl,
   openxlsx_style,
-  googlesheet_style
+  googlesheet_style = gs_border_style(color = "#000000")
 ) {
   tbl$styles$hline$openxlsx <- openxlsx_style
   tbl$styles$hline$googlesheet <- googlesheet_style
@@ -1022,7 +1010,7 @@ style_hline <- function(
 style_vline <- function(
   tbl,
   openxlsx_style,
-  googlesheet_style
+  googlesheet_style = gs_border_style(color = "#000000")
 ) {
   tbl$styles$vline$openxlsx <- openxlsx_style
   tbl$styles$vline$googlesheet <- googlesheet_style

@@ -36,6 +36,7 @@ as_googlesheet <- function(
     start_col = start_col
   )
 
+  browser()
   tbl_header <- gs_get_header_table(tbl)
 
   # Add the data
@@ -64,11 +65,42 @@ as_googlesheet <- function(
   if (!silent) {
     rlang::inform(message = c("i" = paste0("Writing footnote to ", sheet)))
   }
+
   gs_write_table_footnote(
     footnote = tbl$footnote,
     locations = locations,
     google_sheet = google_sheet,
     sheet = sheet
+  )
+
+  merge_requests <- c(
+    gs_merge_title_cell_requests(
+      tbl = tbl,
+      locations = locations,
+      google_sheet = google_sheet,
+      sheet = sheet
+    ),
+    gs_merge_header_cell_requests(
+      tbl_header = tbl_header,
+      locations = locations,
+      google_sheet = google_sheet,
+      sheet = sheet
+    )
+  )
+  browser()
+  header_outline_requests <- gs_header_outline_requests(
+    tbl = tbl,
+    tbl_header = tbl_header,
+    google_sheet = google_sheet,
+    sheet = sheet,
+    locations = locations
+  )
+
+  outline_requests <- gs_outlines_requests(
+    tbl = tbl,
+    google_sheet = google_sheet,
+    sheet = sheet,
+    locations = locations
   )
 
   style_requests <- style_requests_googlesheet(
@@ -78,17 +110,122 @@ as_googlesheet <- function(
     locations = locations
   )
 
-  # MERGE
-  warning("Merging missing")
-
   # Apply all style requests
   if (!silent) {
     rlang::inform(message = c("i" = paste0("Styling ", sheet)))
   }
   gs_run_style_requests(
     google_sheet = google_sheet,
-    style_requests = style_requests
+    style_requests = c(
+      header_outline_requests,
+      merge_requests,
+      style_requests,
+      outline_requests
+    )
   )
+}
+
+gs_outlines_requests <- function(tbl, google_sheet, sheet, locations) {
+  require_googlesheets4()
+  styles <- tbl$styles
+  sheet_id <- google_sheet$sheets$id[google_sheet$sheets$name == sheet]
+
+  requests <- list()
+
+  if (!is.null(tbl$header$lhs)) {
+    left_most <- locations$col$start_col_header_lhs
+  } else {
+    left_most <- locations$col$start_col_header_rhs
+  }
+
+  # top line
+  requests[[length(requests) + 1]] <- gs_border_request(
+    sheetId = sheet_id,
+    row = locations$row$start_row_header,
+    col = c(left_most, locations$col$end_col_header_rhs),
+    top = styles$hline$googlesheet
+  )
+
+  # bottom line
+  requests[[length(requests) + 1]] <- gs_border_request(
+    sheetId = sheet_id,
+    row = locations$row$end_row_data,
+    col = c(left_most, locations$col$end_col_header_rhs),
+    bottom = styles$hline$googlesheet
+  )
+
+  # left line
+  requests[[length(requests) + 1]] <- gs_border_request(
+    sheetId = sheet_id,
+    row = c(locations$row$start_row_header, locations$row$end_row_data),
+    col = left_most,
+    left = styles$vline$googlesheet
+  )
+
+  # right line
+  requests[[length(requests) + 1]] <- gs_border_request(
+    sheetId = sheet_id,
+    row = c(locations$row$start_row_header, locations$row$end_row_data),
+    col = locations$col$end_col_header_rhs,
+    right = styles$vline$googlesheet
+  )
+
+  # row name separator
+  requests[[length(requests) + 1]] <- gs_border_request(
+    sheetId = sheet_id,
+    row = c(locations$row$start_row_header, locations$row$end_row_data),
+    col = locations$col$start_col_header_rhs,
+    left = styles$vline$googlesheet,
+  )
+  return(requests)
+}
+
+gs_header_outline_requests <- function(
+  tbl,
+  tbl_header,
+  google_sheet,
+  sheet,
+  locations
+) {
+  outline_requests <- list()
+
+  row_header_start <- locations$row$start_row_header
+  col_header_start <- ifelse(
+    !is.null(locations$col$start_col_header_lhs),
+    locations$col$start_col_header_lhs,
+    locations$col$start_col_header_rhs
+  )
+  for (i in 1:nrow(tbl_header)) {
+    for (j in 1:ncol(tbl_header)) {
+      if (!is.na(tbl_header[i, j])) {
+        outline_requests[[length(outline_requests) + 1]] <- gs_border_request(
+          sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+          row = row_header_start + i - 1,
+          col = col_header_start + j - 1,
+          bottom = tbl$styles$hline$googlesheet,
+          left = tbl$styles$vline$googlesheet,
+          right = tbl$styles$vline$googlesheet
+        )
+      }
+    }
+  }
+
+  merged_element <- attr(tbl_header, "to_merge")
+  for (merge_elem in merged_element) {
+    outline_requests[[length(outline_requests) + 1]] <- gs_border_request(
+      sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+      row = row_header_start + merge_elem$row - 1,
+      col = c(
+        col_header_start + min(merge_elem$columns) - 1,
+        col_header_start + max(merge_elem$columns) - 1
+      ),
+      bottom = tbl$styles$hline$googlesheet,
+      left = tbl$styles$vline$googlesheet,
+      right = tbl$styles$vline$googlesheet
+    )
+  }
+
+  return(outline_requests)
 }
 
 gs_write_table_data <- function(
@@ -316,12 +453,7 @@ gs_create_style_request <- function(
     text_format$fontSize <- font_size
   }
   if (!is.null(text_color)) {
-    text_color <- as.vector(col2rgb(text_color)) / 255
-    text_format$foregroundColor <- list(
-      "red" = text_color[1],
-      "green" = text_color[2],
-      "blue" = text_color[3]
-    )
+    text_format$foregroundColor <- gs_color(text_color)
   }
 
   if (length(text_format)) {
@@ -330,12 +462,7 @@ gs_create_style_request <- function(
 
   # Background color
   if (!is.null(background_color)) {
-    background_color <- as.vector(col2rgb(background_color)) / 255
-    user_format$backgroundColor <- list(
-      "red" = background_color[1],
-      "green" = background_color[2],
-      "blue" = background_color[3]
-    )
+    user_format$backgroundColor <- gs_color(background_color)
   }
 
   # Number and date formatting
@@ -452,9 +579,33 @@ gs_initialize_style_requests <- function(
         )
       )
     }
+
+    for (style_fun in styles$header_cells$googlesheet) {
+      style_requests[[length(style_requests) + 1]] <- style_fun(
+        google_sheet = google_sheet,
+        sheet = sheet,
+        row = c(locations$row$start_row_header, locations$row$end_row_header),
+        col = c(
+          locations$col$start_col_header_lhs,
+          locations$col$end_col_header_lhs
+        )
+      )
+    }
   }
   # Header RHS
   for (style_fun in styles$header$googlesheet) {
+    style_requests[[length(style_requests) + 1]] <- style_fun(
+      google_sheet = google_sheet,
+      sheet = sheet,
+      row = c(locations$row$start_row_header, locations$row$end_row_header),
+      col = c(
+        locations$col$start_col_header_rhs,
+        locations$col$end_col_header_rhs
+      )
+    )
+  }
+
+  for (style_fun in styles$header_cells$googlesheet) {
     style_requests[[length(style_requests) + 1]] <- style_fun(
       google_sheet = google_sheet,
       sheet = sheet,
@@ -560,4 +711,202 @@ style_requests_googlesheet <- function(tbl, google_sheet, sheet, locations) {
   warning("TODO: Apply custom formats")
 
   return(style_requests)
+}
+
+gs_merge_cells_request <- function(
+  sheetId,
+  row_start,
+  row_end,
+  col_start,
+  col_end
+) {
+  # Change to zero-indexed
+  row_start <- row_start - 1
+  row_end <- row_end # we don't subtract 1 because google sheets works with [start, end)
+  col_start <- col_start - 1
+  col_end <- col_end
+
+  # Final API request
+  # See https://developers.google.com/workspace/sheets/api/samples/formatting#merge-cells
+  merge_request <- list(
+    mergeCells = list(
+      range = list(
+        sheetId = sheetId,
+        startRowIndex = row_start,
+        endRowIndex = row_end,
+        startColumnIndex = col_start,
+        endColumnIndex = col_end
+      ),
+      "mergeType" = "MERGE_ALL"
+    )
+  )
+  return(merge_request)
+}
+
+gs_merge_title_cell_requests <- function(tbl, locations, google_sheet, sheet) {
+  merge_requests <- list()
+  if (!is.null(tbl$title)) {
+    merge_requests[[length(merge_requests) + 1]] <- gs_merge_cells_request(
+      sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+      row_start = locations$row$start_row_title,
+      row_end = locations$row$end_row_title,
+      col_start = locations$col$start_col_title,
+      col_end = locations$col$end_col_title
+    )
+  }
+
+  if (!is.null(tbl$subtitle)) {
+    merge_requests[[length(merge_requests) + 1]] <- gs_merge_cells_request(
+      sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+      row_start = locations$row$start_row_subtitle,
+      row_end = locations$row$end_row_subtitle,
+      col_start = locations$col$start_col_subtitle,
+      col_end = locations$col$end_col_subtitle
+    )
+  }
+
+  if (!is.null(tbl$footnote)) {
+    merge_requests[[length(merge_requests) + 1]] <- gs_merge_cells_request(
+      sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+      row_start = locations$row$start_row_footnote,
+      row_end = locations$row$end_row_footnote,
+      col_start = locations$col$start_col_footnote,
+      col_end = locations$col$end_col_footnote
+    )
+  }
+  return(merge_requests)
+}
+
+gs_merge_header_cell_requests <- function(
+  tbl_header,
+  locations,
+  google_sheet,
+  sheet
+) {
+  merge_requests <- list()
+  to_merge <- attr(tbl_header, "to_merge")
+  for (tm in to_merge) {
+    merge_requests[[length(merge_requests) + 1]] <- gs_merge_cells_request(
+      sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+      row_start = tm$row[1] + locations$row$start_row_header - 1,
+      row_end = ifelse(
+        length(tm$row) == 1,
+        tm$row[1] + locations$row$start_row_header - 1,
+        tm$row[2] + locations$row$start_row_header - 1
+      ),
+      col_start = tm$col[1] + locations$col$start_col_title - 1,
+      col_end = ifelse(
+        length(tm$col) == 1,
+        tm$col[1] + locations$col$start_col_title - 1,
+        tm$col[2] + locations$col$start_col_title - 1
+      )
+    )
+  }
+  return(merge_requests)
+}
+
+#' @export
+gs_border_style <- function(
+  style = c(
+    "SOLID",
+    "DOTTED",
+    "DASHED",
+    "SOLID_MEDIUM",
+    "SOLID_THICK",
+    "NONE",
+    "DOUBLE"
+  ),
+  width = 1,
+  color
+) {
+  return(list(
+    style = match.arg(style),
+    width = width,
+    color = gs_color(color)
+  ))
+}
+
+gs_color <- function(color) {
+  if (is.list(color) && all(c("red", "green", "blue") %in% names(color))) {
+    return(color)
+  } else {
+    gs_col <- as.vector(col2rgb(color)) / 255
+  }
+  return(list(
+    "red" = gs_col[1],
+    "green" = gs_col[2],
+    "blue" = gs_col[3]
+  ))
+}
+
+gs_border_request <- function(
+  sheetId,
+  row,
+  col,
+  top = NULL,
+  bottom = NULL,
+  left = NULL,
+  right = NULL
+) {
+  # We assume that row and col are row and column ranges
+  if (!length(row) %in% 1:2) {
+    stop("row must be either one or two values")
+  }
+  if (!length(col) %in% 1:2) {
+    stop("col must be either one or two values")
+  }
+
+  # We have to translate the 1-indexed R to a 0-indexed googlesheets request.
+  # Additionally, googlesheets has non-inclusive indexes with [start, end), so we must
+  # add 1 to the end (so end stays the same, start is reduced by 1):
+
+  row_start <- if (length(row) == 1) row - 1 else row[1] - 1
+  row_end <- if (length(row) == 1) row else row[2]
+
+  col_start <- if (length(col) == 1) col - 1 else col[1] - 1
+  col_end <- if (length(col) == 1) col else col[2]
+
+  request <- list(
+    updateBorders = list(
+      range = list(
+        sheetId = sheetId,
+        startRowIndex = row_start,
+        endRowIndex = row_end,
+        startColumnIndex = col_start,
+        endColumnIndex = col_end
+      )
+    )
+  )
+
+  # Final API request
+  # See https://developers.google.com/workspace/sheets/api/samples/formatting#cell-borders
+  if (!is.null(top)) {
+    request$updateBorders$top <- list(
+      "style" = top$style,
+      "width" = top$width,
+      "color" = top$color
+    )
+  }
+  if (!is.null(bottom)) {
+    request$updateBorders$bottom <- list(
+      "style" = bottom$style,
+      "width" = bottom$width,
+      "color" = bottom$color
+    )
+  }
+  if (!is.null(left)) {
+    request$updateBorders$left <- list(
+      "style" = left$style,
+      "width" = left$width,
+      "color" = left$color
+    )
+  }
+  if (!is.null(right)) {
+    request$updateBorders$right <- list(
+      "style" = right$style,
+      "width" = right$width,
+      "color" = right$color
+    )
+  }
+  return(request)
 }
