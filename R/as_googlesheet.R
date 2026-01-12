@@ -36,7 +36,6 @@ as_googlesheet <- function(
     start_col = start_col
   )
 
-  browser()
   tbl_header <- gs_get_header_table(tbl)
 
   # Add the data
@@ -87,7 +86,7 @@ as_googlesheet <- function(
       sheet = sheet
     )
   )
-  browser()
+
   header_outline_requests <- gs_header_outline_requests(
     tbl = tbl,
     tbl_header = tbl_header,
@@ -110,6 +109,13 @@ as_googlesheet <- function(
     locations = locations
   )
 
+  format_requests <- format_requests_googlesheet(
+    tbl = tbl,
+    google_sheet = google_sheet,
+    sheet = sheet,
+    locations = locations
+  )
+
   # Apply all style requests
   if (!silent) {
     rlang::inform(message = c("i" = paste0("Styling ", sheet)))
@@ -117,6 +123,7 @@ as_googlesheet <- function(
   gs_run_style_requests(
     google_sheet = google_sheet,
     style_requests = c(
+      format_requests,
       header_outline_requests,
       merge_requests,
       style_requests,
@@ -419,7 +426,8 @@ gs_create_style_request <- function(
   font_size = 10,
   background_color = NULL,
   text_color = NULL,
-  format = NULL
+  format = NULL,
+  color_scale = NULL
 ) {
   # We assume that row and col are row and column ranges
   if (!length(row) %in% 1:2) {
@@ -495,21 +503,113 @@ gs_create_style_request <- function(
 
   # Final API request
   # See https://developers.google.com/workspace/sheets/api/samples/formatting#format-header-row
-  list(
-    repeatCell = list(
-      range = list(
-        sheetId = sheetId,
-        startRowIndex = row_start,
-        endRowIndex = row_end,
-        startColumnIndex = col_start,
-        endColumnIndex = col_end
-      ),
-      cell = list(
-        userEnteredFormat = user_format
-      ),
-      fields = paste(fields, collapse = ",")
+  reqs <- list(
+    list(
+      repeatCell = list(
+        range = list(
+          sheetId = sheetId,
+          startRowIndex = row_start,
+          endRowIndex = row_end,
+          startColumnIndex = col_start,
+          endColumnIndex = col_end
+        ),
+        cell = list(
+          userEnteredFormat = user_format
+        ),
+        fields = paste(fields, collapse = ",")
+      )
     )
   )
+
+  if (!is.null(color_scale)) {
+    reqs <- c(
+      reqs,
+      list(
+        gs_create_color_scale_request(
+          sheetId = sheetId,
+          row_start = row_start,
+          col_start = col_start,
+          row_end = row_end,
+          col_end = col_end,
+          color_scale = color_scale
+        )
+      )
+    )
+  }
+
+  return(reqs)
+}
+
+gs_create_color_scale_request <- function(
+  sheetId,
+  row_start,
+  col_start,
+  row_end,
+  col_end,
+  color_scale
+) {
+  if (length(color_scale) == 2) {
+    return(list(
+      addConditionalFormatRule = list(
+        rule = list(
+          ranges = list(
+            sheetId = sheetId,
+            startRowIndex = row_start,
+            endRowIndex = row_end,
+            startColumnIndex = col_start,
+            endColumnIndex = col_end
+          ),
+          gradientRule = list(
+            minpoint = list(
+              color = gs_color(color = names(color_scale)[1]),
+              "type" = "NUMBER",
+              "value" = as.character(unname(color_scale[1]))
+            ),
+            maxpoint = list(
+              color = gs_color(color = names(color_scale)[2]),
+              "type" = "NUMBER",
+              "value" = as.character(unname(color_scale[2]))
+            )
+          )
+        ),
+        index = 0
+      )
+    ))
+  } else if (length(color_scale) == 3) {
+    return(list(
+      addConditionalFormatRule = list(
+        rule = list(
+          ranges = list(
+            sheetId = sheetId,
+            startRowIndex = row_start,
+            endRowIndex = row_end,
+            startColumnIndex = col_start,
+            endColumnIndex = col_end
+          ),
+          gradientRule = list(
+            minpoint = list(
+              color = gs_color(color = names(color_scale)[1]),
+              "type" = "NUMBER",
+              "value" = as.character(unname(color_scale[1]))
+            ),
+            midpoint = list(
+              color = gs_color(color = names(color_scale)[2]),
+              "type" = "NUMBER",
+              "value" = as.character(unname(color_scale[2]))
+            ),
+            maxpoint = list(
+              color = gs_color(color = names(color_scale)[3]),
+              "type" = "NUMBER",
+              "value" = as.character(unname(color_scale[3]))
+            )
+          )
+        ),
+        index = 0
+      )
+    ))
+  } else {
+    stop("Unknown color_scale")
+  }
 }
 
 gs_run_style_requests <- function(google_sheet, style_requests) {
@@ -638,6 +738,74 @@ gs_initialize_style_requests <- function(
   return(style_requests)
 }
 
+format_requests_googlesheet <- function(
+  tbl = tbl,
+  google_sheet = google_sheet,
+  sheet = sheet,
+  locations = locations
+) {
+  format_requests <- list()
+  # Add user defined formats
+  column_formats <- tbl$formats$columns
+  for (column_name in names(column_formats)) {
+    for (format in column_formats[[column_name]]) {
+      if (is.null(format$format$googlesheet)) {
+        next
+      } else {
+        if (is.null(format$rows)) {
+          data_rows <- c(
+            locations$row$start_row_data,
+            (locations$row$end_row_data)
+          )
+          contiguous_rows <- TRUE
+        } else {
+          data_rows <- (locations$row$start_row_data + format$rows) - 1
+          if (
+            all(min(data_rows):max(data_rows) %in% data_rows) &
+              all(data_rows %in% min(data_rows):max(data_rows))
+          ) {
+            data_rows <- c(min(data_rows), max(data_rows))
+            contiguous_rows <- TRUE
+          } else {
+            contiguous_rows <- FALSE
+          }
+        }
+        data_cols <- locations$col$start_col_header_lhs +
+          which(names(column_formats) == column_name) -
+          1
+        if (is(format$format$googlesheet, "gs_format")) {
+          if (contiguous_rows) {
+            format_requests[[
+              length(format_requests) + 1
+            ]] <- gs_create_style_request(
+              sheetId = google_sheet$sheets$id[
+                google_sheet$sheets$name == sheet
+              ],
+              row = data_rows,
+              col = data_cols,
+              format = format$format$googlesheet
+            )
+          } else {
+            for (rw in data_rows) {
+              format_requests[[
+                length(format_requests) + 1
+              ]] <- gs_create_style_request(
+                sheetId = google_sheet$sheets$id[
+                  google_sheet$sheets$name == sheet
+                ],
+                row = rw,
+                col = data_cols,
+                format = format$format$googlesheet
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+  return(format_requests)
+}
+
 style_requests_googlesheet <- function(tbl, google_sheet, sheet, locations) {
   require_googlesheets4()
 
@@ -705,10 +873,6 @@ style_requests_googlesheet <- function(tbl, google_sheet, sheet, locations) {
       }
     }
   }
-
-  # Apply custom formatting to columns
-  # Apply formats
-  warning("TODO: Apply custom formats")
 
   return(style_requests)
 }

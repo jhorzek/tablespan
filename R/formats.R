@@ -22,6 +22,7 @@ initialize_formats <- function(tbl, max_digits) {
       format_openxlsx = auto_formatting$openxlsx,
       format_hux = auto_formatting$hux,
       format_flex = auto_formatting$flex,
+      format_googlesheet = auto_formatting$googlesheet,
       columns = dplyr::all_of(column_name),
       rows = seq_len(length(data[[column_name]]))
     )
@@ -126,6 +127,7 @@ format_column <- function(
   rows = NULL,
   format_gt = gt::fmt_auto,
   format_openxlsx = "GENERAL",
+  format_googlesheet = create_format_googlesheet(type = NULL),
   format_hux = NULL,
   format_flex = NULL,
   stack = TRUE
@@ -144,6 +146,7 @@ format_column <- function(
     openxlsx = create_format_openxlsx(
       num_format = format_openxlsx
     ),
+    googlesheet = format_googlesheet,
     hux = create_format_hux(num_format = format_hux),
     flex = create_format_flex(format = format_flex)
   )
@@ -288,6 +291,33 @@ create_format_openxlsx <- function(num_format) {
   )
 
   return(openxlsx_style)
+}
+
+#' @export
+create_format_googlesheet <- function(
+  type = c(
+    "TEXT",
+    "NUMBER",
+    "PERCENT",
+    "CURRENCY",
+    "DATE",
+    "TIME",
+    "DATE_TIME",
+    "SCIENTIFIC"
+  ),
+  pattern = NULL
+) {
+  if (is.null(type)) {
+    return(NULL)
+  }
+  gs_format <- list(
+    type = match.arg(type),
+    pattern = pattern
+  )
+  class(gs_format) <- "gs_format"
+  return(
+    gs_format
+  )
 }
 
 
@@ -458,6 +488,12 @@ format_number <- function(decimals, sep_mark = ",", dec_mark = ".") {
     dec_mark = dec_mark
   )
 
+  styles_list$googlesheet <- format_number_googlesheet(
+    decimals = decimals,
+    sep_mark = sep_mark,
+    dec_mark = dec_mark
+  )
+
   styles_list$gt <- format_number_gt(
     decimals = decimals,
     sep_mark = sep_mark,
@@ -523,27 +559,45 @@ format_number_gt <- function(decimals, sep_mark, dec_mark) {
 #' @returns a character string representing the openxlsx number format, or NULL if openxlsx is not available
 #' @noRd
 format_number_openxlsx <- function(decimals, sep_mark, dec_mark) {
-  if (requireNamespace("openxlsx", quietly = TRUE)) {
-    if (decimals == 0) {
-      openxlsx_format <- "0"
-    } else {
-      openxlsx_format <- paste0(ifelse(
-        sep_mark == "",
-        paste0("0", dec_mark, paste0(rep("0", decimals), collapse = "")),
-        paste0(
-          "#",
-          sep_mark,
-          "##0",
-          dec_mark,
-          paste0(rep("0", decimals), collapse = "")
-        )
-      ))
-    }
-    openxlsx <- openxlsx_format
+  if (decimals == 0) {
+    openxlsx_format <- "0"
   } else {
-    openxlsx_format <- NULL
+    openxlsx_format <- paste0(ifelse(
+      sep_mark == "",
+      paste0("0", dec_mark, paste0(rep("0", decimals), collapse = "")),
+      paste0(
+        "#",
+        sep_mark,
+        "##0",
+        dec_mark,
+        paste0(rep("0", decimals), collapse = "")
+      )
+    ))
   }
+
   return(openxlsx_format)
+}
+
+#' format_number_googlesheet
+#'
+#' Creates an googlesheet number format string for formatting numbers with specified decimal places,
+#' thousands separator, and decimal mark.
+#'
+#' @param decimals number of decimal places to display
+#' @param sep_mark character used as thousands separator (default: ",")
+#' @param dec_mark character used as decimal mark (default: ".")
+#'
+#' @returns a character string representing the googlesheet number format, or NULL if googlesheet is not available
+#' @noRd
+format_number_googlesheet <- function(decimals, sep_mark, dec_mark) {
+  # users the same format as openxlsx
+  number_format <- format_number_openxlsx(
+    decimals = decimals,
+    sep_mark = sep_mark,
+    dec_mark = dec_mark
+  )
+
+  return(create_format_googlesheet(type = "NUMBER", pattern = number_format))
 }
 
 format_number_hux <- function(decimals, sep_mark, dec_mark) {
@@ -608,6 +662,7 @@ format_text <- function() {
   formats <- list()
   formats$gt <- format_text_gt()
   formats$openxlsx <- format_text_openxlsx()
+  formats$googlesheet <- format_text_googlesheet()
   formats$hux <- format_text_hux()
   return(formats)
 }
@@ -638,14 +693,14 @@ format_text_gt <- function() {
 #'
 #' Creates an openxlsx text format for formatting text cells.
 #'
-#' @returns a character string representing the openxlsx text format, or NULL if openxlsx is not available
+#' @returns a character string representing the openxlsx text format
 #' @noRd
 format_text_openxlsx <- function() {
-  if (requireNamespace("openxlsx", quietly = TRUE)) {
-    return("TEXT")
-  } else {
-    return(NULL)
-  }
+  return("TEXT")
+}
+
+format_text_googlesheet <- function() {
+  return("TEXT")
 }
 
 #' format_text_hux

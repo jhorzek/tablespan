@@ -151,16 +151,16 @@ default_styles_openxlsx <- function(default_styles) {
     return(tbl)
   })
   default_styles$title$openxlsx <- openxlsx::createStyle(
-    fgFill = "#ffffff",
+    fgFill = NULL,
     textDecoration = "bold",
     fontSize = 14
   )
   default_styles$subtitle$openxlsx <- openxlsx::createStyle(
-    fgFill = "#ffffff",
+    fgFill = NULL,
     textDecoration = "bold"
   )
   default_styles$header$openxlsx <- openxlsx::createStyle(
-    fgFill = "#ffffff",
+    fgFill = NULL,
     textDecoration = "bold"
   )
   default_styles$header_cells$openxlsx <- openxlsx::createStyle(
@@ -203,9 +203,10 @@ default_styles_googlesheet <- function(default_styles) {
         bold = TRUE,
         italic = FALSE,
         font_size = 12,
-        background_color = "#ffffff",
+        background_color = NULL,
         text_color = NULL,
-        format = NULL
+        format = NULL,
+        color_scale = NULL
       )
     }
   )
@@ -218,9 +219,10 @@ default_styles_googlesheet <- function(default_styles) {
         bold = TRUE,
         italic = FALSE,
         font_size = 10,
-        background_color = "#ffffff",
+        background_color = NULL,
         text_color = NULL,
-        format = NULL
+        format = NULL,
+        color_scale = NULL
       )
     }
   )
@@ -234,9 +236,10 @@ default_styles_googlesheet <- function(default_styles) {
         bold = TRUE,
         italic = FALSE,
         font_size = 10,
-        background_color = "#ffffff",
+        background_color = NULL,
         text_color = NULL,
-        format = NULL
+        format = NULL,
+        color_scale = NULL
       )
     }
   )
@@ -276,9 +279,10 @@ default_styles_googlesheet <- function(default_styles) {
         bold = FALSE,
         italic = FALSE,
         font_size = 10,
-        background_color = "#ffffff",
+        background_color = NULL,
         text_color = NULL,
-        format = NULL
+        format = NULL,
+        color_scale = NULL
       )
     }
   )
@@ -397,7 +401,8 @@ style_title <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style
+    googlesheet_style = googlesheet_style,
+    color_scale = NULL
   )
 
   if (requireNamespace("gt", quietly = TRUE)) {
@@ -526,7 +531,8 @@ style_subtitle <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style
+    googlesheet_style = googlesheet_style,
+    color_scale = NULL
   )
 
   if (requireNamespace("gt", quietly = TRUE)) {
@@ -659,7 +665,8 @@ style_header <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style
+    googlesheet_style = googlesheet_style,
+    color_scale = NULL
   )
 
   if (requireNamespace("gt", quietly = TRUE)) {
@@ -739,33 +746,82 @@ style_header_cells <- function(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
+  border_color = "#000000",
+  top = FALSE,
+  bottom = TRUE,
+  left = TRUE,
+  right = TRUE,
   openxlsx_style = NULL,
   googlesheet_style = NULL
 ) {
-  openxlsx_style <- create_style_openxlsx(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    openxlsx_style = openxlsx_style
-  )
+  if (!is.null(openxlsx_style)) {
+    tbl$styles$header_cells$openxlsx <- openxlsx_style
+  } else {
+    border <- ifelse(bottom, "Bottom", "")
+    border <- paste0(border, ifelse(left, "Left", ""))
+    border <- paste0(border, ifelse(right, "Right", ""))
+    border <- paste0(border, ifelse(top, "Top", ""))
 
-  googlesheet_style <- create_style_googlesheet(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    googlesheet_style = googlesheet_style
-  )
+    tbl$styles$header_cells$openxlsx <- openxlsx::createStyle(
+      fontSize = font_size,
+      fontColour = text_color,
+      halign = "center",
+      border = border,
+      borderColour = border_color,
+      borderStyle = "thin",
+      textDecoration = if (TRUE) NULL else "bold"
+    )
+  }
+
+  if (!is.null(googlesheet_style)) {
+    tbl$styles$header_cells$googlesheet <- list(googlesheet_style)
+  } else {
+    tbl$styles$header_cells$googlesheet <- create_style_googlesheet(
+      font_size = font_size,
+      text_color = text_color,
+      bold = bold,
+      italic = italic,
+      background_color = background_color,
+      googlesheet_style = googlesheet_style,
+      color_scale = NULL
+    )
+    tbl$styles$header_cells$googlesheet[
+      length(tbl$styles$header_cells$googlesheet) + 1
+    ] <-
+      function(google_sheet, sheet, row, col) {
+        gs_border_request(
+          sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+          row = row,
+          col = col,
+          top = gs_border_style(
+            style = if (top) "SOLID" else "None",
+            width = 1,
+            color = border_color
+          ),
+          bottom = gs_border_style(
+            style = if (bottom) "SOLID" else "None",
+            width = 1,
+            color = border_color
+          ),
+          left = gs_border_style(
+            style = if (lef) "SOLID" else "None",
+            width = 1,
+            color = border_color
+          ),
+          right = gs_border_style(
+            style = if (right) "SOLID" else "None",
+            width = 1,
+            color = border_color
+          )
+        )
+      }
+  }
 
   # does not exist for gt
   tbl$styles$header_cells$gt <- function(tbl) {
     return(tbl)
   }
-  tbl$styles$header_cells$openxlsx <- openxlsx_style
-  tbl$styles$header_cells$googlesheets <- googlesheet_style
+
   return(tbl)
 }
 
@@ -876,7 +932,8 @@ style_footnote <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style
+    googlesheet_style = googlesheet_style,
+    color_scale = NULL
   )
 
   if (requireNamespace("gt", quietly = TRUE)) {
@@ -1144,7 +1201,9 @@ style_column <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style
+    googlesheet_style = googlesheet_style,
+    # googlesheets can handel color scale directly
+    color_scale = color_scale
   )
 
   style <- list(
@@ -1409,6 +1468,7 @@ create_style_googlesheet <- function(
   bold,
   italic,
   background_color,
+  color_scale,
   googlesheet_style = NULL
 ) {
   if (!requireNamespace("googlesheets4", quietly = TRUE)) {
@@ -1428,10 +1488,13 @@ create_style_googlesheet <- function(
         italic = italic,
         font_size = font_size,
         background_color = background_color,
-        text_color = text_color
+        text_color = text_color,
+        color_scale = color_scale
       ))
     }
   )
+
+  return(styles)
 }
 
 #' create_style_hux
