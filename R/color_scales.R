@@ -18,6 +18,7 @@ add_style_color_scale <- function(styles, color_scale, rows) {
   style$flex <- list(create_color_scale_flex(color_scale = color_scale))
   style$openxlsx <- create_color_scale_openxlsx(color_scale = color_scale)
   style$hux <- list(create_color_scale_hux(color_scale = color_scale))
+  style$googlesheet <- list(create_color_scale_gs(color_scale = color_scale))
   # for googlesheet, the colorscale is handled separately as part of the request
 
   styles <- append(
@@ -113,6 +114,19 @@ check_color_scale_increasing <- function(color_scale) {
       )
     }
   }
+}
+
+create_color_scale_gs <- function(color_scale) {
+  return(
+    function(google_sheet, sheet, row, col) {
+      return(gs_create_color_scale_request(
+        sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+        row = row,
+        col = col,
+        color_scale
+      ))
+    }
+  )
 }
 
 #' create_color_scale_openxlsx

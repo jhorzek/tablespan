@@ -426,8 +426,7 @@ gs_create_style_request <- function(
   font_size = 10,
   background_color = NULL,
   text_color = NULL,
-  format = NULL,
-  color_scale = NULL
+  format = NULL
 ) {
   # We assume that row and col are row and column ranges
   if (!length(row) %in% 1:2) {
@@ -521,33 +520,33 @@ gs_create_style_request <- function(
     )
   )
 
-  if (!is.null(color_scale)) {
-    reqs <- c(
-      reqs,
-      list(
-        gs_create_color_scale_request(
-          sheetId = sheetId,
-          row_start = row_start,
-          col_start = col_start,
-          row_end = row_end,
-          col_end = col_end,
-          color_scale = color_scale
-        )
-      )
-    )
-  }
-
   return(reqs)
 }
 
 gs_create_color_scale_request <- function(
   sheetId,
-  row_start,
-  col_start,
-  row_end,
-  col_end,
+  row,
+  col,
   color_scale
 ) {
+  # We assume that row and col are row and column ranges
+  if (!length(row) %in% 1:2) {
+    stop("row must be either one or two values")
+  }
+  if (!length(col) %in% 1:2) {
+    stop("col must be either one or two values")
+  }
+
+  # We have to translate the 1-indexed R to a 0-indexed googlesheets request.
+  # Additionally, googlesheets has non-inclusive indexes with [start, end), so we must
+  # add 1 to the end (so end stays the same, start is reduced by 1):
+
+  row_start <- if (length(row) == 1) row - 1 else row[1] - 1
+  row_end <- if (length(row) == 1) row else row[2]
+
+  col_start <- if (length(col) == 1) col - 1 else col[1] - 1
+  col_end <- if (length(col) == 1) col else col[2]
+
   if (length(color_scale) == 2) {
     return(list(
       addConditionalFormatRule = list(

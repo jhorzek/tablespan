@@ -205,8 +205,7 @@ default_styles_googlesheet <- function(default_styles) {
         font_size = 12,
         background_color = NULL,
         text_color = NULL,
-        format = NULL,
-        color_scale = NULL
+        format = NULL
       )
     }
   )
@@ -221,8 +220,7 @@ default_styles_googlesheet <- function(default_styles) {
         font_size = 10,
         background_color = NULL,
         text_color = NULL,
-        format = NULL,
-        color_scale = NULL
+        format = NULL
       )
     }
   )
@@ -238,8 +236,7 @@ default_styles_googlesheet <- function(default_styles) {
         font_size = 10,
         background_color = NULL,
         text_color = NULL,
-        format = NULL,
-        color_scale = NULL
+        format = NULL
       )
     }
   )
@@ -281,8 +278,7 @@ default_styles_googlesheet <- function(default_styles) {
         font_size = 10,
         background_color = NULL,
         text_color = NULL,
-        format = NULL,
-        color_scale = NULL
+        format = NULL
       )
     }
   )
@@ -401,8 +397,7 @@ style_title <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style,
-    color_scale = NULL
+    googlesheet_style = googlesheet_style
   )
 
   if (requireNamespace("gt", quietly = TRUE)) {
@@ -531,8 +526,7 @@ style_subtitle <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style,
-    color_scale = NULL
+    googlesheet_style = googlesheet_style
   )
 
   if (requireNamespace("gt", quietly = TRUE)) {
@@ -665,8 +659,7 @@ style_header <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style,
-    color_scale = NULL
+    googlesheet_style = googlesheet_style
   )
 
   if (requireNamespace("gt", quietly = TRUE)) {
@@ -782,8 +775,7 @@ style_header_cells <- function(
       bold = bold,
       italic = italic,
       background_color = background_color,
-      googlesheet_style = googlesheet_style,
-      color_scale = NULL
+      googlesheet_style = googlesheet_style
     )
     tbl$styles$header_cells$googlesheet[
       length(tbl$styles$header_cells$googlesheet) + 1
@@ -932,8 +924,7 @@ style_footnote <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style,
-    color_scale = NULL
+    googlesheet_style = googlesheet_style
   )
 
   if (requireNamespace("gt", quietly = TRUE)) {
@@ -1201,9 +1192,7 @@ style_column <- function(
     bold = bold,
     italic = italic,
     background_color = background_color,
-    googlesheet_style = googlesheet_style,
-    # googlesheets can handel color scale directly
-    color_scale = color_scale
+    googlesheet_style = googlesheet_style
   )
 
   style <- list(
@@ -1468,7 +1457,6 @@ create_style_googlesheet <- function(
   bold,
   italic,
   background_color,
-  color_scale,
   googlesheet_style = NULL
 ) {
   if (!requireNamespace("googlesheets4", quietly = TRUE)) {
@@ -1488,8 +1476,7 @@ create_style_googlesheet <- function(
         italic = italic,
         font_size = font_size,
         background_color = background_color,
-        text_color = text_color,
-        color_scale = color_scale
+        text_color = text_color
       ))
     }
   )
