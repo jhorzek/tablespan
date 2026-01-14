@@ -200,7 +200,11 @@ preprocess_formula <- function(formula, data) {
     # available from the data
     replace_with <- parse(
       text = paste0(
-        setdiff(all_variables_in_data, all_variables_in_formula),
+        paste0(
+          "`",
+          setdiff(all_variables_in_data, all_variables_in_formula),
+          "`"
+        ),
         collapse = " + "
       )
     )[[1]]

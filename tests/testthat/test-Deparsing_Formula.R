@@ -74,7 +74,7 @@ test_that("default formula works", {
           group_by(cyl, vs) |>
           summarise(
                N = n(),
-               mean_hp = mean(hp),
+               `Mean HP` = mean(hp),
                sd_hp = sd(hp),
                mean_wt = mean(wt),
                sd_wt = sd(wt)
@@ -85,7 +85,7 @@ test_that("default formula works", {
 
      tbl_comparison <- summarized_table |>
           tablespan(
-               formula = 1 ~ cyl + vs + N + mean_hp + sd_hp + mean_wt + sd_wt
+               formula = 1 ~ cyl + vs + N + `Mean HP` + sd_hp + mean_wt + sd_wt
           )
 
      expect_true(identical(print(tbl_default), print(tbl_comparison)))
