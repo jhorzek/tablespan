@@ -120,6 +120,7 @@ as_googlesheet <- function(
   if (!silent) {
     rlang::inform(message = c("i" = paste0("Styling ", sheet)))
   }
+
   gs_run_style_requests(
     google_sheet = google_sheet,
     style_requests = c(
@@ -844,11 +845,15 @@ style_requests_googlesheet <- function(tbl, google_sheet, sheet, locations) {
             colnames(tbl$table_data$col_data)
           ) ==
             column_name
-        )
+        ) +
+          locations$col$start_col_header_lhs -
+          1
       } else {
         column_index <- which(
           colnames(tbl$table_data$col_data) == column_name
-        )
+        ) +
+          locations$col$start_col_header_rhs -
+          1
       }
 
       for (style_fun in c_style$style$googlesheet) {
