@@ -953,21 +953,24 @@ gs_merge_header_cell_requests <- function(
 ) {
   merge_requests <- list()
   to_merge <- attr(tbl_header, "to_merge")
+
+  col_offset <- if (!is.null(locations$col$start_col_header_lhs)) {
+    locations$col$start_col_header_lhs - 1
+  } else {
+    locations$col$start_col_header_rhs - 1
+  }
+
   for (tm in to_merge) {
     merge_requests[[length(merge_requests) + 1]] <- gs_merge_cells_request(
       sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
-      row_start = tm$row[1] + locations$row$start_row_header - 1,
-      row_end = ifelse(
-        length(tm$row) == 1,
-        tm$row[1] + locations$row$start_row_header - 1,
-        tm$row[2] + locations$row$start_row_header - 1
-      ),
-      col_start = tm$col[1] + locations$col$start_col_title - 1,
-      col_end = ifelse(
-        length(tm$col) == 1,
-        tm$col[1] + locations$col$start_col_title - 1,
-        tm$col[2] + locations$col$start_col_title - 1
-      )
+      row_start = min(tm$row) + locations$row$start_row_header - 1,
+      row_end = if (length(tm$row) == 1) {
+        tm$row[1] + locations$row$start_row_header - 1
+      } else {
+        max(tm$row) + locations$row$start_row_header - 1
+      },
+      col_start = min(tm$columns) + col_offset,
+      col_end = max(tm$columns) + col_offset
     )
   }
   return(merge_requests)
