@@ -18,6 +18,7 @@ style_column(
   gt_style = NULL,
   hux_style = NULL,
   flex_style = NULL,
+  googlesheet_style = NULL,
   stack = TRUE
 )
 }

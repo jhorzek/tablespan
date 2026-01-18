@@ -14,7 +14,8 @@ style_title(
   openxlsx_style = NULL,
   gt_style = NULL,
   hux_style = NULL,
-  flex_style = NULL
+  flex_style = NULL,
+  googlesheet_style = NULL
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ function(tbl, row, col)\{apply some style to the table and return the table\}. E
 
 \item{flex_style}{optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}}
+
+\item{googlesheet_style}{TODO}
 }
 \value{
 the tablespan table with added styles

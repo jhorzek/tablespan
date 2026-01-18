@@ -4,7 +4,11 @@
 \alias{style_hline}
 \title{style_hline}
 \usage{
-style_hline(tbl, openxlsx_style)
+style_hline(
+  tbl,
+  openxlsx_style,
+  googlesheet_style = gs_border_style(color = "#000000")
+)
 }
 \arguments{
 \item{tbl}{tablespan table}

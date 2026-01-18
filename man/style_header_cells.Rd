@@ -11,7 +11,13 @@ style_header_cells(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
-  openxlsx_style = NULL
+  border_color = "#000000",
+  top = FALSE,
+  bottom = TRUE,
+  left = TRUE,
+  right = TRUE,
+  openxlsx_style = NULL,
+  googlesheet_style = NULL
 )
 }
 \arguments{

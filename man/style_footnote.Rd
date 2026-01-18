@@ -14,7 +14,8 @@ style_footnote(
   openxlsx_style = NULL,
   gt_style = NULL,
   hux_style = NULL,
-  flex_style = NULL
+  flex_style = NULL,
+  googlesheet_style = NULL
 )
 }
 \arguments{

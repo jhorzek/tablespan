@@ -10,6 +10,7 @@ format_column(
   rows = NULL,
   format_gt = gt::fmt_auto,
   format_openxlsx = "GENERAL",
+  format_googlesheet = create_format_googlesheet(type = NULL),
   format_hux = NULL,
   format_flex = NULL,
   stack = TRUE
