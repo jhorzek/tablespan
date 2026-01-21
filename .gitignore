@@ -8,8 +8,11 @@
 docs
 CRAN-SUBMISSION
 cran-comments.md
+settings.json
 
 /.quarto/
 inst/doc
 /doc/
 /Meta/
+
+**/*.quarto_ipynb

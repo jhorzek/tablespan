@@ -79,6 +79,8 @@ smart_round <- function(x, max_digits = 4) {
 #' @param format_gt formatting used for gt. This must be a function with the following signature: function(tbl, columns, rows, ...)
 #' and return the tbl with applied formatting. See examples.
 #' @param format_openxlsx an argument passed to the numFmt field for openxlsx::createStyle.
+#' @param format_googlesheet formatting specification for Google Sheets exports. This can be created using
+#' `create_format_googlesheet`. The formatting will be applied when exporting to Google Sheets.
 #' @param format_hux set to NULL to use default formatting. Alternative, use a value that can be passed to huxtable::set_number_format()
 #' @param format_flex formatting used for flextable. Must be a function with the following signature: function(tbl, i, j, part) and
 #' must return the tbl object with applied formatting.
@@ -293,7 +295,49 @@ create_format_openxlsx <- function(num_format) {
   return(openxlsx_style)
 }
 
+#' create_format_googlesheet
+#'
+#' Create a Google Sheets formatting specification for tablespan exports.
+#'
+#' @param type The type of formatting to apply. Must be one of:
+#'   "TEXT", "NUMBER", "PERCENT", "CURRENCY", "DATE", "TIME", "DATE_TIME", or "SCIENTIFIC".
+#'   When NULL, no formatting will be applied.
+#' @param pattern A custom pattern string for number formatting. This follows Google Sheets'
+#'   formatting rules. When NULL, a default pattern will be used based on the type.
+#'
+#' @returns A list with class "gs_format" containing the formatting specification,
+#'   or NULL if type is NULL. This object can be passed to format_column() via the
+#'   format_googlesheet parameter.
+#'
+#' @details
+#' The returned format specification will be applied when exporting to Google Sheets.
+#' For number formatting, the pattern parameter follows Google Sheets' number format
+#' syntax. For example, "#,##0.00" would format numbers with thousands separators
+#' and two decimal places.
+#'
 #' @export
+#' @examples
+#' # Create a number format with 2 decimal places
+#' num_format <- create_format_googlesheet(type = "NUMBER", pattern = "#,##0.00")
+#'
+#' # Create a percentage format
+#' percent_format <- create_format_googlesheet(type = "PERCENT")
+#'
+#' # Apply to a tablespan table
+#' library(tablespan)
+#' library(dplyr)
+#' data("mtcars")
+#'
+#' summarized_table <- mtcars |>
+#'   group_by(cyl) |>
+#'   summarise(mpg = mean(mpg))
+#'
+#' tbl <- tablespan(data = summarized_table,
+#'                  formula = Cylinder:cyl ~ MPG:mpg)
+#'
+#' tbl |>
+#'   format_column(columns = mpg,
+#'                 format_googlesheet = num_format)
 create_format_googlesheet <- function(
   type = c(
     "TEXT",

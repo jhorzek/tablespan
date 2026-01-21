@@ -312,7 +312,9 @@ default_styles_googlesheet <- function(default_styles) {
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
 #' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
-#' @param googlesheet_style TODO
+#' @param googlesheet_style optional custom Google Sheets style. When provided, all other
+#' arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -442,6 +444,9 @@ style_title <- function(
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
 #' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
+#' @param googlesheet_style optional custom Google Sheets style. When provided, all other
+#' arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -482,7 +487,8 @@ style_subtitle <- function(
   openxlsx_style = NULL,
   gt_style = NULL,
   hux_style = NULL,
-  flex_style = NULL
+  flex_style = NULL,
+  googlesheet_style = NULL
 ) {
   gt_style <- create_style_gt(
     font_size = font_size,
@@ -570,6 +576,9 @@ style_subtitle <- function(
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
 #' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
+#' @param googlesheet_style optional custom Google Sheets style. When provided, all other
+#' arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -700,7 +709,15 @@ style_header <- function(
 #' @param font_size font size
 #' @param bold set to TRUE for bold
 #' @param italic set to TRUE for italic
+#' @param border_color set the color of the border for the header cells
+#' @param top boolean. Set to TRUE to add a top border
+#' @param bottom boolean. Set to TRUE to add a bottom border
+#' @param left boolean. Set to TRUE to add a left border
+#' @param right boolean. Set to TRUE to add a right border
 #' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
+#' @param googlesheet_style optional custom Google Sheets style. When provided, all other
+#' arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -747,66 +764,73 @@ style_header_cells <- function(
   openxlsx_style = NULL,
   googlesheet_style = NULL
 ) {
-  if (!is.null(openxlsx_style)) {
-    tbl$styles$header_cells$openxlsx <- openxlsx_style
+  if (!require_openxlsx(throw = FALSE)) {
+    tbl$styles$header_cells$openxlsx <- NULL
   } else {
-    border <- ifelse(bottom, "Bottom", "")
-    border <- paste0(border, ifelse(left, "Left", ""))
-    border <- paste0(border, ifelse(right, "Right", ""))
-    border <- paste0(border, ifelse(top, "Top", ""))
+    if (!is.null(openxlsx_style)) {
+      tbl$styles$header_cells$openxlsx <- openxlsx_style
+    } else {
+      border <- ifelse(bottom, "Bottom", "")
+      border <- paste0(border, ifelse(left, "Left", ""))
+      border <- paste0(border, ifelse(right, "Right", ""))
+      border <- paste0(border, ifelse(top, "Top", ""))
 
-    tbl$styles$header_cells$openxlsx <- openxlsx::createStyle(
-      fontSize = font_size,
-      fontColour = text_color,
-      halign = "center",
-      border = border,
-      borderColour = border_color,
-      borderStyle = "thin",
-      textDecoration = if (TRUE) NULL else "bold"
-    )
+      tbl$styles$header_cells$openxlsx <- openxlsx::createStyle(
+        fontSize = font_size,
+        fontColour = text_color,
+        halign = "center",
+        border = border,
+        borderColour = border_color,
+        borderStyle = "thin",
+        textDecoration = if (TRUE) NULL else "bold"
+      )
+    }
   }
-
-  if (!is.null(googlesheet_style)) {
-    tbl$styles$header_cells$googlesheet <- list(googlesheet_style)
+  if (!require_googlesheets4(throw = FALSE)) {
+    tbl$styles$header_cells$googlesheet <- NULL
   } else {
-    tbl$styles$header_cells$googlesheet <- create_style_googlesheet(
-      font_size = font_size,
-      text_color = text_color,
-      bold = bold,
-      italic = italic,
-      background_color = background_color,
-      googlesheet_style = googlesheet_style
-    )
-    tbl$styles$header_cells$googlesheet[
-      length(tbl$styles$header_cells$googlesheet) + 1
-    ] <-
-      function(google_sheet, sheet, row, col) {
-        gs_border_request(
-          sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
-          row = row,
-          col = col,
-          top = gs_border_style(
-            style = if (top) "SOLID" else "None",
-            width = 1,
-            color = border_color
-          ),
-          bottom = gs_border_style(
-            style = if (bottom) "SOLID" else "None",
-            width = 1,
-            color = border_color
-          ),
-          left = gs_border_style(
-            style = if (lef) "SOLID" else "None",
-            width = 1,
-            color = border_color
-          ),
-          right = gs_border_style(
-            style = if (right) "SOLID" else "None",
-            width = 1,
-            color = border_color
+    if (!is.null(googlesheet_style)) {
+      tbl$styles$header_cells$googlesheet <- list(googlesheet_style)
+    } else {
+      tbl$styles$header_cells$googlesheet <- create_style_googlesheet(
+        font_size = font_size,
+        text_color = text_color,
+        bold = bold,
+        italic = italic,
+        background_color = background_color,
+        googlesheet_style = googlesheet_style
+      )
+      tbl$styles$header_cells$googlesheet[[
+        length(tbl$styles$header_cells$googlesheet) + 1
+      ]] <-
+        function(google_sheet, sheet, row, col) {
+          gs_border_request(
+            sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
+            row = row,
+            col = col,
+            top = gs_border_style(
+              style = if (top) "SOLID" else "None",
+              width = 1,
+              color = border_color
+            ),
+            bottom = gs_border_style(
+              style = if (bottom) "SOLID" else "None",
+              width = 1,
+              color = border_color
+            ),
+            left = gs_border_style(
+              style = if (left) "SOLID" else "None",
+              width = 1,
+              color = border_color
+            ),
+            right = gs_border_style(
+              style = if (right) "SOLID" else "None",
+              width = 1,
+              color = border_color
+            )
           )
-        )
-      }
+        }
+    }
   }
 
   # does not exist for gt
@@ -839,6 +863,9 @@ style_header_cells <- function(
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
 #' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
+#' @param googlesheet_style optional custom Google Sheets style. When provided, all other
+#' arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -965,6 +992,9 @@ style_footnote <- function(
 #'
 #' @param tbl tablespan table
 #' @param openxlsx_style style used when exporting to openxlsx
+#' @param googlesheet_style optional custom Google Sheets style. When provided, all other
+#' arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -1020,6 +1050,9 @@ style_hline <- function(
 #'
 #' @param tbl tablespan table
 #' @param openxlsx_style style used when exporting to openxlsx
+#' @param googlesheet_style optional custom Google Sheets style. When provided, all other
+#' arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API
 #' @returns the tablespan table with added styles
 #' @export
 #' @examples
@@ -1086,6 +1119,9 @@ style_vline <- function(
 #' function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}
 #' @param flex_style optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
 #' function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}
+#' @param googlesheet_style optional custom Google Sheets style. When provided, all other
+#' arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API
 #' @param stack When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 #' for openxlsx. When set to FALSE, the new style replaces all previous styling.
 #' @returns the tablespan table with added styles
@@ -1451,6 +1487,29 @@ create_style_openxlsx <- function(
   return(openxlsx_style)
 }
 
+#' create_style_googlesheet
+#'
+#' Create a style for Google Sheets export that can be applied to table elements.
+#'
+#' This function generates a list of style functions that can be used to apply formatting
+#' to cells in a Google Sheet.
+#'
+#' @param font_size numeric value specifying the font size to apply
+#' @param text_color character value specifying the text color as a hex code (e.g., "#000000")
+#' @param bold logical value indicating whether to apply bold formatting
+#' @param italic logical value indicating whether to apply italic formatting
+#' @param background_color character value specifying the background color as a hex code
+#' @param googlesheet_style optional custom Google Sheets style function. When provided,
+#' all other arguments are ignored. Must be a function with the following signature:
+#' function(google_sheet, sheet, row, col) that returns a list of Google Sheets API requests
+#' @returns A list containing one or more style functions that can be applied to Google Sheets
+#' @noRd
+#' @examples
+#' # Create a style with bold text and yellow background
+#' style <- create_style_googlesheet(
+#'   bold = TRUE,
+#'   background_color = "#FFFF00"
+#' )
 create_style_googlesheet <- function(
   font_size,
   text_color,

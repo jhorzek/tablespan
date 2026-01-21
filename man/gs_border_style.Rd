@@ -22,11 +22,8 @@ or a list with red, green, and blue components (values between 0 and 1).}
 }
 \value{
 A list containing the border style specification with elements:
-        \itemize{
-          \item{style}{The border style}
-          \item{width}{The border width}
-          \item{color}{The border color as a Google Sheets API color object}
-        }
+style (The border style), width (The border width), and color (The border
+color as a Google Sheets API color object)
 }
 \description{
 Creates a border style specification that can be used with gs_border_request()

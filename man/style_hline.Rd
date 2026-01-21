@@ -14,6 +14,10 @@ style_hline(
 \item{tbl}{tablespan table}
 
 \item{openxlsx_style}{style used when exporting to openxlsx}
+
+\item{googlesheet_style}{optional custom Google Sheets style. When provided, all other
+arguments are ignored. Must be a function with the following signature:
+function(google_sheet, sheet, row, col) that returns a list of Google Sheets API}
 }
 \value{
 the tablespan table with added styles

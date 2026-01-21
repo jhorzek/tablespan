@@ -33,7 +33,21 @@ style_header_cells(
 
 \item{italic}{set to TRUE for italic}
 
+\item{border_color}{set the color of the border for the header cells}
+
+\item{top}{boolean. Set to TRUE to add a top border}
+
+\item{bottom}{boolean. Set to TRUE to add a bottom border}
+
+\item{left}{boolean. Set to TRUE to add a left border}
+
+\item{right}{boolean. Set to TRUE to add a right border}
+
 \item{openxlsx_style}{optional custom openxlsx style. When provided, all other arguments are ignored}
+
+\item{googlesheet_style}{optional custom Google Sheets style. When provided, all other
+arguments are ignored. Must be a function with the following signature:
+function(google_sheet, sheet, row, col) that returns a list of Google Sheets API}
 }
 \value{
 the tablespan table with added styles

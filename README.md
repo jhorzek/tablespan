@@ -80,6 +80,7 @@ allows `tablespan` tables to be exported to a large number of formats:
 |----|----|----|----|
 | **gt** | `as_gt()` | The **gt** package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout. | HTML, PDF, PNG, LaTeX, RTF, Word ([docs](https://gt.rstudio.com/reference/gtsave.html)) |
 | **openxlsx** | `as_excel()` | The **openxlsx** package offers Excel file creation and manipulation. Great for reporting tables to end-users. | Excel ([docs](https://ycphs.github.io/openxlsx/index.html)) |
+| **googlesheets4** | `as_googlesheet()` | Using **googlesheets4** ([docs](https://googlesheets4.tidyverse.org)), **tablespan** tables can be directly exported into google sheets | google sheets |
 | **flextable** | `as_flextable()` | **flextable** specializes in creating complex, publication-quality tables with extensive formatting capabilities. Integrates well with Word/PowerPoint workflows. | HTML, Word, RTF, PowerPoint, PDF, PNG ([docs](https://ardata-fr.github.io/flextable-book/rendering.html)) |
 | **huxtable** | `as_huxtable()` | **huxtable** provides a unified interface for creating tables in multiple output formats. Also provides styled printing to the console. | LaTeX, Typst, HTML, Word, Excel, RTF, markdown, console ([docs](https://hughjonesd.github.io/huxtable/reference/index.html)) |
 
@@ -567,6 +568,9 @@ gt_tbl |>
 - openxlsx: Schauberger P, Walker A (2023). *openxlsx: Read, Write and
   Edit xlsx Files*. R package version 4.2.5.2,
   <https://ycphs.github.io/openxlsx/>.
+- googlesheets4: Bryan, J. (2025). *googlesheets4: Access Google Sheets
+  using the Sheets API V4*. R package version 1.1.2,
+  <https://CRAN.R-project.org/package=googlesheets4>.
 - flextable: Gohel D, Skintzos P (2025). *flextable: Functions for
   Tabular Reporting*. R package version 0.9.10,
   <https://CRAN.R-project.org/package=flextable>
