@@ -328,6 +328,21 @@ hux_add_footnote <- function(tbl, tbl_hux) {
   return(tbl_hux)
 }
 
+hux_set_styles <- function(tbl) {
+  hux_styles <- initialize_styles_hux() |>
+    style_title_hux(tbl = tbl) |>
+    style_subtitle_hux(tbl = tbl) |>
+    style_header_hux(tbl = tbl) |>
+    style_header_cells_hux(tbl = tbl) |>
+    style_vline_hux(tbl = tbl) |>
+    style_hline_hux(tbl = tbl) |>
+    style_footnote_hux(tbl = tbl)
+
+  hux_styles <- style_column_hux(hux_styles, tbl = tbl)
+
+  return(hux_styles)
+}
+
 #' style_hux
 #'
 #' Applies custom styling to a huxtable based on the structure of the original tablespan table.
@@ -346,14 +361,17 @@ hux_add_footnote <- function(tbl, tbl_hux) {
 #' @noRd
 style_hux <- function(tbl_hux, tbl) {
   require_huxtable()
+
+  hux_styles <- hux_set_styles(tbl = tbl)
+
   # Style the title
-  if (!is.null(tbl$styles$title$hux) & !is.null(tbl$title)) {
-    for (sty in tbl$styles$title$hux) {
+  if (!is.null(hux_styles$title$hux) & !is.null(tbl$title)) {
+    for (sty in hux_styles$title$hux) {
       tbl_hux <- sty(tbl_hux, row = 1, col = 1:ncol(tbl_hux))
     }
   }
-  if (!is.null(tbl$styles$subtitle$hux) & !is.null(tbl$subtitle)) {
-    for (sty in tbl$styles$subtitle$hux) {
+  if (!is.null(hux_styles$subtitle$hux) & !is.null(tbl$subtitle)) {
+    for (sty in hux_styles$subtitle$hux) {
       tbl_hux <- sty(
         tbl_hux,
         row = 1 * (!is.null(tbl$title)) + 1 * (!is.null(tbl$subtitle)),
@@ -362,8 +380,8 @@ style_hux <- function(tbl_hux, tbl) {
     }
   }
 
-  if (!is.null(tbl$styles$footnote$hux) & !is.null(tbl$footnote)) {
-    for (sty in tbl$styles$footnote$hux) {
+  if (!is.null(hux_styles$footnote$hux) & !is.null(tbl$footnote)) {
+    for (sty in hux_styles$footnote$hux) {
       tbl_hux <- sty(
         tbl_hux,
         row = nrow(tbl_hux),
@@ -372,7 +390,7 @@ style_hux <- function(tbl_hux, tbl) {
     }
   }
 
-  if (!is.null(tbl$styles$header$hux)) {
+  if (!is.null(hux_styles$header$hux)) {
     start_header <- 1 * (!is.null(tbl$title)) + 1 * (!is.null(tbl$subtitle)) + 1
     if (!is.null(tbl$header$lhs)) {
       end_header <- 1 *
@@ -387,7 +405,7 @@ style_hux <- function(tbl_hux, tbl) {
         tbl$header$rhs$level -
         1
     }
-    for (sty in tbl$styles$header$hux) {
+    for (sty in hux_styles$header$hux) {
       tbl_hux <- sty(
         tbl_hux,
         row = start_header:end_header,
@@ -411,8 +429,8 @@ style_hux <- function(tbl_hux, tbl) {
   }
 
   # Apply any custom styles
-  for (column_name in names(tbl$styles$columns)) {
-    for (c_style in tbl$styles$columns[[column_name]]) {
+  for (column_name in names(hux_styles$columns)) {
+    for (c_style in hux_styles$columns[[column_name]]) {
       if (is.null(c_style$style$hux)) {
         next
       }

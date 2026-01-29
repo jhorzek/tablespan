@@ -154,29 +154,6 @@ create_color_scale_openxlsx <- function(color_scale) {
   )
 }
 
-
-create_color_scale_hux <- function(color_scale) {
-  return(function(tbl, row, col) {
-    tbl |>
-      huxtable::map_background_color(
-        do.call(
-          huxtable::by_colorspace,
-          c(
-            as.list(names(color_scale)),
-            list(
-              range = color_scale,
-              na_color = NA,
-              ignore_na = TRUE,
-              colwise = FALSE
-            )
-          )
-        ),
-        row = row,
-        col = col
-      )
-  })
-}
-
 create_color_scale_flex <- function(color_scale) {
   fn <- create_color_scale_function(color_scale = color_scale)
 
