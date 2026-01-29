@@ -4,6 +4,7 @@
 .Ruserdata
 .DS_Store
 /*.R
+/*.xlsx
 !tests/testthat/xlsx_files/*.xlsx
 docs
 CRAN-SUBMISSION
