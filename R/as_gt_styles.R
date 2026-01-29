@@ -199,7 +199,9 @@ create_color_scale_gt <- function(color_scale) {
           gt::data_color(
             columns = gt::all_of(column),
             rows = rows,
-            fn = fn
+            fn = fn,
+            apply_to = "fill",
+            autocolor_text = TRUE
           )
       )
     }
@@ -316,10 +318,12 @@ create_style_gt_function <- function(
     italic,
     background_color
   )
+
   gt_style <- function(data, column, rows) {
     style <- if (italic) "italic" else NULL
     weight <- if (bold) "bold" else NULL
     data |>
+      color_scale_fn(data = _, column = column, rows = rows) |>
       gt::tab_style(
         data = _,
         style = styles,
@@ -327,8 +331,7 @@ create_style_gt_function <- function(
           columns = gt::all_of(column),
           rows = rows
         )
-      ) |>
-      color_scale_fn(data = _, column = column, rows = rows)
+      )
   }
 
   return(gt_style)
@@ -379,15 +382,10 @@ create_style_gt <- function(
   text_color,
   bold,
   italic,
-  background_color,
-  gt_style = NULL
+  background_color
 ) {
-  if (!requireNamespace("gt", quietly = TRUE)) {
-    return(NULL)
-  }
-  if (!is.null(gt_style)) {
-    return(gt_style)
-  }
+  require_gt()
+
   style <- if (italic) "italic" else NULL
   weight <- if (bold) "bold" else NULL
   font_size <- if (!is.null(font_size)) {

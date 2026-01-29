@@ -4,20 +4,14 @@
 \alias{style_vline}
 \title{style_vline}
 \usage{
-style_vline(
-  tbl,
-  openxlsx_style,
-  googlesheet_style = gs_border_style(color = "#000000")
-)
+style_vline(tbl, color = "#000000", ...)
 }
 \arguments{
 \item{tbl}{tablespan table}
 
-\item{openxlsx_style}{style used when exporting to openxlsx}
+\item{color}{color used for the border}
 
-\item{googlesheet_style}{optional custom Google Sheets style. When provided, all other
-arguments are ignored. Must be a function with the following signature:
-function(google_sheet, sheet, row, col) that returns a list of Google Sheets API}
+\item{...}{optional additional arguments. Currently not used}
 }
 \value{
 the tablespan table with added styles

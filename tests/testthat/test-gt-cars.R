@@ -1116,13 +1116,13 @@ test_that("cars - gt styling", {
       ) |>
       style_column(
         columns = dplyr::where(is.double),
-        rows = 2:3,
-        italic = TRUE,
-        text_color = "#B54321"
+        color_scale = color_scale
       ) |>
       style_column(
         columns = dplyr::where(is.double),
-        color_scale = color_scale
+        rows = 2:3,
+        italic = TRUE,
+        text_color = "#B54321"
       ) |>
       as_gt()
   )
@@ -1174,13 +1174,13 @@ test_that("cars - gt styling", {
       ) |>
       style_column(
         columns = dplyr::where(is.double),
-        rows = 2:3,
-        italic = TRUE,
-        text_color = "#B54321"
+        color_scale = color_scale
       ) |>
       style_column(
         columns = dplyr::where(is.double),
-        color_scale = color_scale
+        rows = 2:3,
+        italic = TRUE,
+        text_color = "#B54321"
       ) |>
       as_gt()
   )

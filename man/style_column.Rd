@@ -14,12 +14,8 @@ style_column(
   bold = FALSE,
   italic = FALSE,
   color_scale = NULL,
-  openxlsx_style = NULL,
-  gt_style = NULL,
-  hux_style = NULL,
-  flex_style = NULL,
-  googlesheet_style = NULL,
-  stack = TRUE
+  stack = TRUE,
+  ...
 )
 }
 \arguments{
@@ -41,24 +37,13 @@ style_column(
 
 \item{color_scale}{a named vector of length 2 or 3 to define a color scale. Example for two colors: color_scale = c("#EE2F43" = -1, "#37E65A" = 1).
 Example for three colors: color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1). If a value is set as NA, it will be replaced with the minimum, mean, or maximum respectively
-(e.g., color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1) will be replaced by color_scale = c("#EE2F43" = min(data), "#FFFFFF" = 0, "#37E65A" = max(data))).}
-
-\item{openxlsx_style}{optional custom openxlsx style. When provided, all other arguments are ignored}
-
-\item{gt_style}{optional custom gt style. When provided, all other arguments are ignored}
-
-\item{hux_style}{optional custom huxtable style. When provided, all other arguments are ignored. Must be a function with the following signature:
-function(tbl, row, col)\{apply some style to the table and return the table\}. Example: function(tbl, row, col)\{tbl |> huxtable::set_bold(row = row, col = col)\}}
-
-\item{flex_style}{optional custom flextable style. When provided, all other arguments are ignored. Must be a function with the following signature:
-function(tbl, row, col, part)\{apply some style to the table and return the table\}. Example: function(tbl, row, col, part)\{tbl |> flextable::color(i = row, j = col, color = "red", part = part)\}}
-
-\item{googlesheet_style}{optional custom Google Sheets style. When provided, all other
-arguments are ignored. Must be a function with the following signature:
-function(google_sheet, sheet, row, col) that returns a list of Google Sheets API}
+(e.g., color_scale = c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1) will be replaced by color_scale = c("#EE2F43" = min(data), "#FFFFFF" = 0, "#37E65A" = max(data))).
+NOTE: When exporting to gt, make sure to apply the color scale before you change the text color; otherwise, gt will overwrite the text color.}
 
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}
+
+\item{...}{optional additional arguments. Currently not used}
 }
 \value{
 the tablespan table with added styles

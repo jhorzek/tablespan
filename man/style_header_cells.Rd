@@ -16,8 +16,7 @@ style_header_cells(
   bottom = TRUE,
   left = TRUE,
   right = TRUE,
-  openxlsx_style = NULL,
-  googlesheet_style = NULL
+  ...
 )
 }
 \arguments{
@@ -43,11 +42,7 @@ style_header_cells(
 
 \item{right}{boolean. Set to TRUE to add a right border}
 
-\item{openxlsx_style}{optional custom openxlsx style. When provided, all other arguments are ignored}
-
-\item{googlesheet_style}{optional custom Google Sheets style. When provided, all other
-arguments are ignored. Must be a function with the following signature:
-function(google_sheet, sheet, row, col) that returns a list of Google Sheets API}
+\item{...}{optional additional arguments. Currently not used}
 }
 \value{
 the tablespan table with added styles

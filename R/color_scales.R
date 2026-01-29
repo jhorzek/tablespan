@@ -115,26 +115,3 @@ check_color_scale_increasing <- function(color_scale) {
     }
   }
 }
-
-create_color_scale_gs <- function(color_scale) {
-  return(
-    function(google_sheet, sheet, row, col) {
-      return(gs_create_color_scale_request(
-        sheetId = google_sheet$sheets$id[google_sheet$sheets$name == sheet],
-        row = row,
-        col = col,
-        color_scale
-      ))
-    }
-  )
-}
-
-
-create_color_scale_flex <- function(color_scale) {
-  fn <- create_color_scale_function(color_scale = color_scale)
-
-  return(function(tbl, row, col, part) {
-    tbl |>
-      flextable::bg(i = row, j = col, bg = fn, part = part)
-  })
-}
