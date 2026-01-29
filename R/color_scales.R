@@ -129,30 +129,6 @@ create_color_scale_gs <- function(color_scale) {
   )
 }
 
-#' create_color_scale_openxlsx
-#'
-#' Create a color scale style for openlslx
-#' @param color_scale vector with two or three color values
-#' @returns openlslx style object
-#' @noRd
-create_color_scale_openxlsx <- function(color_scale) {
-  if (!require_openxlsx(throw = FALSE)) {
-    return(NULL)
-  }
-  return(
-    function(wb, sheet, rows, cols) {
-      openxlsx::conditionalFormatting(
-        wb = wb,
-        sheet = sheet,
-        cols = cols,
-        rows = rows,
-        type = "colourScale",
-        rule = color_scale,
-        style = names(color_scale)
-      )
-    }
-  )
-}
 
 create_color_scale_flex <- function(color_scale) {
   fn <- create_color_scale_function(color_scale = color_scale)

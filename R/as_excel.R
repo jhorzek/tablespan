@@ -67,7 +67,7 @@ as_excel <- function(
     openxlsx::addWorksheet(sheetName = sheet, wb = workbook)
   }
 
-  styles <- tbl$styles
+  styles <- openxlsx_set_styles(tbl)
   styles$merge_rownames <- merge_rownames
 
   locations <- get_locations(
@@ -149,62 +149,72 @@ initialize_styles_openxlsx <- function(
   require_openxlsx()
   # Title
   if (!is.null(tbl$title)) {
-    openxlsx::addStyle(
-      wb = workbook,
-      sheet = sheet,
-      style = styles$title$openxlsx,
-      rows = locations$row$start_row_title:locations$row$end_row_title,
-      cols = locations$col$start_col_title:locations$col$end_col_title,
-      gridExpand = TRUE,
-      stack = TRUE
-    )
+    for (style in styles$title$openxlsx) {
+      openxlsx::addStyle(
+        wb = workbook,
+        sheet = sheet,
+        style = style,
+        rows = locations$row$start_row_title:locations$row$end_row_title,
+        cols = locations$col$start_col_title:locations$col$end_col_title,
+        gridExpand = TRUE,
+        stack = TRUE
+      )
+    }
   }
   # Subtitle
   if (!is.null(tbl$subtitle)) {
-    openxlsx::addStyle(
-      wb = workbook,
-      sheet = sheet,
-      style = styles$subtitle$openxlsx,
-      rows = locations$row$start_row_subtitle:locations$row$end_row_subtitle,
-      cols = locations$col$start_col_subtitle:locations$col$end_col_subtitle,
-      gridExpand = TRUE,
-      stack = TRUE
-    )
+    for (style in styles$subtitle$openxlsx) {
+      openxlsx::addStyle(
+        wb = workbook,
+        sheet = sheet,
+        style = style,
+        rows = locations$row$start_row_subtitle:locations$row$end_row_subtitle,
+        cols = locations$col$start_col_subtitle:locations$col$end_col_subtitle,
+        gridExpand = TRUE,
+        stack = TRUE
+      )
+    }
   }
   # Header LHS
   if (!is.null(tbl$header$lhs)) {
+    for (style in styles$header$openxlsx) {
+      openxlsx::addStyle(
+        wb = workbook,
+        sheet = sheet,
+        style = style,
+        rows = locations$row$start_row_header:locations$row$end_row_header,
+        cols = locations$col$start_col_header_lhs:locations$col$end_col_header_lhs,
+        gridExpand = TRUE,
+        stack = TRUE
+      )
+    }
+  }
+  # Header RHS
+  for (style in styles$header$openxlsx) {
     openxlsx::addStyle(
       wb = workbook,
       sheet = sheet,
-      style = styles$header$openxlsx,
+      style = style,
       rows = locations$row$start_row_header:locations$row$end_row_header,
-      cols = locations$col$start_col_header_lhs:locations$col$end_col_header_lhs,
+      cols = locations$col$start_col_header_rhs:locations$col$end_col_header_rhs,
       gridExpand = TRUE,
       stack = TRUE
     )
   }
-  # Header RHS
-  openxlsx::addStyle(
-    wb = workbook,
-    sheet = sheet,
-    style = styles$header$openxlsx,
-    rows = locations$row$start_row_header:locations$row$end_row_header,
-    cols = locations$col$start_col_header_rhs:locations$col$end_col_header_rhs,
-    gridExpand = TRUE,
-    stack = TRUE
-  )
 
   # Footnote
   if (!is.null(tbl$footnote)) {
-    openxlsx::addStyle(
-      wb = workbook,
-      sheet = sheet,
-      style = styles$footnote$openxlsx,
-      rows = locations$row$start_row_footnote:locations$row$end_row_footnote,
-      cols = locations$col$start_col_footnote:locations$col$end_col_footnote,
-      gridExpand = TRUE,
-      stack = TRUE
-    )
+    for (style in styles$footnote$openxlsx) {
+      openxlsx::addStyle(
+        wb = workbook,
+        sheet = sheet,
+        style = style,
+        rows = locations$row$start_row_footnote:locations$row$end_row_footnote,
+        cols = locations$col$start_col_footnote:locations$col$end_col_footnote,
+        gridExpand = TRUE,
+        stack = TRUE
+      )
+    }
   }
 }
 
@@ -229,54 +239,64 @@ create_outlines <- function(tbl, workbook, sheet, locations, styles) {
   }
 
   # top line
-  openxlsx::addStyle(
-    wb = workbook,
-    sheet = sheet,
-    style = styles$hline$openxlsx,
-    rows = locations$row$start_row_header,
-    cols = left_most:locations$col$end_col_header_rhs,
-    stack = TRUE
-  )
+  for (style in styles$hline$openxlsx) {
+    openxlsx::addStyle(
+      wb = workbook,
+      sheet = sheet,
+      style = style,
+      rows = locations$row$start_row_header,
+      cols = left_most:locations$col$end_col_header_rhs,
+      stack = TRUE
+    )
+  }
 
   # bottom line
-  openxlsx::addStyle(
-    wb = workbook,
-    sheet = sheet,
-    style = styles$hline$openxlsx,
-    rows = locations$row$end_row_data + 1,
-    cols = left_most:locations$col$end_col_header_rhs,
-    stack = TRUE
-  )
+  for (style in styles$hline$openxlsx) {
+    openxlsx::addStyle(
+      wb = workbook,
+      sheet = sheet,
+      style = style,
+      rows = locations$row$end_row_data + 1,
+      cols = left_most:locations$col$end_col_header_rhs,
+      stack = TRUE
+    )
+  }
 
   # left line
-  openxlsx::addStyle(
-    wb = workbook,
-    sheet = sheet,
-    style = styles$vline$openxlsx,
-    rows = locations$row$start_row_header:locations$row$end_row_data,
-    cols = left_most,
-    stack = TRUE
-  )
+  for (style in styles$vline$openxlsx) {
+    openxlsx::addStyle(
+      wb = workbook,
+      sheet = sheet,
+      style = style,
+      rows = locations$row$start_row_header:locations$row$end_row_data,
+      cols = left_most,
+      stack = TRUE
+    )
+  }
 
   # right line
-  openxlsx::addStyle(
-    wb = workbook,
-    sheet = sheet,
-    style = styles$vline$openxlsx,
-    rows = locations$row$start_row_header:locations$row$end_row_data,
-    cols = locations$col$end_col_header_rhs + 1,
-    stack = TRUE
-  )
+  for (style in styles$vline$openxlsx) {
+    openxlsx::addStyle(
+      wb = workbook,
+      sheet = sheet,
+      style = style,
+      rows = locations$row$start_row_header:locations$row$end_row_data,
+      cols = locations$col$end_col_header_rhs + 1,
+      stack = TRUE
+    )
+  }
 
   # row name separator
-  openxlsx::addStyle(
-    wb = workbook,
-    sheet = sheet,
-    style = styles$vline$openxlsx,
-    rows = locations$row$start_row_header:locations$row$end_row_data,
-    cols = locations$col$start_col_header_rhs,
-    stack = TRUE
-  )
+  for (style in styles$vline$openxlsx) {
+    openxlsx::addStyle(
+      wb = workbook,
+      sheet = sheet,
+      style = style,
+      rows = locations$row$start_row_header:locations$row$end_row_data,
+      cols = locations$col$start_col_header_rhs,
+      stack = TRUE
+    )
+  }
 }
 
 #' write_title
@@ -415,15 +435,18 @@ write_header_entry <- function(
         rows = start_row + (max_level - header_entry$level) - 1
       )
     }
-    openxlsx::addStyle(
-      wb = workbook,
-      sheet = sheet,
-      style = styles$header_cells$openxlsx,
-      rows = start_row + (max_level - header_entry$level) - 1,
-      cols = start_col:(start_col + header_entry$width - 1),
-      gridExpand = TRUE,
-      stack = TRUE
-    )
+
+    for (style in styles$header_cells$openxlsx) {
+      openxlsx::addStyle(
+        wb = workbook,
+        sheet = sheet,
+        style = style,
+        rows = start_row + (max_level - header_entry$level) - 1,
+        cols = start_col:(start_col + header_entry$width - 1),
+        gridExpand = TRUE,
+        stack = TRUE
+      )
+    }
   }
 
   # entries may have sub-entries, that also have to be written down
@@ -695,4 +718,19 @@ require_openxlsx <- function(throw = TRUE) {
     return(FALSE)
   }
   return(TRUE)
+}
+
+openxlsx_set_styles <- function(tbl) {
+  openxlsx_styles <- default_styles_openxlsx() |>
+    style_title_openxlsx(tbl = tbl) |>
+    style_subtitle_openxlsx(tbl = tbl) |>
+    style_header_openxlsx(tbl = tbl) |>
+    style_header_cells_openxlsx(tbl = tbl) |>
+    style_vline_openxlsx(tbl = tbl) |>
+    style_hline_openxlsx(tbl = tbl) |>
+    style_footnote_openxlsx(tbl = tbl)
+
+  openxlsx_styles <- style_column_openxlsx(openxlsx_styles, tbl = tbl)
+
+  return(openxlsx_styles)
 }

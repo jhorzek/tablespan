@@ -71,58 +71,6 @@ default_styles_flex <- function(default_styles) {
   return(default_styles)
 }
 
-#' default_styles_openxlsx
-#'
-#' Sets the default styles for openxlsx tables in a tablespan table.
-#'
-#' This function adds default styling for openxlsx tables to the provided default_styles list.
-#' If the openxlsx package is not available, the original default_styles are returned unchanged.
-#'
-#' @param default_styles a list containing default styles for different table elements
-#' @returns a list with default styles for openxlsx tables added to the input default_styles
-#' @noRd
-default_styles_openxlsx <- function(default_styles) {
-  if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    return(default_styles)
-  }
-
-  default <- list(function(tbl, row, col) {
-    return(tbl)
-  })
-  default_styles$title$openxlsx <- openxlsx::createStyle(
-    fgFill = NULL,
-    textDecoration = "bold",
-    fontSize = 14
-  )
-  default_styles$subtitle$openxlsx <- openxlsx::createStyle(
-    fgFill = NULL,
-    textDecoration = "bold"
-  )
-  default_styles$header$openxlsx <- openxlsx::createStyle(
-    fgFill = NULL,
-    textDecoration = "bold"
-  )
-  default_styles$header_cells$openxlsx <- openxlsx::createStyle(
-    fontSize = 11,
-    halign = "center",
-    border = "BottomLeftRight",
-    borderColour = "#000000",
-    borderStyle = "thin",
-    textDecoration = "bold"
-  )
-  default_styles$footnote$openxlsx <- openxlsx::createStyle(fgFill = "#ffffff")
-  default_styles$hline$openxlsx <- openxlsx::createStyle(
-    border = "Top",
-    borderColour = "#000000",
-    borderStyle = "thin"
-  )
-  default_styles$vline$openxlsx <- openxlsx::createStyle(
-    border = "Left",
-    borderColour = "#000000",
-    borderStyle = "thin"
-  )
-  return(default_styles)
-}
 
 default_styles_googlesheet <- function(default_styles) {
   if (!requireNamespace("googlesheets4", quietly = TRUE)) {
@@ -304,15 +252,6 @@ style_title <- function(
   )
   return(tbl)
 
-  hux_style <- create_style_hux(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    hux_style = hux_style
-  )
-
   flex_style <- create_style_flex(
     font_size = font_size,
     text_color = text_color,
@@ -340,19 +279,6 @@ style_title <- function(
     googlesheet_style = googlesheet_style
   )
 
-  if (requireNamespace("gt", quietly = TRUE)) {
-    tbl$styles$title$gt <- function(tbl) {
-      return(
-        tbl |>
-          gt::tab_style(
-            style = gt_style,
-            locations = gt::cells_title(groups = "title")
-          )
-      )
-    }
-  }
-
-  tbl$styles$title$hux <- hux_style
   tbl$styles$title$flex <- flex_style
   tbl$styles$title$openxlsx <- openxlsx_style
   tbl$styles$title$googlesheet <- googlesheet_style
@@ -464,7 +390,6 @@ style_subtitle <- function(
   )
 
   tbl$styles$subtitle$flex <- flex_style
-  tbl$styles$subtitle$hux <- hux_style
   tbl$styles$subtitle$openxlsx <- openxlsx_style
   tbl$styles$subtitle$googlesheet <- googlesheet_style
   return(tbl)
@@ -550,15 +475,6 @@ style_header <- function(
   )
   return(tbl)
 
-  hux_style <- create_style_hux(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    hux_style = hux_style
-  )
-
   flex_style <- create_style_flex(
     font_size = font_size,
     text_color = text_color,
@@ -586,23 +502,6 @@ style_header <- function(
     googlesheet_style = googlesheet_style
   )
 
-  if (requireNamespace("gt", quietly = TRUE)) {
-    tbl$styles$header$gt <- function(tbl) {
-      return(
-        tbl |>
-          gt::tab_style(
-            style = gt_style,
-            locations = gt::cells_column_labels()
-          ) |>
-          gt::tab_style(
-            style = gt_style,
-            locations = gt::cells_column_spanners()
-          )
-      )
-    }
-  }
-
-  tbl$styles$header$hux <- hux_style
   tbl$styles$header$flex <- flex_style
   tbl$styles$header$openxlsx <- openxlsx_style
   tbl$styles$header$googlesheet <- googlesheet_style
@@ -763,13 +662,6 @@ style_header_cells <- function(
         }
     }
   }
-
-  # does not exist for gt
-  tbl$styles$header_cells$gt <- function(tbl) {
-    return(tbl)
-  }
-
-  return(tbl)
 }
 
 #' style_footnote
@@ -847,24 +739,6 @@ style_footnote <- function(
     list(...)
   )
   return(tbl)
-
-  gt_style <- create_style_gt(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    gt_style = gt_style
-  )
-
-  hux_style <- create_style_hux(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    hux_style = hux_style
-  )
 
   flex_style <- create_style_flex(
     font_size = font_size,
@@ -1163,15 +1037,6 @@ style_column <- function(
 
   return(tbl)
 
-  gt_style <- create_style_gt_function(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    gt_style = gt_style
-  )
-
   flex_style <- create_style_flex(
     font_size = font_size,
     text_color = text_color,
@@ -1179,15 +1044,6 @@ style_column <- function(
     italic = italic,
     background_color = background_color,
     flex_style = flex_style
-  )
-
-  hux_style <- create_style_hux(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    hux_style = hux_style
   )
 
   openxlsx_style <- create_style_openxlsx(
@@ -1240,77 +1096,6 @@ style_column <- function(
   return(tbl)
 }
 
-
-#' create_style_openxlsx
-#'
-#' Create a new style to be applied to the body of the table.
-#'
-#' @param background_color hex code for the background color
-#' @param text_color hex code for the text color
-#' @param font_size font size
-#' @param bold set to TRUE for bold
-#' @param italic set to TRUE for italic
-#' @param openxlsx_style optional custom openxlsx style. When provided, all other arguments are ignored
-#' @noRd
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' if(require_openxlsx(throw = FALSE))
-#' tbl |>
-#'   style_column(columns = mean_hp,
-#'                bold = TRUE) |>
-#'   as_excel()
-create_style_openxlsx <- function(
-  font_size,
-  text_color,
-  bold,
-  italic,
-  background_color,
-  openxlsx_style = NULL
-) {
-  if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    return(NULL)
-  }
-  if (!is.null(openxlsx_style)) {
-    return(openxlsx_style)
-  }
-  textDecoration <- NULL
-  if (bold) {
-    textDecoration <- c("Bold")
-  }
-  if (italic) {
-    textDecoration <- c(textDecoration, "italic")
-  }
-  openxlsx_style <- openxlsx::createStyle(
-    fontSize = font_size,
-    fontColour = text_color,
-    fgFill = background_color,
-    textDecoration = textDecoration
-  )
-
-  return(openxlsx_style)
-}
 
 #' create_style_googlesheet
 #'
