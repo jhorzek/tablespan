@@ -3,12 +3,13 @@
 .RData
 .Ruserdata
 .DS_Store
-*.xlsx
+/*.R
 !tests/testthat/xlsx_files/*.xlsx
 docs
 CRAN-SUBMISSION
 cran-comments.md
 settings.json
+tmp.R
 
 /.quarto/
 inst/doc

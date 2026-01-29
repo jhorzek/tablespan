@@ -6,7 +6,9 @@
 #' @returns tablespan table with added styles field
 #' @noRd
 initialize_styles <- function(tbl) {
-  tbl$styles <- default_styles()
+  tbl <- tbl |>
+    default_styles()
+
   data <- extract_data(tbl)
 
   for (column_name in colnames(data)) {
@@ -24,85 +26,22 @@ initialize_styles <- function(tbl) {
 #'
 #' Sets the default styles for a tablespan table.
 #'
+#' @param tbl tablespan object
 #' @returns a list with default styles
 #' @noRd
-default_styles <- function() {
-  default <- list(
-    title = list(),
-    subtitle = list(),
-    header = list(),
-    header_cells = list(),
-    columns = list(),
-    footnote = list(),
-    hline = list(),
-    vline = list()
-  ) |>
-    default_styles_gt() |>
-    default_styles_openxlsx() |>
-    default_styles_hux() |>
-    default_styles_flex() |>
-    default_styles_googlesheet()
+default_styles <- function(tbl) {
+  tbl <- tbl |>
+    style_title() |>
+    style_subtitle() |>
+    style_header() |>
+    style_header_cells() |>
+    style_footnote() |>
+    style_hline() |>
+    style_vline()
 
-  return(default)
+  return(tbl)
 }
 
-#' default_styles_gt
-#'
-#' Sets the default styles for gt tables in a tablespan table.
-#'
-#' This function adds default styling for gt tables to the provided default_styles list.
-#' If the gt package is not available, the original default_styles are returned unchanged.
-#'
-#' @param default_styles a list containing default styles for different table elements
-#' @returns a list with default styles for gt tables added to the input default_styles
-#' @noRd
-default_styles_gt <- function(default_styles) {
-  if (!requireNamespace("gt", quietly = TRUE)) {
-    return(default_styles)
-  }
-
-  default <- function(tbl) {
-    return(
-      tbl
-    )
-  }
-  default_styles$title$gt <- default
-  default_styles$subtitle$gt <- default
-  default_styles$header$gt <- default
-  default_styles$header_cells$gt <- default
-  default_styles$footnote$gt <- default
-  default_styles$hline$gt <- default
-  default_styles$vline$gt <- default
-  return(default_styles)
-}
-
-#' default_styles_hux
-#'
-#' Sets the default styles for huxtable tables in a tablespan table.
-#'
-#' This function adds default styling for huxtable tables to the provided default_styles list.
-#' If the huxtable package is not available, the original default_styles are returned unchanged.
-#'
-#' @param default_styles a list containing default styles for different table elements
-#' @returns a list with default styles for huxtable tables added to the input default_styles
-#' @noRd
-default_styles_hux <- function(default_styles) {
-  if (!requireNamespace("huxtable", quietly = TRUE)) {
-    return(default_styles)
-  }
-
-  default <- list(function(tbl, row, col) {
-    return(tbl)
-  })
-  default_styles$title$hux <- default
-  default_styles$subtitle$hux <- default
-  default_styles$header$hux <- default
-  default_styles$header_cells$hux <- default
-  default_styles$footnote$hux <- default
-  default_styles$hline$hux <- default
-  default_styles$vline$hux <- default
-  return(default_styles)
-}
 
 #' default_styles_flex
 #'
@@ -351,20 +290,19 @@ style_title <- function(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
-  openxlsx_style = NULL,
-  gt_style = NULL,
-  hux_style = NULL,
-  flex_style = NULL,
-  googlesheet_style = NULL
+  ...
 ) {
-  gt_style <- create_style_gt(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    gt_style = gt_style
+  tbl$styles$title <- c(
+    list(
+      background_color = background_color,
+      text_color = text_color,
+      font_size = font_size,
+      bold = bold,
+      italic = italic
+    ),
+    list(...)
   )
+  return(tbl)
 
   hux_style <- create_style_hux(
     font_size = font_size,
@@ -484,29 +422,19 @@ style_subtitle <- function(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
-  openxlsx_style = NULL,
-  gt_style = NULL,
-  hux_style = NULL,
-  flex_style = NULL,
-  googlesheet_style = NULL
+  ...
 ) {
-  gt_style <- create_style_gt(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    gt_style = gt_style
+  tbl$styles$subtitle <- c(
+    list(
+      background_color = background_color,
+      text_color = text_color,
+      font_size = font_size,
+      bold = bold,
+      italic = italic
+    ),
+    list(...)
   )
-
-  hux_style <- create_style_hux(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    hux_style = hux_style
-  )
+  return(tbl)
 
   flex_style <- create_style_flex(
     font_size = font_size,
@@ -534,18 +462,6 @@ style_subtitle <- function(
     background_color = background_color,
     googlesheet_style = googlesheet_style
   )
-
-  if (requireNamespace("gt", quietly = TRUE)) {
-    tbl$styles$subtitle$gt <- function(tbl) {
-      return(
-        tbl |>
-          gt::tab_style(
-            style = gt_style,
-            locations = gt::cells_title(groups = "subtitle")
-          )
-      )
-    }
-  }
 
   tbl$styles$subtitle$flex <- flex_style
   tbl$styles$subtitle$hux <- hux_style
@@ -620,20 +536,19 @@ style_header <- function(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
-  openxlsx_style = NULL,
-  gt_style = NULL,
-  hux_style = NULL,
-  flex_style = NULL,
-  googlesheet_style = NULL
+  ...
 ) {
-  gt_style <- create_style_gt(
-    font_size = font_size,
-    text_color = text_color,
-    bold = bold,
-    italic = italic,
-    background_color = background_color,
-    gt_style = gt_style
+  tbl$styles$header <- c(
+    list(
+      background_color = background_color,
+      text_color = text_color,
+      font_size = font_size,
+      bold = bold,
+      italic = italic
+    ),
+    list(...)
   )
+  return(tbl)
 
   hux_style <- create_style_hux(
     font_size = font_size,
@@ -761,9 +676,25 @@ style_header_cells <- function(
   bottom = TRUE,
   left = TRUE,
   right = TRUE,
-  openxlsx_style = NULL,
-  googlesheet_style = NULL
+  ...
 ) {
+  tbl$styles$header_cells <- c(
+    list(
+      background_color = background_color,
+      text_color = text_color,
+      font_size = font_size,
+      bold = bold,
+      italic = italic,
+      border_color = border_color,
+      top = top,
+      bottom = bottom,
+      left = left,
+      right = right
+    ),
+    list(...)
+  )
+  return(tbl)
+
   if (!require_openxlsx(throw = FALSE)) {
     tbl$styles$header_cells$openxlsx <- NULL
   } else {
@@ -903,12 +834,20 @@ style_footnote <- function(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
-  openxlsx_style = NULL,
-  gt_style = NULL,
-  hux_style = NULL,
-  flex_style = NULL,
-  googlesheet_style = NULL
+  ...
 ) {
+  tbl$styles$footnote <- c(
+    list(
+      background_color = background_color,
+      text_color = text_color,
+      font_size = font_size,
+      bold = bold,
+      italic = italic
+    ),
+    list(...)
+  )
+  return(tbl)
+
   gt_style <- create_style_gt(
     font_size = font_size,
     text_color = text_color,
@@ -954,27 +893,6 @@ style_footnote <- function(
     googlesheet_style = googlesheet_style
   )
 
-  if (requireNamespace("gt", quietly = TRUE)) {
-    tbl$styles$footnote$gt <- function(tbl) {
-      return(
-        tbl |>
-          gt::tab_style(
-            style = gt_style,
-            locations = gt::cells_footnotes()
-          )
-      )
-    }
-  }
-
-  tbl$styles$footnote$gt <- function(tbl) {
-    return(
-      tbl |>
-        gt::tab_style(
-          style = gt_style,
-          locations = gt::cells_footnotes()
-        )
-    )
-  }
   tbl$styles$footnote$hux <- hux_style
   tbl$styles$footnote$flex <- flex_style
   tbl$styles$footnote$openxlsx <- openxlsx_style
@@ -1032,9 +950,19 @@ style_footnote <- function(
 #' # save workbook to see effect
 style_hline <- function(
   tbl,
-  openxlsx_style,
-  googlesheet_style = gs_border_style(color = "#000000")
+  color = "#000000",
+  ...
+  #openxlsx_style,
+  #googlesheet_style = gs_border_style(color = "#000000")
 ) {
+  tbl$styles$hline <- c(
+    list(
+      color = color
+    ),
+    list(...)
+  )
+  return(tbl)
+
   tbl$styles$hline$openxlsx <- openxlsx_style
   tbl$styles$hline$googlesheet <- googlesheet_style
   return(tbl)
@@ -1090,9 +1018,19 @@ style_hline <- function(
 #' # save workbook to see effect
 style_vline <- function(
   tbl,
-  openxlsx_style,
-  googlesheet_style = gs_border_style(color = "#000000")
+  color = "#000000",
+  ...
+  #openxlsx_style,
+  #googlesheet_style = gs_border_style(color = "#000000")
 ) {
+  tbl$styles$vline <- c(
+    list(
+      color = color
+    ),
+    list(...)
+  )
+  return(tbl)
+
   tbl$styles$vline$openxlsx <- openxlsx_style
   tbl$styles$vline$googlesheet <- googlesheet_style
   return(tbl)
@@ -1165,15 +1103,15 @@ style_column <- function(
   bold = FALSE,
   italic = FALSE,
   color_scale = NULL,
-  openxlsx_style = NULL,
-  gt_style = NULL,
-  hux_style = NULL,
-  flex_style = NULL,
-  googlesheet_style = NULL,
-  stack = TRUE
+  stack = TRUE,
+  ...
 ) {
   columns_expr <- rlang::enquo(columns)
   data <- extract_data(tbl)
+
+  if (is.null(rows)) {
+    rows <- 1:nrow(data)
+  }
 
   column_names <- data |>
     dplyr::select(!!columns_expr) |>
@@ -1185,6 +1123,45 @@ style_column <- function(
     column_names = column_names,
     rows = rows
   )
+
+  for (column_name in column_names) {
+    if (stack) {
+      tbl$styles$columns[[column_name]] <- append(
+        tbl$styles$columns[[column_name]],
+        list(list(
+          "style" = c(
+            list(
+              background_color = background_color,
+              text_color = text_color,
+              font_size = font_size,
+              bold = bold,
+              italic = italic,
+              color_scale = color_scale
+            ),
+            list(...)
+          ),
+          "rows" = rows
+        ))
+      )
+    } else {
+      tbl$styles$columns[[column_name]] <- list(list(
+        style = c(
+          list(
+            background_color = background_color,
+            text_color = text_color,
+            font_size = font_size,
+            bold = bold,
+            italic = italic,
+            color_scale = color_scale
+          ),
+          list(...)
+        ),
+        rows = rows
+      ))
+    }
+  }
+
+  return(tbl)
 
   gt_style <- create_style_gt_function(
     font_size = font_size,
@@ -1263,158 +1240,6 @@ style_column <- function(
   return(tbl)
 }
 
-#' create_style_gt_function
-#'
-#' Create a new style function to be applied to the body of the table.
-#'
-#' @param background_color hex code for the background color
-#' @param text_color hex code for the text color
-#' @param font_size font size
-#' @param bold set to TRUE for bold
-#' @param italic set to TRUE for italic
-#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
-#' @noRd
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' if(require_gt(throw = FALSE))
-#' tbl |>
-#'   style_column(columns = mean_hp,
-#'                    bold = TRUE) |>
-#'   as_gt()
-create_style_gt_function <- function(
-  font_size,
-  text_color,
-  bold,
-  italic,
-  background_color,
-  gt_style
-) {
-  if (!requireNamespace("gt", quietly = TRUE)) {
-    return(NULL)
-  }
-
-  styles <- create_style_gt(
-    font_size,
-    text_color,
-    bold,
-    italic,
-    background_color,
-    gt_style = gt_style
-  )
-  gt_style <- function(data, column, rows) {
-    style <- if (italic) "italic" else NULL
-    weight <- if (bold) "bold" else NULL
-    data |>
-      gt::tab_style(
-        data = _,
-        style = styles,
-        locations = gt::cells_body(
-          columns = gt::all_of(column),
-          rows = rows
-        )
-      )
-  }
-
-  return(gt_style)
-}
-
-#' create_style_gt
-#'
-#' Create a new style to be applied to the body of the table.
-#'
-#' @param background_color hex code for the background color
-#' @param text_color hex code for the text color
-#' @param font_size font size
-#' @param bold set to TRUE for bold
-#' @param italic set to TRUE for italic
-#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
-#' @noRd
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' if(require_gt(throw = FALSE))
-#' tbl |>
-#'   style_column(columns = mean_hp,
-#'                    bold = TRUE) |>
-#'   as_gt()
-create_style_gt <- function(
-  font_size,
-  text_color,
-  bold,
-  italic,
-  background_color,
-  gt_style = NULL
-) {
-  if (!requireNamespace("gt", quietly = TRUE)) {
-    return(NULL)
-  }
-  if (!is.null(gt_style)) {
-    return(gt_style)
-  }
-  style <- if (italic) "italic" else NULL
-  weight <- if (bold) "bold" else NULL
-  font_size <- if (!is.null(font_size)) {
-    gt::px(1.3333343412075 * font_size)
-  } else {
-    NULL
-  }
-
-  style = list(
-    gt::cell_text(
-      size = font_size,
-      color = text_color,
-      style = style,
-      weight = weight
-    )
-  )
-  if (!is.null(background_color)) {
-    style[[length(style) + 1]] <- gt::cell_fill(color = background_color)
-  }
-  return(style)
-}
 
 #' create_style_openxlsx
 #'

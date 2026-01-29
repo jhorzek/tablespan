@@ -87,6 +87,21 @@ as_gt <- function(
   return(gt_tbl)
 }
 
+gt_set_styles <- function(tbl) {
+  gt_styles <- initialize_styles_gt() |>
+    style_title_gt(gt_styles = _, tbl = tbl) |>
+    style_subtitle_gt(tbl = tbl) |>
+    style_header_gt(tbl = tbl) |>
+    style_header_cells_gt(tbl = tbl) |>
+    style_vline_gt(tbl = tbl) |>
+    style_hline_gt(tbl = tbl) |>
+    style_footnote_gt(tbl = tbl)
+
+  gt_styles <- style_column_gt(gt_styles = gt_styles, tbl = tbl)
+
+  return(gt_styles)
+}
+
 #' flatten_table
 #'
 #' The table header within tables created with tablespan is represented in
@@ -352,17 +367,18 @@ format_gt <- function(gt_tbl, tbl, auto_format) {
   }
 
   # Apply any custom styles
-  for (style_element in names(tbl$styles)) {
+  gt_styles <- gt_set_styles(tbl = tbl)
+  for (style_element in names(gt_styles)) {
     if (style_element == "columns") {
       next
     }
     gt_tbl <- gt_tbl |>
-      tbl$styles[[style_element]]$gt()
+      gt_styles[[style_element]]$gt()
   }
 
   # Apply custom formatting to columns
-  for (column_name in names(tbl$styles$columns)) {
-    for (c_style in tbl$styles$columns[[column_name]]) {
+  for (column_name in names(gt_styles$columns)) {
+    for (c_style in gt_styles$columns[[column_name]]) {
       if (is.null(c_style$style$gt)) {
         next
       }
