@@ -338,9 +338,11 @@ style_flex <- function(tbl, tbl_flex) {
 
   # Apply custom formatting to columns
   # Apply formats
-  for (column_name in names(tbl$formats$columns)) {
-    for (c_format in tbl$formats$columns[[column_name]]) {
-      if (is.null(c_format$format$flex)) {
+  formats <- get_formats_flex(tbl = tbl)
+
+  for (column_name in names(formats$columns)) {
+    for (c_format in formats$columns[[column_name]]) {
+      if (is.null(c_format$flex)) {
         next
       }
 
@@ -351,7 +353,7 @@ style_flex <- function(tbl, tbl_flex) {
         rows <- c_format$rows
       }
       tbl_flex <- tbl_flex |>
-        c_format$format$flex(col = column_name, row = rows, part = "body")
+        c_format$flex(row = rows, col = column_name, part = "body")
     }
   }
 
