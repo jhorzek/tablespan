@@ -11,10 +11,16 @@ initialize_formats <- function(tbl, max_digits) {
   tbl$formats <- list()
 
   for (column_name in colnames(data)) {
-    auto_formatting <- format_auto(
-      data_col = data[[column_name]],
-      max_digits = max_digits
+    tbl$formats$columns[[column_name]] <- list(
+      list(
+        fmt = format_auto(
+          data_col = data[[column_name]],
+          max_digits = max_digits
+        ),
+        row = 1:nrow(data)
+      )
     )
+    next
 
     tbl <- format_column(
       tbl = tbl,
@@ -76,14 +82,8 @@ smart_round <- function(x, max_digits = 4) {
 #' @param tbl tablespan table
 #' @param columns the columns to style. Must be a tidyselect selector expression (e.g., starts_with("hp_"))
 #' @param rows indices of the rows which should be styled. When set to NULL, the style is applied to all rows
-#' @param format_gt formatting used for gt. This must be a function with the following signature: function(tbl, columns, rows, ...)
-#' and return the tbl with applied formatting. See examples.
-#' @param format_openxlsx an argument passed to the numFmt field for openxlsx::createStyle.
-#' @param format_googlesheet formatting specification for Google Sheets exports. This can be created using
-#' `create_format_googlesheet`. The formatting will be applied when exporting to Google Sheets.
-#' @param format_hux set to NULL to use default formatting. Alternative, use a value that can be passed to huxtable::set_number_format()
-#' @param format_flex formatting used for flextable. Must be a function with the following signature: function(tbl, i, j, part) and
-#' must return the tbl object with applied formatting.
+#' @param fmt fromatting object. Use format_number to format numeric values, format_text for text elements, and format_date
+#' for dates.
 #' @param stack When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 #' for openxlsx. When set to FALSE, the new style replaces all previous styling.
 #' @returns the tablespan table with added styles
@@ -127,13 +127,13 @@ format_column <- function(
   tbl,
   columns = dplyr::everything(),
   rows = NULL,
-  format_gt = gt::fmt_auto,
-  format_openxlsx = "GENERAL",
-  format_googlesheet = create_format_googlesheet(type = NULL),
-  format_hux = NULL,
-  format_flex = NULL,
+  fmt,
   stack = TRUE
 ) {
+  if (!is(fmt, "tablespan_format")) {
+    stop("fmt must be a tablespan_format object (e.g., format_numeric).")
+  }
+
   columns_expr <- rlang::enquo(columns)
   data <- extract_data(tbl)
 
@@ -141,30 +141,18 @@ format_column <- function(
     dplyr::select(!!columns_expr) |>
     colnames()
 
-  formats <- list(
-    gt = create_format_gt_function(
-      format = format_gt
-    ),
-    openxlsx = create_format_openxlsx(
-      num_format = format_openxlsx
-    ),
-    googlesheet = format_googlesheet,
-    hux = create_format_hux(num_format = format_hux),
-    flex = create_format_flex(format = format_flex)
-  )
-
   for (column_name in column_names) {
     if (stack) {
       tbl$formats$columns[[column_name]] <- append(
         tbl$formats$columns[[column_name]],
         list(list(
-          format = formats,
+          fmt = fmt,
           rows = rows
         ))
       )
     } else {
       tbl$formats$columns[[column_name]] <- list(list(
-        format = formats,
+        fmt = fmt,
         rows = rows
       ))
     }
@@ -173,74 +161,6 @@ format_column <- function(
   return(tbl)
 }
 
-#' create_format_gt_function
-#'
-#' Create a new style function to be applied to the body of the table.
-#'
-#' @param format gt formatting
-#' @param background_color hex code for the background color
-#' @param text_color hex code for the text color
-#' @param font_size font size
-#' @param bold set to TRUE for bold
-#' @param italic set to TRUE for italic
-#' @param gt_style optional custom gt style. When provided, all other arguments are ignored
-#' @noRd
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' if(require_gt(throw = FALSE))
-#' tbl |>
-#'   format_column(columns = mean_hp,
-#'                 rows = c(1,3),
-#'                 format_gt = function(tbl, columns, rows, ...){
-#'                              return(gt::fmt_number(tbl,
-#'                                        columns = columns,
-#'                                        rows = rows,
-#'                                        decimals = 4))},
-#'                 format_openxlsx = "0.0000",
-#'                 format_hux = "%5.4f") |>
-#'   as_gt()
-create_format_gt_function <- function(
-  format
-) {
-  if (!requireNamespace("gt", quietly = TRUE)) {
-    return(NULL)
-  }
-
-  if (!is.function(format)) {
-    stop("format must be a function.")
-  }
-
-  gt_formatter <- function(data, column, rows) {
-    return(
-      data |>
-        format(columns = gt::all_of(column), rows = rows)
-    )
-  }
-
-  return(gt_formatter)
-}
 
 #' create_format_openxlsx
 #'
@@ -511,6 +431,8 @@ format_auto <- function(data_col, max_digits) {
     return(format_number(
       decimals = smart_round(x = data_col, max_digits = max_digits)
     ))
+  } else if (inherits(data_col, 'Date')) {
+    return(format_date())
   } else {
     return(format_text())
   }
@@ -525,7 +447,17 @@ format_auto <- function(data_col, max_digits) {
 #' @returns a list with styles for gt and openxlsx
 #' @noRd
 format_number <- function(decimals, sep_mark = ",", dec_mark = ".") {
-  styles_list <- list()
+  styles_list <- list(
+    type = "number",
+    args = list(
+      decimals = decimals,
+      sep_mark = sep_mark,
+      dec_mark = dec_mark
+    )
+  )
+  class(styles_list) <- "tablespan_format"
+  return(styles_list)
+
   styles_list$openxlsx <- format_number_openxlsx(
     decimals = decimals,
     sep_mark = sep_mark,
@@ -703,12 +635,23 @@ format_number_flex <- function(decimals, sep_mark, dec_mark) {
 #' @returns a list with styles for gt and openxlsx
 #' @noRd
 format_text <- function() {
-  formats <- list()
+  formats <- list(type = "text", args = list())
+  class(formats) <- "tablespan_format"
+  return(formats)
   formats$gt <- format_text_gt()
   formats$openxlsx <- format_text_openxlsx()
   formats$googlesheet <- format_text_googlesheet()
   formats$hux <- format_text_hux()
   return(formats)
+}
+
+format_date <- function(format = "%Y-%m-%d") {
+  styles_list <- list(
+    type = "date",
+    args = list(format = "%Y-%m-%d")
+  )
+  class(styles_list) <- "tablespan_format"
+  return(styles_list)
 }
 
 #' format_text_gt
