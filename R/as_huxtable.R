@@ -452,9 +452,10 @@ style_hux <- function(tbl_hux, tbl) {
 
   # Apply custom formatting to columns
   # Apply formats
-  for (column_name in names(tbl$formats$columns)) {
-    for (c_format in tbl$formats$columns[[column_name]]) {
-      if (is.null(c_format$format$hux)) {
+  formats_hux <- get_formats_hux(tbl = tbl)
+  for (column_name in names(formats_hux$columns)) {
+    for (c_format in formats_hux$columns[[column_name]]) {
+      if (is.null(c_format$hux)) {
         next
       }
 
@@ -468,7 +469,7 @@ style_hux <- function(tbl_hux, tbl) {
       }
 
       tbl_hux <- tbl_hux |>
-        c_format$format$hux(col = column_name, row = rows)
+        c_format$hux(col = column_name, row = rows)
     }
   }
 
