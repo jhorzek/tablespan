@@ -454,36 +454,6 @@ format_number_gt <- function(decimals, sep_mark, dec_mark) {
   return(gt_style)
 }
 
-#' format_number_openxlsx
-#'
-#' Creates an openxlsx number format string for formatting numbers with specified decimal places,
-#' thousands separator, and decimal mark.
-#'
-#' @param decimals number of decimal places to display
-#' @param sep_mark character used as thousands separator (default: ",")
-#' @param dec_mark character used as decimal mark (default: ".")
-#'
-#' @returns a character string representing the openxlsx number format, or NULL if openxlsx is not available
-#' @noRd
-format_number_openxlsx <- function(decimals, sep_mark, dec_mark) {
-  if (decimals == 0) {
-    openxlsx_format <- "0"
-  } else {
-    openxlsx_format <- paste0(ifelse(
-      sep_mark == "",
-      paste0("0", dec_mark, paste0(rep("0", decimals), collapse = "")),
-      paste0(
-        "#",
-        sep_mark,
-        "##0",
-        dec_mark,
-        paste0(rep("0", decimals), collapse = "")
-      )
-    ))
-  }
-
-  return(openxlsx_format)
-}
 
 #' format_number_googlesheet
 #'
@@ -607,15 +577,6 @@ format_text_gt <- function() {
   }
 }
 
-#' format_text_openxlsx
-#'
-#' Creates an openxlsx text format for formatting text cells.
-#'
-#' @returns a character string representing the openxlsx text format
-#' @noRd
-format_text_openxlsx <- function() {
-  return("TEXT")
-}
 
 format_text_googlesheet <- function() {
   return("TEXT")

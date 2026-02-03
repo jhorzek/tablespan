@@ -67,8 +67,10 @@ as_excel <- function(
     openxlsx::addWorksheet(sheetName = sheet, wb = workbook)
   }
 
-  styles <- openxlsx_set_styles(tbl)
+  styles <- get_styles_openxlsx(tbl)
   styles$merge_rownames <- merge_rownames
+
+  formats <- get_formats_openxlsx(tbl = tbl)
 
   locations <- get_locations(
     tbl = tbl,
@@ -107,7 +109,7 @@ as_excel <- function(
     table_data = tbl$table_data,
     locations = locations,
     styles = styles,
-    formats = tbl$formats
+    formats = formats
   )
 
   write_footnote(
@@ -526,7 +528,7 @@ write_data <- function(
   column_formats <- formats$columns
   for (column_name in names(column_formats)) {
     for (format in column_formats[[column_name]]) {
-      if (is.null(format$format$openxlsx)) {
+      if (is.null(format$openxlsx)) {
         next
       } else {
         if (is.null(format$rows)) {
@@ -537,17 +539,9 @@ write_data <- function(
         data_cols <- locations$col$start_col_header_lhs +
           which(names(column_formats) == column_name) -
           1
-        if (is(format$format$openxlsx, "Style")) {
-          openxlsx::addStyle(
-            wb = workbook,
-            sheet = sheet,
-            style = format$format$openxlsx,
-            rows = data_rows,
-            cols = data_cols,
-            stack = TRUE,
-            gridExpand = FALSE
-          )
-        }
+
+        workbook |>
+          format$openxlsx(sheet = sheet, row = data_rows, col = data_cols)
       }
     }
   }
@@ -720,7 +714,7 @@ require_openxlsx <- function(throw = TRUE) {
   return(TRUE)
 }
 
-openxlsx_set_styles <- function(tbl) {
+get_styles_openxlsx <- function(tbl) {
   openxlsx_styles <- default_styles_openxlsx() |>
     style_title_openxlsx(tbl = tbl) |>
     style_subtitle_openxlsx(tbl = tbl) |>
