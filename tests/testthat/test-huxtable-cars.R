@@ -43,8 +43,8 @@ test_that("cars", {
     huxtable::set_bottom_border(col = 1:7, row = 7) |>
     huxtable::set_left_border(row = 1:7, col = 1) |>
     huxtable::set_right_border(row = 1:7, col = 7) |>
-    tablespan:::hux_add_merged_row(text = "A table created with tablespan") |>
-    tablespan:::hux_add_merged_row(
+    tablespan:::add_merged_row_hux(text = "A table created with tablespan") |>
+    tablespan:::add_merged_row_hux(
       text = "Motor Trend Car Road Tests",
       border = NULL
     ) |>
@@ -167,8 +167,8 @@ test_that("cars-additional_spanners", {
     huxtable::set_bottom_border(col = 1:7, row = 9) |>
     huxtable::set_left_border(row = 1:9, col = 1) |>
     huxtable::set_right_border(row = 1:9, col = 7) |>
-    tablespan:::hux_add_merged_row(text = "A table created with tablespan") |>
-    tablespan:::hux_add_merged_row(
+    tablespan:::add_merged_row_hux(text = "A table created with tablespan") |>
+    tablespan:::add_merged_row_hux(
       text = "Motor Trend Car Road Tests",
       border = NULL
     ) |>
@@ -296,8 +296,8 @@ test_that("cars-no_row_names", {
     huxtable::set_bottom_border(col = 1:5, row = 9) |>
     huxtable::set_left_border(row = 1:9, col = 1) |>
     huxtable::set_right_border(row = 1:9, col = 5) |>
-    tablespan:::hux_add_merged_row(text = "A table created with tablespan") |>
-    tablespan:::hux_add_merged_row(
+    tablespan:::add_merged_row_hux(text = "A table created with tablespan") |>
+    tablespan:::add_merged_row_hux(
       text = "Motor Trend Car Road Tests",
       border = NULL
     ) |>
@@ -573,8 +573,8 @@ test_that("cars - hux styling", {
     huxtable::set_bottom_border(col = 1:7, row = 7) |>
     huxtable::set_left_border(row = 1:7, col = 1) |>
     huxtable::set_right_border(row = 1:7, col = 7) |>
-    tablespan:::hux_add_merged_row(text = "A table created with tablespan") |>
-    tablespan:::hux_add_merged_row(
+    tablespan:::add_merged_row_hux(text = "A table created with tablespan") |>
+    tablespan:::add_merged_row_hux(
       text = "Motor Trend Car Road Tests",
       border = NULL
     ) |>

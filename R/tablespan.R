@@ -383,7 +383,7 @@ add_header_level <- function(parsed_partial) {
   return(parsed_partial)
 }
 
-extract_data <- function(tbl) {
+get_table_data <- function(tbl) {
   if (!is.null(tbl$table_data$row_data)) {
     data <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
   } else {

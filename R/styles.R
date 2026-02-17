@@ -9,7 +9,7 @@ initialize_styles <- function(tbl) {
   tbl <- tbl |>
     default_styles()
 
-  data <- extract_data(tbl)
+  data <- get_table_data(tbl)
 
   for (column_name in colnames(data)) {
     tbl <- style_column(
@@ -618,7 +618,7 @@ style_column <- function(
   ...
 ) {
   columns_expr <- rlang::enquo(columns)
-  data <- extract_data(tbl)
+  data <- get_table_data(tbl)
 
   if (is.null(rows)) {
     rows <- 1:nrow(data)

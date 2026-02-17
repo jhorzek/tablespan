@@ -47,7 +47,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
     ...
   )
 
-  updated_tables <- flex_add_headers(x, tbl_flex)
+  updated_tables <- add_header_flex(x, tbl_flex)
   tbl_flex <- updated_tables$tbl_flex
   header_table <- updated_tables$header_table
   header_width <- updated_tables$header_width
@@ -71,7 +71,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
 
   tbl_flex <- flex_add_title(tbl = x, tbl_flex = tbl_flex)
 
-  tbl_flex <- flex_add_footnote(tbl = x, tbl_flex = tbl_flex)
+  tbl_flex <- add_footnote_flex(tbl = x, tbl_flex = tbl_flex)
 
   tbl_flex <- tbl_flex |>
     style_flex(tbl = x)
@@ -83,7 +83,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
 }
 
 
-#' flex_insert_header_entries
+#' insert_header_entries_flex
 #'
 #' Insert header entries into a matrix for flextable
 #'
@@ -94,7 +94,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
 #' @param header_width table with values encoding the width of each cell
 #' @returns header_table with entries
 #' @noRd
-flex_insert_header_entries <- function(
+insert_header_entries_flex <- function(
   header_partial,
   max_level,
   column_offset,
@@ -121,7 +121,7 @@ flex_insert_header_entries <- function(
   }
   if (!is.null(header_partial$entries)) {
     for (i in seq_along(header_partial$entries)) {
-      recursive_out <- flex_insert_header_entries(
+      recursive_out <- insert_header_entries_flex(
         header_partial = header_partial$entries[[i]],
         max_level = max_level,
         column_offset = column_offset,
@@ -136,7 +136,7 @@ flex_insert_header_entries <- function(
   return(list(header_table = header_table, header_width = header_width))
 }
 
-flex_add_headers <- function(tbl, tbl_flex) {
+add_header_flex <- function(tbl, tbl_flex) {
   require_flextable()
 
   if (!is.null(tbl$header$lhs)) {
@@ -166,7 +166,7 @@ flex_add_headers <- function(tbl, tbl_flex) {
   )
 
   if (!is.null(tbl$header$lhs)) {
-    header_table_width <- flex_insert_header_entries(
+    header_table_width <- insert_header_entries_flex(
       header_partial = tbl$header$lhs,
       max_level = max_level,
       column_offset = 1,
@@ -177,7 +177,7 @@ flex_add_headers <- function(tbl, tbl_flex) {
     header_width <- header_table_width$header_width
   }
 
-  header_table_width <- flex_insert_header_entries(
+  header_table_width <- insert_header_entries_flex(
     header_partial = tbl$header$rhs,
     max_level = max_level,
     column_offset = ifelse(
@@ -231,7 +231,7 @@ flex_add_title <- function(tbl, tbl_flex) {
   return(tbl_flex)
 }
 
-flex_add_footnote <- function(tbl, tbl_flex) {
+add_footnote_flex <- function(tbl, tbl_flex) {
   if (!is.null(tbl$footnote)) {
     tbl_flex <- flextable::add_footer_lines(tbl_flex, values = tbl$footnote)
   }

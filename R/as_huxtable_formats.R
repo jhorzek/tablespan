@@ -8,7 +8,7 @@
 get_formats_hux <- function(tbl) {
   formats <- list()
   force(tbl)
-  data <- extract_data(tbl)
+  data <- get_table_data(tbl)
 
   for (column_name in colnames(data)) {
     for (form in tbl$formats$columns[[column_name]]) {

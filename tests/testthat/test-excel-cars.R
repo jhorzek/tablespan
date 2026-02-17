@@ -20,8 +20,8 @@ test_that("cars", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -102,8 +102,8 @@ test_that("cars-offset", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -183,8 +183,8 @@ test_that("cars-cell_styles", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -266,8 +266,8 @@ test_that("cars-data_styles", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -348,8 +348,8 @@ test_that("cars-gradients", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -445,8 +445,8 @@ test_that("cars-gradients", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -543,8 +543,8 @@ test_that("cars-formatting", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -555,7 +555,7 @@ test_that("cars-formatting", {
     tbl = tbl |>
       format_column(
         columns = dplyr::where(is.double),
-        format_openxlsx = "0.00000"
+        fmt = format_number(decimals = 5, sep_mark = "", dec_mark = ".")
       )
   )
 
@@ -1005,8 +1005,8 @@ test_that("cars - missing rownames", {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."

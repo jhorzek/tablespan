@@ -1,7 +1,9 @@
 get_formats_openxlsx <- function(tbl) {
+  require_openxlsx()
+
   formats <- list()
   force(tbl)
-  data <- extract_data(tbl)
+  data <- get_table_data(tbl)
 
   for (column_name in colnames(data)) {
     for (form in tbl$formats$columns[[column_name]]) {
@@ -97,6 +99,7 @@ get_formats_openxlsx <- function(tbl) {
 #' @returns a character string representing the openxlsx number format, or NULL if openxlsx is not available
 #' @noRd
 format_number_openxlsx <- function(decimals, sep_mark, dec_mark) {
+  require_openxlsx()
   if (decimals == 0) {
     openxlsx_format <- "0"
   } else {
@@ -123,5 +126,6 @@ format_number_openxlsx <- function(decimals, sep_mark, dec_mark) {
 #' @returns a character string representing the openxlsx text format
 #' @noRd
 format_text_openxlsx <- function() {
+  require_openxlsx()
   return(openxlsx::createStyle(numFmt = "TEXT"))
 }

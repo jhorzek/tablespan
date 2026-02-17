@@ -48,19 +48,19 @@ as_huxtable.Tablespan <- function(x, ...) {
     ...
   )
 
-  updated_tables <- hux_add_headers(x, tbl_hux)
+  updated_tables <- add_headers_hux(x, tbl_hux)
   tbl_hux <- updated_tables$tbl_hux
   header_table <- updated_tables$header_table
 
-  tbl_hux <- hux_add_borders(
+  tbl_hux <- add_borders_hux(
     tbl = x,
     tbl_hux = tbl_hux,
     header_table = header_table
   )
 
-  tbl_hux <- hux_add_title(tbl = x, tbl_hux = tbl_hux)
+  tbl_hux <- add_title_hux(tbl = x, tbl_hux = tbl_hux)
 
-  tbl_hux <- hux_add_footnote(tbl = x, tbl_hux = tbl_hux)
+  tbl_hux <- add_footnote_hux(tbl = x, tbl_hux = tbl_hux)
 
   tbl_hux <- tbl_hux |>
     style_hux(tbl = x)
@@ -69,7 +69,7 @@ as_huxtable.Tablespan <- function(x, ...) {
 }
 
 
-#' hux_insert_header_entries
+#' insert_header_entries_hux
 #'
 #' Insert header entries into a matrix for hux
 #'
@@ -79,7 +79,7 @@ as_huxtable.Tablespan <- function(x, ...) {
 #' @param header_table table in which the header entries should be inserted
 #' @returns header_table with entries
 #' @noRd
-hux_insert_header_entries <- function(
+insert_header_entries_hux <- function(
   header_partial,
   max_level,
   column_offset,
@@ -102,7 +102,7 @@ hux_insert_header_entries <- function(
   }
   if (!is.null(header_partial$entries)) {
     for (i in seq_along(header_partial$entries)) {
-      header_table <- hux_insert_header_entries(
+      header_table <- insert_header_entries_hux(
         header_partial = header_partial$entries[[i]],
         max_level = max_level,
         column_offset = column_offset,
@@ -114,7 +114,7 @@ hux_insert_header_entries <- function(
   return(header_table)
 }
 
-hux_add_headers <- function(tbl, tbl_hux) {
+add_headers_hux <- function(tbl, tbl_hux) {
   require_huxtable()
   if (!is.null(tbl$header$lhs)) {
     max_level <- max(tbl$header$lhs$level, tbl$header$rhs$level)
@@ -134,7 +134,7 @@ hux_add_headers <- function(tbl, tbl_hux) {
   attr(header_table, "to_merge") <- list()
 
   if (!is.null(tbl$header$lhs)) {
-    header_table <- hux_insert_header_entries(
+    header_table <- insert_header_entries_hux(
       header_partial = tbl$header$lhs,
       max_level = max_level,
       column_offset = 1,
@@ -142,7 +142,7 @@ hux_add_headers <- function(tbl, tbl_hux) {
     )
   }
 
-  header_table <- hux_insert_header_entries(
+  header_table <- insert_header_entries_hux(
     header_partial = tbl$header$rhs,
     max_level = max_level,
     column_offset = ifelse(
@@ -168,7 +168,7 @@ hux_add_headers <- function(tbl, tbl_hux) {
   return(list(tbl_hux = tbl_hux, header_table = header_table))
 }
 
-#' hux_add_borders
+#' add_borders_hux
 #'
 #' Adds borders to a huxtable based on the structure of the original tablespan table.
 #'
@@ -181,7 +181,7 @@ hux_add_headers <- function(tbl, tbl_hux) {
 #' @param header_table matrix containing the header structure
 #' @returns huxtable with borders added
 #' @noRd
-hux_add_borders <- function(tbl, tbl_hux, header_table) {
+add_borders_hux <- function(tbl, tbl_hux, header_table) {
   require_huxtable()
   # Add borders
   # All header borders
@@ -237,7 +237,7 @@ hux_add_borders <- function(tbl, tbl_hux, header_table) {
   return(tbl_hux)
 }
 
-#' hux_add_merged_row
+#' add_merged_row_hux
 #'
 #' Adds a merged row to a huxtable with specified text and styling options.
 #'
@@ -252,7 +252,7 @@ hux_add_borders <- function(tbl, tbl_hux, header_table) {
 #' @param ... additional arguments passed to huxtable::set_cell_properties
 #' @returns modified huxtable with the new merged row
 #' @noRd
-hux_add_merged_row <- function(
+add_merged_row_hux <- function(
   ht,
   text,
   border = 0.8,
@@ -281,7 +281,7 @@ hux_add_merged_row <- function(
   return(ht)
 }
 
-#' hux_add_title
+#' add_title_hux
 #'
 #' Adds a title to a huxtable based on the structure of the original tablespan table.
 #'
@@ -292,14 +292,14 @@ hux_add_merged_row <- function(
 #' @param tbl_hux huxtable object to add the title to
 #' @returns huxtable with title added if applicable
 #' @noRd
-hux_add_title <- function(tbl, tbl_hux) {
+add_title_hux <- function(tbl, tbl_hux) {
   require_huxtable()
   if (!is.null(tbl$subtitle)) {
-    tbl_hux <- hux_add_merged_row(ht = tbl_hux, text = tbl$subtitle)
+    tbl_hux <- add_merged_row_hux(ht = tbl_hux, text = tbl$subtitle)
   }
   if (!is.null(tbl$title)) {
     set_border <- if (!is.null(tbl$subtitle)) NULL else .8
-    tbl_hux <- hux_add_merged_row(
+    tbl_hux <- add_merged_row_hux(
       ht = tbl_hux,
       text = tbl$title,
       border = set_border
@@ -308,7 +308,7 @@ hux_add_title <- function(tbl, tbl_hux) {
   return(tbl_hux)
 }
 
-#' hux_add_footnote
+#' add_footnote_hux
 #'
 #' Adds a footnote to a huxtable based on the structure of the original tablespan table.
 #'
@@ -319,7 +319,7 @@ hux_add_title <- function(tbl, tbl_hux) {
 #' @param tbl_hux huxtable object to add the footnote to
 #' @returns huxtable with footnote added if applicable
 #' @noRd
-hux_add_footnote <- function(tbl, tbl_hux) {
+add_footnote_hux <- function(tbl, tbl_hux) {
   require_huxtable()
   if (!is.null(tbl$footnote)) {
     tbl_hux <- tbl_hux |>
@@ -328,7 +328,7 @@ hux_add_footnote <- function(tbl, tbl_hux) {
   return(tbl_hux)
 }
 
-hux_set_styles <- function(tbl) {
+set_styles_hux <- function(tbl) {
   hux_styles <- initialize_styles_hux() |>
     style_title_hux(tbl = tbl) |>
     style_subtitle_hux(tbl = tbl) |>
@@ -362,7 +362,7 @@ hux_set_styles <- function(tbl) {
 style_hux <- function(tbl_hux, tbl) {
   require_huxtable()
 
-  hux_styles <- hux_set_styles(tbl = tbl)
+  hux_styles <- set_styles_hux(tbl = tbl)
 
   # Style the title
   if (!is.null(hux_styles$title$hux) & !is.null(tbl$title)) {

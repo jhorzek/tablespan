@@ -63,11 +63,11 @@ as_gt <- function(
   gt_tbl <- gt::gt(data = data_set, groupname_col = groupname_col, ...)
 
   # add the spanners
-  gt_tbl <- add_gt_spanners(gt_tbl = gt_tbl, tbl = tbl)
+  gt_tbl <- add_spanners_gt(gt_tbl = gt_tbl, tbl = tbl)
 
   if (!is.null(tbl$header$lhs)) {
     rowname_headers <- colnames(tbl$table_data$row_data)
-    gt_tbl <- add_gt_rowname_separator(
+    gt_tbl <- add_rowname_separator_gt(
       gt_tbl = gt_tbl,
       right_of = rowname_headers[length(rowname_headers)],
       separator_style = separator_style
@@ -75,10 +75,10 @@ as_gt <- function(
   }
 
   if (!is.null(tbl$title) | !is.null(tbl$subtitle)) {
-    gt_tbl <- add_gt_titles(gt_tbl, title = tbl$title, subtitle = tbl$subtitle)
+    gt_tbl <- add_titles_gt(gt_tbl, title = tbl$title, subtitle = tbl$subtitle)
   }
   if (!is.null(tbl$footnote)) {
-    gt_tbl <- add_gt_footnote(gt_tbl, footnote = tbl$footnote)
+    gt_tbl <- add_footnote_gt(gt_tbl, footnote = tbl$footnote)
   }
 
   gt_tbl <- gt_tbl |>
@@ -204,7 +204,7 @@ flatten_table_partial <- function(tbl_partial, id = "", flattened = list()) {
   return(flattened)
 }
 
-#' add_gt_spanners
+#' add_spanners_gt
 #'
 #' Adds the spanners defined in a tablespan table to a gt table.
 #'
@@ -212,17 +212,17 @@ flatten_table_partial <- function(tbl_partial, id = "", flattened = list()) {
 #' @param tbl table created with tablespan::tablespan
 #' @keywords internal
 #' @noRd
-add_gt_spanners <- function(gt_tbl, tbl) {
+add_spanners_gt <- function(gt_tbl, tbl) {
   flattened_tbl <- flatten_table(tbl)
 
   if (!is.null(flattened_tbl$flattened_lhs)) {
-    gt_tbl <- add_gt_spanner_partial(
+    gt_tbl <- add_spanner_partial_gt(
       gt_tbl = gt_tbl,
       tbl_partial = flattened_tbl$flattened_lhs
     )
   }
 
-  gt_tbl <- add_gt_spanner_partial(
+  gt_tbl <- add_spanner_partial_gt(
     gt_tbl = gt_tbl,
     tbl_partial = flattened_tbl$flattened_rhs
   )
@@ -230,7 +230,7 @@ add_gt_spanners <- function(gt_tbl, tbl) {
   return(gt_tbl)
 }
 
-#' add_gt_spanner_partial
+#' add_spanner_partial_gt
 #'
 #' Adds the spanners of the left hand side or right hand side of the headers
 #' defined in tablespan table to a gt table.
@@ -242,7 +242,7 @@ add_gt_spanners <- function(gt_tbl, tbl) {
 #' @importFrom rlang :=
 #' @keywords internal
 #' @noRd
-add_gt_spanner_partial <- function(gt_tbl, tbl_partial) {
+add_spanner_partial_gt <- function(gt_tbl, tbl_partial) {
   require_gt()
   # The table spanners need to be added in the correct order. All children of
   # a spanner must already be in the table, otherwise we get an error.
@@ -290,7 +290,7 @@ add_gt_spanner_partial <- function(gt_tbl, tbl_partial) {
   return(gt_tbl)
 }
 
-#' add_gt_rowname_separator
+#' add_rowname_separator_gt
 #'
 #' Adds a vertical line between the row names part and the data of the table.
 #' @param gt_tbl great table
@@ -300,7 +300,7 @@ add_gt_spanner_partial <- function(gt_tbl, tbl_partial) {
 #' from the data.
 #' @keywords internal
 #' @noRd
-add_gt_rowname_separator <- function(gt_tbl, right_of, separator_style) {
+add_rowname_separator_gt <- function(gt_tbl, right_of, separator_style) {
   require_gt()
   gt_tbl <- gt_tbl |>
     gt::tab_style(
@@ -310,7 +310,7 @@ add_gt_rowname_separator <- function(gt_tbl, right_of, separator_style) {
   return(gt_tbl)
 }
 
-#' add_gt_titles
+#' add_titles_gt
 #'
 #' Add a title and subtitle to a gt table
 #' @param gt_tbl gt table
@@ -319,7 +319,7 @@ add_gt_rowname_separator <- function(gt_tbl, right_of, separator_style) {
 #' @return gt
 #' @keywords internal
 #' @noRd
-add_gt_titles <- function(gt_tbl, title, subtitle) {
+add_titles_gt <- function(gt_tbl, title, subtitle) {
   require_gt()
   return(
     gt_tbl |>
@@ -328,7 +328,7 @@ add_gt_titles <- function(gt_tbl, title, subtitle) {
   )
 }
 
-#' add_gt_footnote
+#' add_footnote_gt
 #'
 #' Add a footnote to a gt table
 #' @param gt_tbl gt table
@@ -336,7 +336,7 @@ add_gt_titles <- function(gt_tbl, title, subtitle) {
 #' @returns gt
 #' @keywords internal
 #' @noRd
-add_gt_footnote <- function(gt_tbl, footnote) {
+add_footnote_gt <- function(gt_tbl, footnote) {
   require_gt()
   return(
     gt_tbl |>

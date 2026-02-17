@@ -7,7 +7,7 @@
 #' @returns tablespan table with added styles field
 #' @noRd
 initialize_formats <- function(tbl, max_digits) {
-  data <- extract_data(tbl)
+  data <- get_table_data(tbl)
   tbl$formats <- list()
 
   for (column_name in colnames(data)) {
@@ -19,30 +19,6 @@ initialize_formats <- function(tbl, max_digits) {
         ),
         row = 1:nrow(data)
       )
-    )
-    next
-
-    tbl <- format_column(
-      tbl = tbl,
-      format_gt = auto_formatting$gt,
-      format_openxlsx = auto_formatting$openxlsx,
-      format_hux = auto_formatting$hux,
-      format_flex = auto_formatting$flex,
-      format_googlesheet = auto_formatting$googlesheet,
-      columns = dplyr::all_of(column_name),
-      rows = seq_len(length(data[[column_name]]))
-    )
-    # Weird thing, but if we don't access the environment directly,
-    # something seems to overwrite the local variables. Accessing it may force
-    # the evaluation and prevent this overwrite...
-    environment(
-      environment(tbl$formats$columns[[column_name]][[1]]$format$gt)$format
-    )
-    environment(
-      environment(tbl$formats$columns[[column_name]][[1]]$format$flex)$format
-    )
-    environment(
-      environment(tbl$formats$columns[[column_name]][[1]]$format$hux)$format
     )
   }
 
@@ -135,7 +111,7 @@ format_column <- function(
   }
 
   columns_expr <- rlang::enquo(columns)
-  data <- extract_data(tbl)
+  data <- get_table_data(tbl)
 
   column_names <- data |>
     dplyr::select(!!columns_expr) |>
@@ -159,194 +135,6 @@ format_column <- function(
   }
 
   return(tbl)
-}
-
-
-#' create_format_openxlsx
-#'
-#' Create a new format to be applied to the body of the table.
-#'
-#' @param num_format number format
-#' @noRd
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' if(require_openxlsx(throw = FALSE))
-#' tbl |>
-#'   format_column(columns = mean_hp,
-#'                 rows = c(1,3),
-#'                 format_gt = function(tbl, columns, rows, ...){
-#'                              return(gt::fmt_number(tbl,
-#'                                        columns = columns,
-#'                                        rows = rows,
-#'                                        decimals = 4))},
-#'                 format_openxlsx = "0.0000") |>
-#'   as_excel()
-create_format_openxlsx <- function(num_format) {
-  if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    return(NULL)
-  }
-
-  openxlsx_style <- openxlsx::createStyle(
-    numFmt = num_format
-  )
-
-  return(openxlsx_style)
-}
-
-#' create_format_googlesheet
-#'
-#' Create a Google Sheets formatting specification for tablespan exports.
-#'
-#' @param type The type of formatting to apply. Must be one of:
-#'   "TEXT", "NUMBER", "PERCENT", "CURRENCY", "DATE", "TIME", "DATE_TIME", or "SCIENTIFIC".
-#'   When NULL, no formatting will be applied.
-#' @param pattern A custom pattern string for number formatting. This follows Google Sheets'
-#'   formatting rules. When NULL, a default pattern will be used based on the type.
-#'
-#' @returns A list with class "gs_format" containing the formatting specification,
-#'   or NULL if type is NULL. This object can be passed to format_column() via the
-#'   format_googlesheet parameter.
-#'
-#' @details
-#' The returned format specification will be applied when exporting to Google Sheets.
-#' For number formatting, the pattern parameter follows Google Sheets' number format
-#' syntax. For example, "#,##0.00" would format numbers with thousands separators
-#' and two decimal places.
-#'
-#' @export
-#' @examples
-#' # Create a number format with 2 decimal places
-#' num_format <- create_format_googlesheet(type = "NUMBER", pattern = "#,##0.00")
-#'
-#' # Create a percentage format
-#' percent_format <- create_format_googlesheet(type = "PERCENT")
-#'
-#' # Apply to a tablespan table
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' summarized_table <- mtcars |>
-#'   group_by(cyl) |>
-#'   summarise(mpg = mean(mpg))
-#'
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl ~ MPG:mpg)
-#'
-#' tbl |>
-#'   format_column(columns = mpg,
-#'                 format_googlesheet = num_format)
-create_format_googlesheet <- function(
-  type = c(
-    "TEXT",
-    "NUMBER",
-    "PERCENT",
-    "CURRENCY",
-    "DATE",
-    "TIME",
-    "DATE_TIME",
-    "SCIENTIFIC"
-  ),
-  pattern = NULL
-) {
-  if (is.null(type)) {
-    return(NULL)
-  }
-  gs_format <- list(
-    type = match.arg(type),
-    pattern = pattern
-  )
-  class(gs_format) <- "gs_format"
-  return(
-    gs_format
-  )
-}
-
-
-#' create_format_hux
-#'
-#' Create a new format to be applied to the body of the table for huxtable exports.
-#'
-#' @param num_format number format. Can be either a string specifying the format or a function that takes a huxtable, column, and row and returns a formatted huxtable.
-#' @returns a function that applies the specified format to a huxtable, or NULL if huxtable is not available
-#' @noRd
-#' @examples
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' # We want to report the following table:
-#' summarized_table <- mtcars |>
-#'   group_by(cyl, vs) |>
-#'   summarise(N = n(),
-#'             mean_hp = mean(hp),
-#'             sd_hp = sd(hp),
-#'             mean_wt = mean(wt),
-#'             sd_wt = sd(wt))
-#'
-#' # Create a tablespan:
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl + Engine:vs ~
-#'                    N +
-#'                    (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-#'                    (`Weight` = Mean:mean_wt + SD:sd_wt),
-#'                  title = "Motor Trend Car Road Tests",
-#'                  subtitle = "A table created with tablespan",
-#'                  footnote = "Data from the infamous mtcars data set.")
-#'
-#' if(require_huxtable(throw = FALSE))
-#' tbl |>
-#'   format_column(columns = mean_hp,
-#'                 rows = c(1,3),
-#'                 format_gt = function(tbl, columns, rows, ...){
-#'                              return(gt::fmt_number(tbl,
-#'                                        columns = columns,
-#'                                        rows = rows,
-#'                                        decimals = 4))},
-#'                 format_openxlsx = "0.0000",
-#'                 format_hux = "%5.4f") |>
-#'   as_huxtable()
-create_format_hux <- function(num_format) {
-  if (!requireNamespace("huxtable", quietly = TRUE)) {
-    return(NULL)
-  }
-
-  if (is.null(num_format)) {
-    return(NULL)
-  }
-
-  if (is.function(num_format)) {
-    return(num_format)
-  }
-  hux_formatter <- function(tbl, col, row) {
-    return(
-      tbl |>
-        huxtable::set_number_format(col = col, row = row, value = num_format)
-    )
-  }
-  return(hux_formatter)
 }
 
 
@@ -388,147 +176,8 @@ format_number <- function(decimals, sep_mark = ",", dec_mark = ".") {
   )
   class(styles_list) <- "tablespan_format"
   return(styles_list)
-
-  styles_list$openxlsx <- format_number_openxlsx(
-    decimals = decimals,
-    sep_mark = sep_mark,
-    dec_mark = dec_mark
-  )
-
-  styles_list$googlesheet <- format_number_googlesheet(
-    decimals = decimals,
-    sep_mark = sep_mark,
-    dec_mark = dec_mark
-  )
-
-  styles_list$gt <- format_number_gt(
-    decimals = decimals,
-    sep_mark = sep_mark,
-    dec_mark = dec_mark
-  )
-
-  styles_list$hux <- format_number_hux(
-    decimals = decimals,
-    sep_mark = sep_mark,
-    dec_mark = dec_mark
-  )
-
-  styles_list$flex <- format_number_flex(
-    decimals = decimals,
-    sep_mark = sep_mark,
-    dec_mark = dec_mark
-  )
-
-  return(styles_list)
 }
 
-#' format_number_gt
-#'
-#' Creates a formatting function for gt tables that formats numbers with specified decimal places,
-#' thousands separator, and decimal mark.
-#'
-#' @param decimals number of decimal places to display
-#' @param sep_mark character used as thousands separator (default: ",")
-#' @param dec_mark character used as decimal mark (default: ".")
-#'
-#' @returns a function that applies the specified number formatting to a gt table, or NULL if gt is not available
-#' @noRd
-format_number_gt <- function(decimals, sep_mark, dec_mark) {
-  if (requireNamespace("gt", quietly = TRUE)) {
-    int_decimals = force(decimals)
-    int_sep_mark = force(sep_mark)
-    int_dec_mark = force(dec_mark)
-    gt_style <- function(data, columns, rows) {
-      gt::fmt_number(
-        data = data,
-        columns = columns,
-        rows = rows,
-        decimals = int_decimals,
-        sep_mark = int_sep_mark,
-        dec_mark = int_dec_mark
-      )
-    }
-  } else {
-    gt_style <- NULL
-  }
-  return(gt_style)
-}
-
-
-#' format_number_googlesheet
-#'
-#' Creates an googlesheet number format string for formatting numbers with specified decimal places,
-#' thousands separator, and decimal mark.
-#'
-#' @param decimals number of decimal places to display
-#' @param sep_mark character used as thousands separator (default: ",")
-#' @param dec_mark character used as decimal mark (default: ".")
-#'
-#' @returns a character string representing the googlesheet number format, or NULL if googlesheet is not available
-#' @noRd
-format_number_googlesheet <- function(decimals, sep_mark, dec_mark) {
-  # users the same format as openxlsx
-  number_format <- format_number_openxlsx(
-    decimals = decimals,
-    sep_mark = sep_mark,
-    dec_mark = dec_mark
-  )
-
-  return(create_format_googlesheet(type = "NUMBER", pattern = number_format))
-}
-
-format_number_hux <- function(decimals, sep_mark, dec_mark) {
-  if (requireNamespace("huxtable", quietly = TRUE)) {
-    hux_format <- function(tbl, row, col) {
-      tbl |>
-        huxtable::set_number_format(
-          row = row,
-          col = col,
-          value = list(function(x) {
-            formatC(
-              x = x,
-              big.mark = sep_mark,
-              decimal.mark = dec_mark,
-              digits = decimals,
-              format = "f"
-            )
-          })
-        )
-    }
-  } else {
-    hux_format <- NULL
-  }
-  return(hux_format)
-}
-
-#' format_number_flex
-#'
-#' Creates a formatting function for flextable that formats numbers with specified decimal places,
-#' thousands separator, and decimal mark.
-#'
-#' @param decimals number of decimal places to display
-#' @param sep_mark character used as thousands separator (default: ",")
-#' @param dec_mark character used as decimal mark (default: ".")
-#'
-#' @returns a function that applies the specified number formatting to a flextable, or NULL if flextable is not available
-#' @noRd
-format_number_flex <- function(decimals, sep_mark, dec_mark) {
-  if (requireNamespace("flextable", quietly = TRUE)) {
-    flex_format <- function(tbl, i, j, part) {
-      tbl |>
-        flextable::colformat_double(
-          i = i,
-          j = j,
-          digits = decimals,
-          big.mark = sep_mark,
-          decimal.mark = dec_mark
-        )
-    }
-  } else {
-    flex_format <- NULL
-  }
-  return(flex_format)
-}
 
 #' format_text
 #'
@@ -538,11 +187,6 @@ format_number_flex <- function(decimals, sep_mark, dec_mark) {
 format_text <- function() {
   formats <- list(type = "text", args = list())
   class(formats) <- "tablespan_format"
-  return(formats)
-  formats$gt <- format_text_gt()
-  formats$openxlsx <- format_text_openxlsx()
-  formats$googlesheet <- format_text_googlesheet()
-  formats$hux <- format_text_hux()
   return(formats)
 }
 
@@ -555,32 +199,6 @@ format_date <- function(format = "%Y-%m-%d") {
   return(styles_list)
 }
 
-#' format_text_gt
-#'
-#' Creates a formatting function for gt tables that applies automatic text formatting.
-#'
-#' @returns a function that applies automatic text formatting to a gt table, or NULL if gt is not available
-#' @noRd
-format_text_gt <- function() {
-  if (requireNamespace("gt", quietly = TRUE)) {
-    return(
-      function(data, columns, rows) {
-        gt::fmt_auto(
-          data = data,
-          columns = columns,
-          rows = rows
-        )
-      }
-    )
-  } else {
-    return(NULL)
-  }
-}
-
-
-format_text_googlesheet <- function() {
-  return("TEXT")
-}
 
 #' format_text_hux
 #'

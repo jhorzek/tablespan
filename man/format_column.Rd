@@ -8,11 +8,7 @@ format_column(
   tbl,
   columns = dplyr::everything(),
   rows = NULL,
-  format_gt = gt::fmt_auto,
-  format_openxlsx = "GENERAL",
-  format_googlesheet = create_format_googlesheet(type = NULL),
-  format_hux = NULL,
-  format_flex = NULL,
+  fmt,
   stack = TRUE
 )
 }
@@ -23,18 +19,8 @@ format_column(
 
 \item{rows}{indices of the rows which should be styled. When set to NULL, the style is applied to all rows}
 
-\item{format_gt}{formatting used for gt. This must be a function with the following signature: function(tbl, columns, rows, ...)
-and return the tbl with applied formatting. See examples.}
-
-\item{format_openxlsx}{an argument passed to the numFmt field for openxlsx::createStyle.}
-
-\item{format_googlesheet}{formatting specification for Google Sheets exports. This can be created using
-`create_format_googlesheet`. The formatting will be applied when exporting to Google Sheets.}
-
-\item{format_hux}{set to NULL to use default formatting. Alternative, use a value that can be passed to huxtable::set_number_format()}
-
-\item{format_flex}{formatting used for flextable. Must be a function with the following signature: function(tbl, i, j, part) and
-must return the tbl object with applied formatting.}
+\item{fmt}{fromatting object. Use format_number to format numeric values, format_text for text elements, and format_date
+for dates.}
 
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}

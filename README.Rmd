@@ -38,12 +38,12 @@ library(tablespan)
 data("mtcars")
 
 summarized_table <- mtcars |>
-  group_by(cyl, vs) |>
   summarise(N = n(),
             mean_hp = mean(hp),
             sd_hp = sd(hp),
             mean_wt = mean(wt),
-            sd_wt = sd(wt))
+            sd_wt = sd(wt),
+            .by = c(cyl, vs))
 
 tbl <- tablespan(data = summarized_table,
                  formula = Cylinder:cyl + Engine:vs ~
@@ -97,12 +97,12 @@ library(dplyr)
 data("mtcars")
 
 summarized_table <- mtcars |>
-  group_by(cyl, vs) |>
   summarise(N = n(),
             mean_hp = mean(hp),
             sd_hp = sd(hp),
             mean_wt = mean(wt),
-            sd_wt = sd(wt))
+            sd_wt = sd(wt),
+            .by = c(cyl, vs))
 
 print(summarized_table, use_hux = FALSE)
 ```
@@ -169,12 +169,12 @@ library(tablespan)
 data("mtcars")
 
 summarized_table <- mtcars |>
-  group_by(cyl, vs) |>
   summarise(N = n(),
             mean_hp = mean(hp),
             sd_hp = sd(hp),
             mean_wt = mean(wt),
-            sd_wt = sd(wt))
+            sd_wt = sd(wt),
+            .by = c(cyl, vs))
 
 tbl <- tablespan(data = summarized_table,
                  formula = Cylinder:cyl + Engine:vs ~
