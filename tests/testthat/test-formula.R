@@ -89,4 +89,16 @@ test_that("default formula works", {
           )
 
      expect_true(identical(print(tbl_default), print(tbl_comparison)))
+
+     # test long formula
+     data_set <- matrix(
+          nrow = 1,
+          ncol = 500,
+          dimnames = list(NULL, paste0("column ", 1:500))
+     ) |>
+          tibble::as_tibble()
+
+     testthat::expect_no_error(
+          tablespan(data_set)
+     )
 })

@@ -106,7 +106,7 @@ test_that("cars", {
   expected <- expected |>
     huxtable::set_right_border(col = 2)
 
-  testthat::expect_identical(
+  compare_html_tables(
     huxtable::as_html(hux_tbl),
     huxtable::as_html(expected)
   )
@@ -230,7 +230,7 @@ test_that("cars-additional_spanners", {
   expected <- expected |>
     huxtable::set_right_border(col = 2)
 
-  testthat::expect_identical(
+  compare_html_tables(
     huxtable::as_html(hux_tbl),
     huxtable::as_html(expected)
   )
@@ -356,7 +356,7 @@ test_that("cars-no_row_names", {
       )
   }
 
-  testthat::expect_identical(
+  compare_html_tables(
     huxtable::as_html(hux_tbl),
     huxtable::as_html(expected)
   )
@@ -463,7 +463,7 @@ test_that("cars-no_titles", {
   expected <- expected |>
     huxtable::set_right_border(col = 2)
 
-  testthat::expect_identical(
+  compare_html_tables(
     huxtable::as_html(hux_tbl),
     huxtable::as_html(expected)
   )
@@ -636,24 +636,24 @@ test_that("cars - hux styling", {
   expected_base <- expected_base |>
     huxtable::set_right_border(col = 2)
 
-  testthat::expect_identical(
-    huxtable::to_html(hux_tbl_base),
-    huxtable::to_html(expected_base)
+  compare_html_tables(
+    huxtable::as_html(hux_tbl_base),
+    huxtable::as_html(expected_base)
   )
 
   # title
-  testthat::expect_identical(
+  compare_html_tables(
     tbl |>
       style_title(text_color = "#000000", background_color = "#983439") |>
       as_huxtable() |>
-      huxtable::to_html(),
+      huxtable::as_html(),
     expected_base |>
       huxtable::set_background_color(row = 1, value = "#983439") |>
       huxtable::set_text_color(row = 1, value = "#000000") |>
-      huxtable::to_html()
+      huxtable::as_html()
   )
 
-  testthat::expect_identical(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -662,16 +662,16 @@ test_that("cars - hux styling", {
         italic = TRUE
       ) |>
       as_huxtable() |>
-      huxtable::to_html(),
+      huxtable::as_html(),
     expected_base |>
       huxtable::set_background_color(row = 1, value = "#983439") |>
       huxtable::set_text_color(row = 1, value = "#ffffff") |>
       huxtable::set_bold(row = 1) |>
       huxtable::set_italic(row = 1) |>
-      huxtable::to_html()
+      huxtable::as_html()
   )
 
-  testthat::expect_identical(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -695,7 +695,7 @@ test_that("cars - hux styling", {
       huxtable::to_html()
   )
 
-  testthat::expect_identical(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -722,7 +722,7 @@ test_that("cars - hux styling", {
       huxtable::to_html()
   )
 
-  testthat::expect_identical(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -773,7 +773,8 @@ test_that("cars - hux styling", {
     "#B46983" = max(
       summarized_table |> select(where(is.double)),
       na.rm = TRUE
-    )
+    ) +
+      .00001
   )
 
   testthat::expect_no_error(

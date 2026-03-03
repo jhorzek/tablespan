@@ -24,7 +24,8 @@ Suggests:
     knitr,
     rmarkdown,
     officer,
-    googlesheets4
+    googlesheets4,
+    rvest
 Depends:
     R (>= 4.2.0)
 Config/testthat/edition: 3

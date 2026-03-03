@@ -1,24 +1,8 @@
+library(tablespan)
+library(testthat)
+library(dplyr)
+
 test_that("cars", {
-  library(tablespan)
-  library(testthat)
-  library(dplyr)
-
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
-
   summarized_table <- mtcars |>
     group_by(cyl, vs) |>
     summarise(
@@ -87,7 +71,7 @@ test_that("cars", {
       )
   }
 
-  testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
 })
 
 test_that("cars - no autostyle", {
@@ -177,7 +161,7 @@ test_that("cars - no autostyle", {
       )
   }
 
-  testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
 })
 
 test_that("cars-additional_spanners", {
@@ -292,7 +276,7 @@ test_that("cars-additional_spanners", {
       )
   }
 
-  testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
 })
 
 test_that("cars-no_row_names", {
@@ -400,7 +384,7 @@ test_that("cars-no_row_names", {
       )
   }
 
-  testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
 })
 
 test_that("cars-no_titles", {
@@ -486,7 +470,7 @@ test_that("cars-no_titles", {
       )
   }
 
-  testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
 })
 
 test_that("cars-no_titles_no_footnotes", {
@@ -570,7 +554,7 @@ test_that("cars-no_titles_no_footnotes", {
       )
   }
 
-  testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
 })
 
 test_that("cars-duplicated_spanner_names", {
@@ -686,7 +670,7 @@ test_that("cars-duplicated_spanner_names", {
       )
   }
 
-  testthat::expect_true(compare_tables(tbl_1 = gt_tbl, tbl_2 = expected))
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
 })
 
 
@@ -694,22 +678,6 @@ test_that("cars - gt styling", {
   library(tablespan)
   library(testthat)
   library(dplyr)
-
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
 
   summarized_table <- mtcars |>
     group_by(cyl, vs) |>
@@ -778,17 +746,17 @@ test_that("cars - gt styling", {
         decimals = tablespan:::smart_round(x = summarized_table[[i]])
       )
   }
-
-  testthat::expect_true(compare_tables(
-    tbl_1 = gt_tbl_base,
-    tbl_2 = expected_base
-  ))
+  compare_html_tables(
+    gt::as_raw_html(gt_tbl_base),
+    gt::as_raw_html(expected_base)
+  )
 
   # title
-  testthat::expect_true(compare_tables(
+  compare_html_tables(
     tbl |>
       style_title(text_color = "#000000", background_color = "#983439") |>
-      as_gt(),
+      as_gt() |>
+      gt::as_raw_html(),
     expected_base |>
       gt::tab_style(
         style = gt::cell_text(color = "#000000"),
@@ -797,12 +765,15 @@ test_that("cars - gt styling", {
       gt::tab_style(
         style = gt::cell_fill(color = "#983439"),
         locations = gt::cells_title("title")
-      )
-  ))
-  testthat::expect_true(compare_tables(
+      ) |>
+      gt::as_raw_html()
+  )
+
+  compare_html_tables(
     tbl |>
       style_title(background_color = "#983439", text_color = "#ffffff") |>
-      as_gt(),
+      as_gt() |>
+      gt::as_raw_html(),
     expected_base |>
       gt::tab_style(
         style = gt::cell_text(color = "#ffffff"),
@@ -811,10 +782,11 @@ test_that("cars - gt styling", {
       gt::tab_style(
         style = gt::cell_fill(color = "#983439"),
         locations = gt::cells_title("title")
-      )
-  ))
+      ) |>
+      gt::as_raw_html()
+  )
 
-  testthat::expect_true(compare_tables(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -822,7 +794,8 @@ test_that("cars - gt styling", {
         bold = TRUE,
         italic = TRUE
       ) |>
-      as_gt(),
+      as_gt() |>
+      gt::as_raw_html(),
     expected_base |>
       gt::tab_style(
         style = gt::cell_text(
@@ -835,10 +808,11 @@ test_that("cars - gt styling", {
       gt::tab_style(
         style = gt::cell_fill(color = "#983439"),
         locations = gt::cells_title("title")
-      )
-  ))
+      ) |>
+      gt::as_raw_html()
+  )
 
-  testthat::expect_true(compare_tables(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -852,7 +826,8 @@ test_that("cars - gt styling", {
         bold = TRUE,
         italic = TRUE
       ) |>
-      as_gt(),
+      as_gt() |>
+      gt::as_raw_html(),
     expected_base |>
       gt::tab_style(
         style = gt::cell_text(
@@ -877,10 +852,11 @@ test_that("cars - gt styling", {
       gt::tab_style(
         style = gt::cell_fill(color = "#983439"),
         locations = gt::cells_title("subtitle")
-      )
-  ))
+      ) |>
+      gt::as_raw_html()
+  )
 
-  testthat::expect_true(compare_tables(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -895,7 +871,8 @@ test_that("cars - gt styling", {
         italic = TRUE
       ) |>
       style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
-      as_gt(),
+      as_gt() |>
+      gt::as_raw_html(),
     expected_base |>
       gt::tab_style(
         style = gt::cell_text(
@@ -924,10 +901,11 @@ test_that("cars - gt styling", {
       gt::tab_style(
         style = gt::cell_text(weight = "lighter"),
         locations = gt::cells_footnotes()
-      )
-  ))
+      ) |>
+      gt::as_raw_html()
+  )
 
-  testthat::expect_true(compare_tables(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -943,7 +921,8 @@ test_that("cars - gt styling", {
       ) |>
       style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
       style_header(background_color = "#B65455", bold = TRUE) |>
-      as_gt(),
+      as_gt() |>
+      gt::as_raw_html(),
     expected_base |>
       gt::tab_style(
         style = gt::cell_text(
@@ -986,10 +965,11 @@ test_that("cars - gt styling", {
           gt::cell_fill(color = "#B65455")
         ),
         locations = gt::cells_column_spanners()
-      )
-  ))
+      ) |>
+      gt::as_raw_html()
+  )
 
-  testthat::expect_true(compare_tables(
+  compare_html_tables(
     tbl |>
       style_title(
         background_color = "#983439",
@@ -1003,15 +983,12 @@ test_that("cars - gt styling", {
         bold = TRUE,
         italic = TRUE
       ) |>
-      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_footnote(italic = TRUE) |>
       style_header(background_color = "#B65455", bold = TRUE) |>
       format_column(
         columns = dplyr::where(is.double),
         rows = 2:3,
-        format_gt = function(x, columns, rows, ...) {
-          gt::fmt_number(x, columns = columns, rows = rows, decimals = 1)
-        },
-        format_openxlsx = "GENERAL"
+        fmt = format_number(decimals = 1)
       ) |>
       style_column(
         columns = dplyr::where(is.double),
@@ -1019,7 +996,8 @@ test_that("cars - gt styling", {
         italic = TRUE,
         text_color = "#B54321"
       ) |>
-      as_gt(),
+      as_gt() |>
+      gt::as_raw_html(),
     expected_base |>
       gt::fmt_number(
         columns = dplyr::where(is.double),
@@ -1051,7 +1029,7 @@ test_that("cars - gt styling", {
         locations = gt::cells_title("subtitle")
       ) |>
       gt::tab_style(
-        style = gt::cell_text(weight = "lighter"),
+        style = gt::cell_text(style = "italic"),
         locations = gt::cells_footnotes()
       ) |>
       gt::tab_style(
@@ -1077,8 +1055,9 @@ test_that("cars - gt styling", {
           columns = dplyr::where(is.double),
           rows = 2:3
         )
-      )
-  ))
+      ) |>
+      gt::as_raw_html()
+  )
 
   color_scale = c(
     "#123456" = min(
@@ -1109,10 +1088,7 @@ test_that("cars - gt styling", {
       format_column(
         columns = dplyr::where(is.double),
         rows = 2:3,
-        format_gt = function(x, columns, rows, ...) {
-          gt::fmt_number(x, columns = columns, rows = rows, decimals = 1)
-        },
-        format_openxlsx = "GENERAL"
+        fmt = format_number(decimals = 1)
       ) |>
       style_column(
         columns = dplyr::where(is.double),
@@ -1167,10 +1143,7 @@ test_that("cars - gt styling", {
       format_column(
         columns = dplyr::where(is.double),
         rows = 2:3,
-        format_gt = function(x, columns, rows, ...) {
-          gt::fmt_number(x, columns = columns, rows = rows, decimals = 1)
-        },
-        format_openxlsx = "GENERAL"
+        fmt = format_number(decimals = 1)
       ) |>
       style_column(
         columns = dplyr::where(is.double),
