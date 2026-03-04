@@ -1,6 +1,9 @@
-#' as_googlesheet
+#' as_googlesheet_request
 #'
-#' Write a tablespan table to a Google Sheet.
+#' Creates a googlesheets4 request to write the tablespan table to a Google Sheet.
+#'
+#' Tablespan will not directly write to the googlesheet. Instead, it will return a googlesheets4
+#' request that can be used to write the data with googlesheets4::request_make
 #'
 #' @param tbl table created with tablespan::tablespan
 #' @param google_sheet Google Sheet spreadsheet dribble created with googlesheets4::gs4_get()
@@ -9,7 +12,8 @@
 #' @param start_col column at which to start the table
 #' @param merge_rownames should row names with identical entries be merged?
 #' @param silent if FALSE, messages about the writing process will be shown
-#' @returns Google Sheet spreadsheet dribble that can be further edited or saved
+#' @returns A request that can be passed to googlesheets4::request_make to write the
+#' tablespan to a google sheet
 #' @export
 #' @examples
 #' \dontrun{
@@ -37,13 +41,19 @@
 #'
 #' if(require_googlesheets4(throw = FALSE)) {
 #'   # Get the Google Sheet (replace with your actual sheet URL)
-#'   google_sheet <- googlesheets4::gs4_get(ss = "link-to-your-google-sheet")
+#'   # google_sheet <- googlesheets4::gs4_get(ss = "link-to-your-google-sheet")
+#'   google_sheet <- fake_gs4_dribble()
 #'
-#'   # Write the table to the sheet
-#'   as_googlesheet(tbl = tbl, google_sheet = google_sheet)
+#'   # Create a request to write the data to the googlesheet
+#'   req <- as_googlesheet_request(tbl = tbl,
+#'                                 google_sheet = google_sheet,
+#'                                 sheet = "Sheet1")
+#'
+#'   # Make the actual request:
+#'   # googlesheets4::request_make(req)
 #' }
 #' }
-as_googlesheet <- function(
+as_googlesheet_request <- function(
   tbl,
   google_sheet,
   sheet = "Table",
@@ -59,15 +69,16 @@ as_googlesheet <- function(
       "google_sheet must be a googlesheets4 spreadsheet dribble. Please run with google_sheet = googlesheets4::gs4_get(ss = 'link to your sheet'))"
     )
   }
+
   if (!sheet %in% googlesheets4::sheet_names(google_sheet)) {
-    if (!silent) {
-      rlang::inform(message = c("i" = paste0("Adding sheet ", sheet)))
-    }
-    googlesheets4::sheet_add(ss = google_sheet, sheet = sheet)
+    warning(
+      "Could not find sheet ",
+      sheet,
+      " in the google sheet. Please first create the sheet with googlesheets4::sheet_add('",
+      sheet,
+      "') before running the request."
+    )
   }
-  # We will update the google_sheet object in case sheets were newly written or
-  # added somewhere else by the user
-  google_sheet$sheets <- googlesheets4::sheet_properties(ss = google_sheet)
 
   if (!is.null(tbl$header$lhs)) {
     tbl_body <- cbind(tbl$table_data$row_data, tbl$table_data$col_data)
@@ -83,39 +94,36 @@ as_googlesheet <- function(
 
   tbl_header <- gs_get_header_table(tbl)
 
-  # Add the data
-  if (!silent) {
-    rlang::inform(message = c("i" = paste0("Writing data to ", sheet)))
-  }
-  gs_write_table_data(
-    tbl = tbl,
-    tbl_body = tbl_body,
-    tbl_header = tbl_header,
-    locations = locations,
-    google_sheet = google_sheet,
-    sheet = sheet
+  # Data writing requests
+  write_data_requests <-
+    gs_write_table_data(
+      tbl = tbl,
+      tbl_body = tbl_body,
+      tbl_header = tbl_header,
+      locations = locations,
+      google_sheet = google_sheet,
+      sheet = sheet
+    )
+
+  write_data_requests <- c(
+    write_data_requests,
+    gs_write_table_title(
+      title = tbl$title,
+      subtitle = tbl$subtitle,
+      locations = locations,
+      google_sheet = google_sheet,
+      sheet = sheet
+    )
   )
 
-  if (!silent) {
-    rlang::inform(message = c("i" = paste0("Writing title to ", sheet)))
-  }
-  gs_write_table_title(
-    title = tbl$title,
-    subtitle = tbl$subtitle,
-    locations = locations,
-    google_sheet = google_sheet,
-    sheet = sheet
-  )
-
-  if (!silent) {
-    rlang::inform(message = c("i" = paste0("Writing footnote to ", sheet)))
-  }
-
-  gs_write_table_footnote(
-    footnote = tbl$footnote,
-    locations = locations,
-    google_sheet = google_sheet,
-    sheet = sheet
+  write_data_requests <- c(
+    write_data_requests,
+    gs_write_table_footnote(
+      footnote = tbl$footnote,
+      locations = locations,
+      google_sheet = google_sheet,
+      sheet = sheet
+    )
   )
 
   merge_requests <- c(
@@ -166,6 +174,23 @@ as_googlesheet <- function(
   if (!silent) {
     rlang::inform(message = c("i" = paste0("Styling ", sheet)))
   }
+
+  req <- googlesheets4::request_generate(
+    endpoint = "sheets.spreadsheets.batchUpdate",
+    params = list(
+      spreadsheetId = google_sheet$spreadsheet_id,
+      requests = c(
+        write_data_requests,
+        format_requests,
+        header_outline_requests,
+        merge_requests,
+        style_requests,
+        outline_requests
+      )
+    )
+  )
+
+  return(req)
 
   gs_run_style_requests(
     google_sheet = google_sheet,
@@ -374,45 +399,55 @@ gs_write_table_data <- function(
   google_sheet,
   sheet
 ) {
-  gs_write_data(
-    data = tibble::as_tibble(tbl_header, .name_repair = make.names),
-    google_sheet = google_sheet,
-    sheet = sheet,
-    range = googlesheets4::cell_limits(
-      c(
-        locations$row$start_row_header,
-        ifelse(
-          is.null(tbl$header$lhs),
-          locations$col$start_col_header_rhs,
-          locations$col$start_col_header_lhs
-        )
-      ),
-      c(
-        locations$row$end_row_header,
-        locations$col$end_col_header_rhs
-      )
-    )
-  )
+  requests <- list()
 
-  gs_write_data(
-    data = tbl_body,
-    google_sheet = google_sheet,
-    sheet = sheet,
-    range = googlesheets4::cell_limits(
-      c(
-        locations$row$start_row_data,
-        ifelse(
-          is.null(tbl$header$lhs),
-          locations$col$start_col_header_rhs,
-          locations$col$start_col_header_lhs
+  requests[[length(requests) + 1]] <-
+    gs_data_writing_request(
+      data = tibble::as_tibble(tbl_header, .name_repair = make.names),
+      ss = google_sheet,
+      sheet = sheet,
+      range = googlesheets4::cell_limits(
+        c(
+          locations$row$start_row_header,
+          ifelse(
+            is.null(tbl$header$lhs),
+            locations$col$start_col_header_rhs,
+            locations$col$start_col_header_lhs
+          )
+        ),
+        c(
+          locations$row$end_row_header,
+          locations$col$end_col_header_rhs
         )
       ),
-      c(
-        locations$row$end_row_data,
-        locations$col$end_col_header_rhs
-      )
+      col_names = FALSE,
+      reformat = TRUE
     )
-  )
+
+  requests[[length(requests) + 1]] <-
+    gs_data_writing_request(
+      data = tbl_body,
+      ss = google_sheet,
+      sheet = sheet,
+      range = googlesheets4::cell_limits(
+        c(
+          locations$row$start_row_data,
+          ifelse(
+            is.null(tbl$header$lhs),
+            locations$col$start_col_header_rhs,
+            locations$col$start_col_header_lhs
+          )
+        ),
+        c(
+          locations$row$end_row_data,
+          locations$col$end_col_header_rhs
+        )
+      ),
+      col_names = FALSE,
+      reformat = TRUE
+    )
+
+  return(requests)
 }
 
 #' Write table title and subtitle to Google Sheet
@@ -433,41 +468,49 @@ gs_write_table_title <- function(
   google_sheet,
   sheet
 ) {
+  requests <- list()
   if (!is.null(title)) {
-    gs_write_data(
-      data = tibble::tibble(text = title),
-      google_sheet = google_sheet,
-      sheet = sheet,
-      range = googlesheets4::cell_limits(
-        c(
-          locations$row$start_row_title,
-          locations$col$start_col_title
+    requests[[length(requests) + 1]] <-
+      gs_data_writing_request(
+        data = tibble::tibble(text = title),
+        ss = google_sheet,
+        sheet = sheet,
+        range = googlesheets4::cell_limits(
+          c(
+            locations$row$start_row_title,
+            locations$col$start_col_title
+          ),
+          c(
+            locations$row$end_row_title,
+            locations$col$end_col_title
+          )
         ),
-        c(
-          locations$row$end_row_title,
-          locations$col$end_col_title
-        )
+        col_names = FALSE,
+        reformat = TRUE
       )
-    )
   }
 
   if (!is.null(subtitle)) {
-    gs_write_data(
-      data = tibble::tibble(text = subtitle),
-      google_sheet = google_sheet,
-      sheet = sheet,
-      range = googlesheets4::cell_limits(
-        c(
-          locations$row$start_row_subtitle,
-          locations$col$start_col_subtitle
+    requests[[length(requests) + 1]] <-
+      gs_data_writing_request(
+        data = tibble::tibble(text = subtitle),
+        ss = google_sheet,
+        sheet = sheet,
+        range = googlesheets4::cell_limits(
+          c(
+            locations$row$start_row_subtitle,
+            locations$col$start_col_subtitle
+          ),
+          c(
+            locations$row$end_row_subtitle,
+            locations$col$end_col_subtitle
+          )
         ),
-        c(
-          locations$row$end_row_subtitle,
-          locations$col$end_col_subtitle
-        )
+        col_names = FALSE,
+        reformat = TRUE
       )
-    )
   }
+  return(requests)
 }
 
 #' Write table footnote to Google Sheet
@@ -486,23 +529,28 @@ gs_write_table_footnote <- function(
   google_sheet,
   sheet
 ) {
+  requests <- list()
   if (!is.null(footnote)) {
-    gs_write_data(
-      data = tibble::tibble(text = footnote),
-      google_sheet = google_sheet,
-      sheet = sheet,
-      range = googlesheets4::cell_limits(
-        c(
-          locations$row$start_row_footnote,
-          locations$col$start_col_footnote
+    requests[[length(requests) + 1]] <-
+      gs_data_writing_request(
+        data = tibble::tibble(text = footnote),
+        ss = google_sheet,
+        sheet = sheet,
+        range = googlesheets4::cell_limits(
+          c(
+            locations$row$start_row_footnote,
+            locations$col$start_col_footnote
+          ),
+          c(
+            locations$row$end_row_footnote,
+            locations$col$end_col_footnote
+          )
         ),
-        c(
-          locations$row$end_row_footnote,
-          locations$col$end_col_footnote
-        )
+        col_names = FALSE,
+        reformat = TRUE
       )
-    )
   }
+  return(requests)
 }
 
 #' Write data to Google Sheet
@@ -730,33 +778,6 @@ gs_create_style_request <- function(
   )
 
   return(reqs)
-}
-
-
-#' Execute Google Sheets API style requests
-#'
-#' Sends a batch of style requests to the Google Sheets API to apply formatting
-#' to a spreadsheet.
-#'
-#' @param google_sheet Google Sheet spreadsheet dribble created with googlesheets4::gs4_get()
-#' @param style_requests A list of Google Sheets API requests generated by the various
-#'        gs_* functions (e.g., gs_create_style_request, gs_border_request, etc.)
-#' @return Invisibly returns the response from the Google Sheets API. Issues a warning
-#'         if the request fails (HTTP status code >= 400).
-#' @noRd
-gs_run_style_requests <- function(google_sheet, style_requests) {
-  req <- googlesheets4::request_generate(
-    endpoint = "sheets.spreadsheets.batchUpdate",
-    params = list(
-      spreadsheetId = google_sheet$spreadsheet_id,
-      requests = style_requests
-    )
-  )
-
-  req_out <- googlesheets4::request_make(req)
-  if (req_out$status >= 400) {
-    warning("Styling request failed:", print(req_out))
-  }
 }
 
 #' Create Google Sheets API merge cells request
@@ -1106,4 +1127,106 @@ get_subseries_minmax <- function(vec) {
   }
 
   return(series)
+}
+
+# gs_data_writing_request is adapted from `range_write()` in the
+# googlesheets4 R package:
+# https://github.com/tidyverse/googlesheets4
+#
+# Original authors: Jennifer Bryan et al.
+# Licensed under the MIT License.
+#
+# Modifications:
+# - Removed request_make()
+# - Return request object instead of executing
+gs_data_writing_request <- function(
+  ss,
+  data,
+  sheet = NULL,
+  range = NULL,
+  col_names = TRUE,
+  reformat = TRUE
+) {
+  # The following is copy-pasted and slightly adapted from googlesheets4::range_write
+  # by Jennifer Bryan
+  ssid <- googlesheets4:::as_sheets_id(ss)
+  googlesheets4:::check_data_frame(data)
+  googlesheets4:::maybe_sheet(sheet)
+  googlesheets4:::check_range(range)
+  googlesheets4:::check_bool(col_names)
+  googlesheets4:::check_bool(reformat)
+  x <- googlesheets4::gs4_get(ssid)
+  range_spec <- googlesheets4:::as_range_spec(
+    range,
+    sheet = sheet,
+    sheets_df = x$sheets,
+    nr_df = x$named_ranges
+  )
+  range_spec$sheet_name <- range_spec$sheet_name %||%
+    googlesheets4:::first_visible_name(x$sheets)
+  requests <- list()
+  s <- googlesheets4:::lookup_sheet(range_spec$sheet_name, sheets_df = x$sheets)
+  loc <- googlesheets4:::prepare_loc(range_spec)
+  dims_needed <- googlesheets4:::prepare_dims(loc, data, col_names)
+  resize_req <- googlesheets4:::prepare_resize_request(
+    s,
+    nrow_needed = dims_needed$nrow,
+    ncol_needed = dims_needed$ncol,
+    exact = FALSE
+  )
+  if (!is.null(resize_req)) {
+    new_dims <- googlesheets4:::pluck(
+      resize_req,
+      "updateSheetProperties",
+      "properties",
+      "gridProperties"
+    )
+    requests <- c(requests, list(resize_req))
+  }
+  fields <- if (reformat) {
+    "userEnteredValue,userEnteredFormat"
+  } else {
+    "userEnteredValue"
+  }
+  data_req <- googlesheets4:::new(
+    "UpdateCellsRequest",
+    rows = googlesheets4:::as_RowData(data, col_names = col_names),
+    fields = fields,
+    !!!loc
+  )
+  requests <- c(requests, list(list(updateCells = data_req)))
+  return(requests)
+}
+
+
+#' fake_gs4_dribble
+#'
+#' Creates a fake googlesheets4 dribble to use as a placeholder in the as_googlesheets_request function.
+#'
+#' @returns fake dribble
+#' @export
+#' @examples
+#' library(tablespan)
+#' fake_gs4_dribble()
+fake_gs4_dribble <- function() {
+  fake_dribble <- list(
+    spreadsheet_id = "spreadsheet_id",
+    spreadsheet_url = "https://docs.google.com/spreadsheets/d/spreadsheet_id/edit",
+    name = "Test",
+    locale = "en_US",
+    time_zone = "Europe/Berlin",
+    sheets = tibble::tibble(
+      name = "Sheet1",
+      index = 0,
+      id = 0,
+      type = "GRID",
+      visible = TRUE,
+      grid_rows = 1000,
+      grid_columns = 26,
+      data = list(NULL)
+    )
+  )
+  attr(fake_dribble, "class") <- c("googlesheets4_spreadsheet", "list")
+
+  return(fake_dribble)
 }
