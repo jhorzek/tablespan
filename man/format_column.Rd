@@ -55,15 +55,11 @@ tbl <- tablespan(data = summarized_table,
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
 
-if(require_gt(throw = FALSE))
+if(require_gt(throw = FALSE)){
 tbl |>
   format_column(columns = mean_hp,
                 rows = c(1,3),
-                format_gt = function(tbl, columns, rows, ...){
-                             return(gt::fmt_number(tbl,
-                                       columns = columns,
-                                       rows = rows,
-                                       decimals = 4))},
-                format_openxlsx = "0.0000") |>
+                fmt = format_number(decimals = 4)) |>
   as_gt()
+}
 }

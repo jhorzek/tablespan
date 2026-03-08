@@ -1,4 +1,4 @@
-test_that("multiplication works", {
+test_that("single row data works", {
   library(tablespan)
   library(dplyr)
   data("mtcars")
@@ -14,7 +14,7 @@ test_that("multiplication works", {
       sd_wt = sd(wt)
     )
 
-  testthat::expect_no_condition(
+  testthat::expect_snapshot(
     tablespan(
       summarized_table[1, ],
       formula = as.formula(paste0(

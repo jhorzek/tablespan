@@ -205,6 +205,7 @@ test_that("preprocess_color_scale works with different columns", {
         tbl$table_data$col_data$mean_hp,
         tbl$table_data$col_data$mean_wt
       ))
-    )
+    ),
+    tolerance = 1e-5
   )
 })

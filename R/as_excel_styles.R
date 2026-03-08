@@ -213,7 +213,9 @@ style_column_openxlsx <- function(xlsx_styles, tbl) {
         ]] <-
           list(
             style = list(
-              openxlsx = create_color_scale_openxlsx(color_scale = color_scale)
+              openxlsx = create_color_scale_openxlsx(
+                color_scale = column_style$style$color_scale
+              )
             ),
             rows = column_style$rows
           )

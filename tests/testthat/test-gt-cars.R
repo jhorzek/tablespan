@@ -870,7 +870,7 @@ test_that("cars - gt styling", {
         bold = TRUE,
         italic = TRUE
       ) |>
-      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_footnote(font_size = 8) |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -899,7 +899,7 @@ test_that("cars - gt styling", {
         locations = gt::cells_title("subtitle")
       ) |>
       gt::tab_style(
-        style = gt::cell_text(weight = "lighter"),
+        style = gt::cell_text(size = gt::px(1.3333343412075 * 8)),
         locations = gt::cells_footnotes()
       ) |>
       gt::as_raw_html()
@@ -919,7 +919,7 @@ test_that("cars - gt styling", {
         bold = TRUE,
         italic = TRUE
       ) |>
-      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_footnote(font_size = 8) |>
       style_header(background_color = "#B65455", bold = TRUE) |>
       as_gt() |>
       gt::as_raw_html(),
@@ -949,7 +949,7 @@ test_that("cars - gt styling", {
         locations = gt::cells_title("subtitle")
       ) |>
       gt::tab_style(
-        style = gt::cell_text(weight = "lighter"),
+        style = gt::cell_text(size = gt::px(1.3333343412075 * 8)),
         locations = gt::cells_footnotes()
       ) |>
       gt::tab_style(
@@ -1083,7 +1083,7 @@ test_that("cars - gt styling", {
         bold = TRUE,
         italic = TRUE
       ) |>
-      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_footnote(font_size = 8) |>
       style_header(background_color = "#B65455", bold = TRUE) |>
       format_column(
         columns = dplyr::where(is.double),
@@ -1138,7 +1138,7 @@ test_that("cars - gt styling", {
         bold = TRUE,
         italic = TRUE
       ) |>
-      style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
+      style_footnote(font_size = 8) |>
       style_header(background_color = "#B65455", bold = TRUE) |>
       format_column(
         columns = dplyr::where(is.double),

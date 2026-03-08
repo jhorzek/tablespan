@@ -67,7 +67,7 @@ This basic table can now be easily exported to other table formats.
 |-----------|-----------|-----------------------------|----------------------|
 | **gt** | `as_gt()` | The **gt** package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout. | HTML, PDF, PNG, LaTeX, RTF, Word ([docs](https://gt.rstudio.com/reference/gtsave.html)) |
 | **openxlsx** | `as_excel()` | The **openxlsx** package offers Excel file creation and manipulation. Great for reporting tables to end-users. | Excel ([docs](https://ycphs.github.io/openxlsx/index.html)) |
-| **googlesheets4** | `as_googlesheet()` | Using **googlesheets4** ([docs](https://googlesheets4.tidyverse.org)), **tablespan** tables can be directly exported into google sheets | google sheets |
+| **googlesheets4** | `as_googlesheet_request()` | Using **googlesheets4** ([docs](https://googlesheets4.tidyverse.org)), **tablespan** tables can be directly exported into google sheets requests that can be executed with `googlesheets4::request_make`. Experimental; use at your own risk | google sheets |
 | **flextable** | `as_flextable()` | **flextable** specializes in creating complex, publication-quality tables with extensive formatting capabilities. Integrates well with Word/PowerPoint workflows. | HTML, Word, RTF, PowerPoint, PDF, PNG ([docs](https://ardata-fr.github.io/flextable-book/rendering.html)) |
 | **huxtable** | `as_huxtable()` | **huxtable** provides a unified interface for creating tables in multiple output formats. Also provides styled printing to the console. | LaTeX, Typst, HTML, Word, Excel, RTF, markdown, console ([docs](https://hughjonesd.github.io/huxtable/reference/index.html)) |
 
@@ -355,22 +355,14 @@ tbl |>
 
 ## Formatting
 
-In addition to applying specific styles to the table, you can also adapt the number formatting. The current setup is slightly more complicated because unifying all of the possible styles supported by `gt` and `openxlsx` is challenging.
+In addition to applying specific styles to the table, you can also adapt the number formatting.
 
 ```{r, eval = FALSE}
 tbl |> 
   format_column(
         columns = dplyr::where(is.double),
         rows = 2:3,
-        # For great tables, we need a function that 
-        # takes in the table, columns, and rows and then
-        # applies the style
-        format_gt = function(x, columns, rows, ...) {
-          gt::fmt_number(x, columns = columns, rows = rows, decimals = 4)
-        },
-        # For openxlsx, we have to provide the style that will be passed
-        # to numFmt in openxlsx::createStyle
-        format_openxlsx = "0.0000"
+        fmt = format_number(decimals = 1)
       ) |> 
   as_gt()
 ```

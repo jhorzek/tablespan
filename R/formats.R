@@ -88,17 +88,13 @@ smart_round <- function(x, max_digits = 4) {
 #'                  subtitle = "A table created with tablespan",
 #'                  footnote = "Data from the infamous mtcars data set.")
 #'
-#' if(require_gt(throw = FALSE))
+#' if(require_gt(throw = FALSE)){
 #' tbl |>
 #'   format_column(columns = mean_hp,
 #'                 rows = c(1,3),
-#'                 format_gt = function(tbl, columns, rows, ...){
-#'                              return(gt::fmt_number(tbl,
-#'                                        columns = columns,
-#'                                        rows = rows,
-#'                                        decimals = 4))},
-#'                 format_openxlsx = "0.0000") |>
+#'                 fmt = format_number(decimals = 4)) |>
 #'   as_gt()
+#' }
 format_column <- function(
   tbl,
   columns = dplyr::everything(),
@@ -159,12 +155,12 @@ format_auto <- function(data_col, max_digits) {
 
 #' format_number
 #'
-#' Implements simple formatting for numbers in gt and excel exports of tablespan.
+#' Implements simple formatting for numbers in tablespan.
 #' @param decimals the number of decimals to show
 #' @param sep_mark optional symbol used to separate thousands
 #' @param dec_mark symbol used to separate decimals
-#' @returns a list with styles for gt and openxlsx
-#' @noRd
+#' @returns a tablespan_format
+#' @export
 format_number <- function(decimals, sep_mark = ",", dec_mark = ".") {
   styles_list <- list(
     type = "number",
@@ -181,31 +177,26 @@ format_number <- function(decimals, sep_mark = ",", dec_mark = ".") {
 
 #' format_text
 #'
-#' Implements simple formatting for text in gt and excel exports of tablespan.
-#' @returns a list with styles for gt and openxlsx
-#' @noRd
+#' Implements simple formatting for text in tablespan.
+#' @returns a tablespan_format
+#' @export
 format_text <- function() {
   formats <- list(type = "text", args = list())
   class(formats) <- "tablespan_format"
   return(formats)
 }
 
-format_date <- function(format = "%Y-%m-%d") {
+#' format_date
+#'
+#' Implements simple formatting for dates in tablespan.
+#' @param fmt date format
+#' @returns a tablespan_format
+#' @export
+format_date <- function(fmt = "%Y-%m-%d") {
   styles_list <- list(
     type = "date",
-    args = list(format = "%Y-%m-%d")
+    args = list(format = fmt)
   )
   class(styles_list) <- "tablespan_format"
   return(styles_list)
-}
-
-
-#' format_text_hux
-#'
-#' Creates a formatting function for huxtable that applies automatic text formatting.
-#'
-#' @returns a function that applies automatic text formatting to a huxtable, or NULL if huxtable is not available
-#' @noRd
-format_text_hux <- function() {
-  return(NULL)
 }

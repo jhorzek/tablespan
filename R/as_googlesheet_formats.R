@@ -142,11 +142,11 @@ get_formats_googlesheet <- function(tbl) {
 }
 
 format_text_googlesheet <- function() {
-  return(create_format_googlesheet(type = "TEXT", pattern = number_format))
+  return(create_format_googlesheet(type = "TEXT", pattern = NULL))
 }
 
 format_date_googlesheet <- function() {
-  return(create_format_googlesheet(type = "DATE", pattern = number_format))
+  return(create_format_googlesheet(type = "DATE", pattern = NULL))
 }
 
 #' format_number_googlesheet
@@ -189,14 +189,14 @@ format_number_googlesheet <- function(decimals, sep_mark, dec_mark) {
 #' Create a Google Sheets formatting specification for tablespan exports.
 #'
 #' @param type The type of formatting to apply. Must be one of:
-#'   "TEXT", "NUMBER", "PERCENT", "CURRENCY", "DATE", "TIME", "DATE_TIME", or "SCIENTIFIC".
-#'   When NULL, no formatting will be applied.
+#' "TEXT", "NUMBER", "PERCENT", "CURRENCY", "DATE", "TIME", "DATE_TIME", or "SCIENTIFIC".
+#' When NULL, no formatting will be applied.
 #' @param pattern A custom pattern string for number formatting. This follows Google Sheets'
-#'   formatting rules. When NULL, a default pattern will be used based on the type.
+#' formatting rules. When NULL, a default pattern will be used based on the type.
 #'
 #' @returns A list with class "gs_format" containing the formatting specification,
-#'   or NULL if type is NULL. This object can be passed to format_column() via the
-#'   format_googlesheet parameter.
+#' or NULL if type is NULL. This object can be passed to format_column() via the
+#' format_googlesheet parameter.
 #'
 #' @details
 #' The returned format specification will be applied when exporting to Google Sheets.
@@ -204,29 +204,13 @@ format_number_googlesheet <- function(decimals, sep_mark, dec_mark) {
 #' syntax. For example, "#,##0.00" would format numbers with thousands separators
 #' and two decimal places.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' # Create a number format with 2 decimal places
 #' num_format <- create_format_googlesheet(type = "NUMBER", pattern = "#,##0.00")
 #'
 #' # Create a percentage format
 #' percent_format <- create_format_googlesheet(type = "PERCENT")
-#'
-#' # Apply to a tablespan table
-#' library(tablespan)
-#' library(dplyr)
-#' data("mtcars")
-#'
-#' summarized_table <- mtcars |>
-#'   group_by(cyl) |>
-#'   summarise(mpg = mean(mpg))
-#'
-#' tbl <- tablespan(data = summarized_table,
-#'                  formula = Cylinder:cyl ~ MPG:mpg)
-#'
-#' tbl |>
-#'   format_column(columns = mpg,
-#'                 format_googlesheet = num_format)
 create_format_googlesheet <- function(
   type = c(
     "TEXT",
