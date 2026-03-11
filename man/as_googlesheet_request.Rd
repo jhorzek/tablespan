@@ -12,7 +12,6 @@ as_googlesheet_request(
   start_col = 1,
   merge_rownames = TRUE,
   dry_run = is(google_sheet, "fake_sheet"),
-  key = NULL,
   token = googlesheets4::gs4_token()
 )
 }
@@ -30,8 +29,6 @@ as_googlesheet_request(
 \item{merge_rownames}{should row names with identical entries be merged?}
 
 \item{dry_run}{if set to TRUE, no API calls will be made. This is useful when just testing the function}
-
-\item{key}{api key; see ?googlesheets4::request_generate}
 
 \item{token}{token; see ?googlesheets4::request_generate}
 }

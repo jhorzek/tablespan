@@ -12,7 +12,6 @@
 #' @param start_col column at which to start the table
 #' @param merge_rownames should row names with identical entries be merged?
 #' @param dry_run if set to TRUE, no API calls will be made. This is useful when just testing the function
-#' @param key api key; see ?googlesheets4::request_generate
 #' @param token token; see ?googlesheets4::request_generate
 #' @returns A request that can be passed to googlesheets4::request_make to write the
 #' tablespan to a google sheet
@@ -63,7 +62,6 @@ as_googlesheet_request <- function(
   start_col = 1,
   merge_rownames = TRUE,
   dry_run = is(google_sheet, "fake_sheet"),
-  key = NULL,
   token = googlesheets4::gs4_token()
 ) {
   require_googlesheets4()
@@ -77,13 +75,19 @@ as_googlesheet_request <- function(
     )
   }
 
+  if (!dry_run) {
+    # update google_sheet. This is necessary because otherwise we
+    # may not see all sheets in the spreadsheet.
+    google_sheet <- googlesheets4::gs4_get(google_sheet)
+  }
+
   if ((!dry_run) && (!sheet %in% googlesheets4::sheet_names(google_sheet))) {
-    warning(
+    stop(
       "Could not find sheet ",
       sheet,
       " in the google_sheet dribble. Please first create the sheet with googlesheets4::sheet_add('",
       sheet,
-      "') before running the request."
+      "')."
     )
   }
 
@@ -194,7 +198,6 @@ as_googlesheet_request <- function(
         outline_requests
       )
     ),
-    key = key,
     token = token
   )
 
@@ -400,9 +403,28 @@ gs_write_table_data <- function(
 ) {
   requests <- list()
 
+  # sanitize data
+  if (!is.null(tbl_header)) {
+    tbl_header <- tbl_header |>
+      tibble::as_tibble(x = _, .name_repair = function(x) {
+        make.names(x, unique = TRUE)
+      }) |>
+      dplyr::mutate(dplyr::across(
+        dplyr::everything(),
+        escape_google_sheets_formula
+      ))
+  }
+  if (!is.null(tbl_body)) {
+    tbl_body <- tbl_body |>
+      dplyr::mutate(dplyr::across(
+        dplyr::everything(),
+        escape_google_sheets_formula
+      ))
+  }
+
   requests[[length(requests) + 1]] <-
     gs_data_writing_request(
-      data = tibble::as_tibble(tbl_header, .name_repair = make.names),
+      data = tbl_header,
       ss = google_sheet,
       sheet = sheet,
       range = googlesheets4::cell_limits(
@@ -475,7 +497,11 @@ gs_write_table_title <- function(
   if (!is.null(title)) {
     requests[[length(requests) + 1]] <-
       gs_data_writing_request(
-        data = tibble::tibble(text = title),
+        data = tibble::tibble(text = title) |>
+          dplyr::mutate(dplyr::across(
+            dplyr::everything(),
+            escape_google_sheets_formula
+          )),
         ss = google_sheet,
         sheet = sheet,
         range = googlesheets4::cell_limits(
@@ -497,7 +523,11 @@ gs_write_table_title <- function(
   if (!is.null(subtitle)) {
     requests[[length(requests) + 1]] <-
       gs_data_writing_request(
-        data = tibble::tibble(text = subtitle),
+        data = tibble::tibble(text = subtitle) |>
+          dplyr::mutate(dplyr::across(
+            dplyr::everything(),
+            escape_google_sheets_formula
+          )),
         ss = google_sheet,
         sheet = sheet,
         range = googlesheets4::cell_limits(
@@ -540,7 +570,11 @@ gs_write_table_footnote <- function(
   if (!is.null(footnote)) {
     requests[[length(requests) + 1]] <-
       gs_data_writing_request(
-        data = tibble::tibble(text = footnote),
+        data = tibble::tibble(text = footnote) |>
+          dplyr::mutate(dplyr::across(
+            dplyr::everything(),
+            escape_google_sheets_formula
+          )),
         ss = google_sheet,
         sheet = sheet,
         range = googlesheets4::cell_limits(
@@ -1150,8 +1184,8 @@ get_subseries_minmax <- function(vec) {
 gs_data_writing_request <- function(
   ss,
   data,
-  sheet = NULL,
-  range = NULL,
+  sheet,
+  range,
   col_names = TRUE,
   reformat = TRUE,
   dry_run
@@ -1168,11 +1202,18 @@ gs_data_writing_request <- function(
   } else {
     stop("Could not create the data wrinting request")
   }
-  googlesheets4:::check_data_frame(data)
-  googlesheets4:::maybe_sheet(sheet)
-  googlesheets4:::check_range(range)
-  googlesheets4:::check_bool(col_names)
-  googlesheets4:::check_bool(reformat)
+  if (!is.data.frame(data)) {
+    stop("data must be a data frame")
+  }
+  if (!is.logical(col_names)) {
+    stop("colnames must be a boolean")
+  }
+  if (!is.logical(reformat)) {
+    stop("colnames must be a boolean")
+  }
+  if (!is.character(sheet)) {
+    stop("sheet must be a character")
+  }
   range_spec <- googlesheets4:::as_range_spec(
     range,
     sheet = sheet,
@@ -1215,6 +1256,25 @@ gs_data_writing_request <- function(
   return(requests)
 }
 
+escape_google_sheets_formula <- function(content) {
+  if (!is.character(content)) {
+    return(content)
+  }
+  if (is.null(content) || length(content) == 0) {
+    return(content)
+  }
+  formula_starters <- c("=", "+", "-", "@")
+
+  is_formula <- grepl(
+    paste0("^[", paste(formula_starters, collapse = ""), "]"),
+    content
+  )
+
+  # Only escape elements that are formulas
+  content[is_formula] <- paste0("'", content[is_formula])
+
+  return(content)
+}
 
 #' fake_gs4_dribble
 #'
@@ -1224,7 +1284,8 @@ gs_data_writing_request <- function(
 #' @export
 #' @examples
 #' library(tablespan)
-#' fake_gs4_dribble()
+#' fake_sheet <- fake_gs4_dribble()
+#' add_fake_sheet(fake_sheet, sheet_name = "new_sheet")
 fake_gs4_dribble <- function() {
   fake_dribble <- list(
     spreadsheet_id = "spreadsheet_id",
@@ -1250,4 +1311,35 @@ fake_gs4_dribble <- function() {
   )
 
   return(fake_dribble)
+}
+
+#' add_fake_sheet
+#'
+#' Adds a fake sheet to a fake_sheet dribble.
+#'
+#' @param fake_sheet fake sheet dribble created with fake_gs4_dribble
+#' @param sheet_name name of the new sheet
+#' @export
+#' @examples
+#' library(tablespan)
+#' fake_sheet <- fake_gs4_dribble()
+#' add_fake_sheet(fake_sheet, sheet_name = "new_sheet")
+add_fake_sheet <- function(fake_sheet, sheet_name) {
+  if (!is(fake_sheet, "fake_sheet")) {
+    stop("fake_sheet must be of class fake_sheet (see ?fake_gs4_dribble).")
+  }
+  fake_sheet$sheets <- rbind(
+    fake_sheet$sheets,
+    tibble::tibble(
+      name = sheet_name,
+      index = nrow(fake_sheet$sheets) + 1,
+      id = nrow(fake_sheet$sheets) + 1,
+      type = "GRID",
+      visible = TRUE,
+      grid_rows = 1000,
+      grid_columns = 26,
+      data = list(NULL)
+    )
+  )
+  return(fake_sheet)
 }

@@ -14,5 +14,6 @@ Creates a fake googlesheets4 dribble to use as a placeholder in the as_googleshe
 }
 \examples{
 library(tablespan)
-fake_gs4_dribble()
+fake_sheet <- fake_gs4_dribble()
+add_fake_sheet(fake_sheet, sheet_name = "new_sheet")
 }

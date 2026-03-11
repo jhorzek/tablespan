@@ -49,7 +49,7 @@ initialize_styles_googlesheet <- function(tbl, locations, google_sheet, sheet) {
         font_size = if (is.null(tbl$styles$title$font_size)) {
           12
         } else {
-          tbl$styles$title$italic
+          tbl$styles$title$font_size
         },
         background_color = if (is.null(tbl$styles$title$background_color)) {
           NULL
@@ -90,7 +90,7 @@ initialize_styles_googlesheet <- function(tbl, locations, google_sheet, sheet) {
         font_size = if (is.null(tbl$styles$subtitle$font_size)) {
           10
         } else {
-          tbl$styles$subtitle$italic
+          tbl$styles$subtitle$font_size
         },
         background_color = if (is.null(tbl$styles$subtitle$background_color)) {
           NULL
@@ -134,7 +134,7 @@ initialize_styles_googlesheet <- function(tbl, locations, google_sheet, sheet) {
       font_size = if (is.null(tbl$styles$header$font_size)) {
         10
       } else {
-        tbl$styles$header$italic
+        tbl$styles$header$font_size
       },
       background_color = if (is.null(tbl$styles$header$background_color)) {
         NULL
@@ -227,7 +227,7 @@ initialize_styles_googlesheet <- function(tbl, locations, google_sheet, sheet) {
         font_size = if (is.null(tbl$styles$subtitle$font_size)) {
           10
         } else {
-          tbl$styles$subtitle$italic
+          tbl$styles$subtitle$font_size
         },
         background_color = if (is.null(tbl$styles$subtitle$background_color)) {
           NULL

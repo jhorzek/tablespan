@@ -10,6 +10,41 @@ remove_token <- function(x) {
 
 googlesheets4::gs4_deauth()
 
+dry_run <- TRUE
+
+token <- if (dry_run) {
+  NULL
+} else {
+  googlesheets4::gs4_token()
+}
+
+run_test <- function(tbl, google_sheet, sheet, token, dry_run, ...) {
+  if (!dry_run && !sheet %in% googlesheets4::sheet_names(google_sheet)) {
+    googlesheets4::sheet_add(google_sheet, sheet)
+  } else {
+    google_sheet <- add_fake_sheet(google_sheet, sheet_name = sheet)
+  }
+
+  gs_request <- as_googlesheet_request(
+    tbl = tbl,
+    google_sheet = google_sheet,
+    sheet = sheet,
+    dry_run = dry_run,
+    token = token,
+    ...
+  )
+  if (!dry_run) {
+    req <- googlesheets4::request_make(
+      gs_request
+    )
+  }
+
+  gs_request <- gs_request |>
+    remove_token()
+
+  testthat::expect_snapshot(x = str(gs_request))
+}
+
 test_that("cars", {
   summarized_table <- mtcars |>
     group_by(cyl, vs) |>
@@ -32,16 +67,13 @@ test_that("cars", {
     footnote = "Data from the infamous mtcars data set."
   )
 
-  gs_request <- as_googlesheet_request(
+  run_test(
     tbl = tbl,
     google_sheet = google_sheet,
-    sheet = "Sheet1",
-    dry_run = TRUE,
-    token = NULL
-  ) |>
-    remove_token()
-
-  testthat::expect_snapshot(x = str(gs_request))
+    sheet = "Test1",
+    dry_run = dry_run,
+    token = token
+  )
 })
 
 test_that("cars-additional_spanners", {
@@ -71,16 +103,13 @@ test_that("cars-additional_spanners", {
     footnote = "Data from the infamous mtcars data set."
   )
 
-  gs_request <- as_googlesheet_request(
+  run_test(
     tbl = tbl,
     google_sheet = google_sheet,
-    sheet = "Sheet1",
-    dry_run = TRUE,
-    token = NULL
-  ) |>
-    remove_token()
-
-  testthat::expect_snapshot(x = str(gs_request))
+    sheet = "Test2",
+    dry_run = dry_run,
+    token = token
+  )
 })
 
 test_that("cars-no_row_names", {
@@ -111,16 +140,13 @@ test_that("cars-no_row_names", {
     footnote = "Data from the infamous mtcars data set."
   )
 
-  gs_request <- as_googlesheet_request(
+  run_test(
     tbl = tbl,
     google_sheet = google_sheet,
-    sheet = "Sheet1",
-    dry_run = TRUE,
-    token = NULL
-  ) |>
-    remove_token()
-
-  testthat::expect_snapshot(x = str(gs_request))
+    sheet = "Test3",
+    dry_run = dry_run,
+    token = token
+  )
 })
 
 test_that("cars-no_titles", {
@@ -147,16 +173,13 @@ test_that("cars-no_titles", {
     footnote = "Data from the infamous mtcars data set."
   )
 
-  gs_request <- as_googlesheet_request(
+  run_test(
     tbl = tbl,
     google_sheet = google_sheet,
-    sheet = "Sheet1",
-    dry_run = TRUE,
-    token = NULL
-  ) |>
-    remove_token()
-
-  testthat::expect_snapshot(x = str(gs_request))
+    sheet = "Test4",
+    dry_run = dry_run,
+    token = token
+  )
 })
 
 test_that("cars-no_titles_no_footnotes", {
@@ -182,16 +205,13 @@ test_that("cars-no_titles_no_footnotes", {
       (`Weight` = Mean:mean_wt + SD:sd_wt)
   )
 
-  gs_request <- as_googlesheet_request(
+  run_test(
     tbl = tbl,
     google_sheet = google_sheet,
-    sheet = "Sheet1",
-    dry_run = TRUE,
-    token = NULL
-  ) |>
-    remove_token()
-
-  testthat::expect_snapshot(x = str(gs_request))
+    sheet = "Test5",
+    dry_run = dry_run,
+    token = token
+  )
 })
 
 test_that("cars-duplicated_spanner_names", {
@@ -221,20 +241,17 @@ test_that("cars-duplicated_spanner_names", {
           (Significance = `t-value`:`t value.y` + `p-value`:`Pr(>|t|).y`))
     )
 
-  gs_request <- as_googlesheet_request(
+  run_test(
     tbl = tbl,
     google_sheet = google_sheet,
-    sheet = "Sheet1",
-    dry_run = TRUE,
-    token = NULL
-  ) |>
-    remove_token()
-
-  testthat::expect_snapshot(x = str(gs_request))
+    sheet = "Test6",
+    dry_run = dry_run,
+    token = token
+  )
 })
 
 
-test_that("cars - gt styling", {
+test_that("cars - googlesheets styling", {
   library(tablespan)
   library(testthat)
   library(dplyr)
@@ -260,179 +277,153 @@ test_that("cars - gt styling", {
     footnote = "Data from the infamous mtcars data set."
   )
 
-  gs_request <- as_googlesheet_request(
+  run_test(
     tbl = tbl,
     google_sheet = google_sheet,
-    sheet = "Sheet1",
-    dry_run = TRUE,
-    token = NULL
-  ) |>
-    remove_token()
-
-  testthat::expect_snapshot(x = str(gs_request))
+    sheet = "Test7",
+    dry_run = dry_run,
+    token = token
+  )
 
   # title
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(text_color = "#000000", background_color = "#983439") |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(text_color = "#000000", background_color = "#983439"),
+    google_sheet = google_sheet,
+    sheet = "Test8",
+    dry_run = dry_run,
+    token = token
   )
 
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(background_color = "#983439", text_color = "#ffffff") |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(background_color = "#983439", text_color = "#ffffff"),
+    google_sheet = google_sheet,
+    sheet = "Test9",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
   )
 
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ),
+    google_sheet = google_sheet,
+    sheet = "Test10",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
   )
 
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_subtitle(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ),
+    google_sheet = google_sheet,
+    sheet = "Test11",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
   )
 
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_subtitle(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(bold = TRUE),
+    google_sheet = google_sheet,
+    sheet = "Test12",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
   )
 
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_subtitle(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
-        style_header(background_color = "#B65455", bold = TRUE) |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(bold = TRUE) |>
+      style_header(background_color = "#B65455", bold = TRUE),
+    google_sheet = google_sheet,
+    sheet = "Test13",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
   )
 
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_subtitle(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_footnote(italic = TRUE) |>
-        style_header(background_color = "#B65455", bold = TRUE) |>
-        format_column(
-          columns = dplyr::where(is.double),
-          rows = 2:3,
-          fmt = format_number(decimals = 1)
-        ) |>
-        style_column(
-          columns = dplyr::where(is.double),
-          rows = 2:3,
-          italic = TRUE,
-          text_color = "#B54321"
-        ) |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(italic = TRUE) |>
+      style_header(background_color = "#B65455", bold = TRUE) |>
+      format_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        fmt = format_number(decimals = 1)
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        italic = TRUE,
+        text_color = "#B54321"
+      ),
+    google_sheet = google_sheet,
+    sheet = "Test14",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
   )
 
   color_scale = c(
@@ -446,46 +437,43 @@ test_that("cars - gt styling", {
     )
   )
 
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_subtitle(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
-        style_header(background_color = "#B65455", bold = TRUE) |>
-        format_column(
-          columns = dplyr::where(is.double),
-          rows = 2:3,
-          fmt = format_number(decimals = 1)
-        ) |>
-        style_column(
-          columns = dplyr::where(is.double),
-          color_scale = color_scale
-        ) |>
-        style_column(
-          columns = dplyr::where(is.double),
-          rows = 2:3,
-          italic = TRUE,
-          text_color = "#B54321"
-        ) |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(bold = TRUE) |>
+      style_header(background_color = "#B65455", bold = TRUE) |>
+      format_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        fmt = format_number(decimals = 1)
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        color_scale = color_scale
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        italic = TRUE,
+        text_color = "#B54321"
+      ),
+    google_sheet = google_sheet,
+    sheet = "Test15",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
   )
 
   color_scale = c(
@@ -509,45 +497,65 @@ test_that("cars - gt styling", {
     domain = color_scale[2:3]
   )
 
-  testthat::expect_snapshot(
-    x = str(
-      tbl |>
-        style_title(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_subtitle(
-          background_color = "#983439",
-          text_color = "#ffffff",
-          bold = TRUE,
-          italic = TRUE
-        ) |>
-        style_footnote(gt_style = gt::cell_text(weight = "lighter")) |>
-        style_header(background_color = "#B65455", bold = TRUE) |>
-        format_column(
-          columns = dplyr::where(is.double),
-          rows = 2:3,
-          fmt = format_number(decimals = 1)
-        ) |>
-        style_column(
-          columns = dplyr::where(is.double),
-          color_scale = color_scale
-        ) |>
-        style_column(
-          columns = dplyr::where(is.double),
-          rows = 2:3,
-          italic = TRUE,
-          text_color = "#B54321"
-        ) |>
-        as_googlesheet_request(
-          google_sheet = google_sheet,
-          sheet = "Sheet1",
-          dry_run = TRUE,
-          token = NULL
-        ) |>
-        remove_token()
-    )
+  run_test(
+    tbl = tbl |>
+      style_title(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_subtitle(
+        background_color = "#983439",
+        text_color = "#ffffff",
+        bold = TRUE,
+        italic = TRUE
+      ) |>
+      style_footnote(bold = TRUE) |>
+      style_header(background_color = "#B65455", bold = TRUE) |>
+      format_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        fmt = format_number(decimals = 1)
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        color_scale = color_scale
+      ) |>
+      style_column(
+        columns = dplyr::where(is.double),
+        rows = 2:3,
+        italic = TRUE,
+        text_color = "#B54321"
+      ),
+    google_sheet = google_sheet,
+    sheet = "Test16",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
+  )
+})
+
+testthat::test_that("formula-esaping works", {
+  data <- tibble::tibble(
+    equal = "=A1",
+    plus = "+A1",
+    minus = "-A1",
+    at = "@A1"
+  )
+  tbl <- tablespan::tablespan(
+    data = data,
+    formula = `=A1`:equal ~ `+A1`:plus + `-A1`:minus + `@A1`:at
+  )
+
+  run_test(
+    tbl = tbl,
+    google_sheet = google_sheet,
+    sheet = "Test17",
+    dry_run = dry_run,
+    token = token,
+    start_row = 4,
+    start_col = 2
   )
 })
