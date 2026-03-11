@@ -78,6 +78,7 @@ allows `tablespan` tables to be exported to a large number of formats:
 
 | Package | Conversion Function | Description | Export Formats |
 |----|----|----|----|
+| – | `as_string()` | Exporting the table to string can be very useful for copy-pasting the table (e.g., to send in a message or use as input to an LLM). | String |
 | **gt** | `as_gt()` | The **gt** package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout. | HTML, PDF, PNG, LaTeX, RTF, Word ([docs](https://gt.rstudio.com/reference/gtsave.html)) |
 | **openxlsx** | `as_excel()` | The **openxlsx** package offers Excel file creation and manipulation. Great for reporting tables to end-users. | Excel ([docs](https://ycphs.github.io/openxlsx/index.html)) |
 | **googlesheets4** | `as_googlesheet_request()` | Using **googlesheets4** ([docs](https://googlesheets4.tidyverse.org)), **tablespan** tables can be directly exported into google sheets requests that can be executed with `googlesheets4::request_make`. Experimental; use at your own risk | google sheets |

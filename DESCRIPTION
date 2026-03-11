@@ -25,7 +25,8 @@ Suggests:
     rmarkdown,
     officer,
     googlesheets4,
-    rvest
+    rvest,
+    purrr
 Depends:
     R (>= 4.2.0)
 Config/testthat/edition: 3

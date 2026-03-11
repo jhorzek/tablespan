@@ -1181,6 +1181,7 @@ get_subseries_minmax <- function(vec) {
 # Modifications:
 # - Removed request_make()
 # - Return request object instead of executing
+#' @importFrom utils getFromNamespace
 gs_data_writing_request <- function(
   ss,
   data,
@@ -1193,6 +1194,24 @@ gs_data_writing_request <- function(
   # The following is copy-pasted and slightly adapted from googlesheets4::range_write
   # by Jennifer Bryan
   require_googlesheets4()
+  if (!requireNamespace("purrr", quietly = TRUE)) {
+    stop(
+      "Using as_googlesheet requires the purrr package. Please install with install.packages('purrr')"
+    )
+  }
+
+  # Import required functions
+  as_range_spec <- getFromNamespace("as_range_spec", "googlesheets4")
+  as_RowData <- getFromNamespace("as_RowData", "googlesheets4")
+  first_visible_name <- getFromNamespace("first_visible_name", "googlesheets4")
+  lookup_sheet <- getFromNamespace("lookup_sheet", "googlesheets4")
+  new <- getFromNamespace("new", "googlesheets4")
+  prepare_dims <- getFromNamespace("prepare_dims", "googlesheets4")
+  prepare_loc <- getFromNamespace("prepare_loc", "googlesheets4")
+  prepare_resize_request <- getFromNamespace(
+    "prepare_resize_request",
+    "googlesheets4"
+  )
 
   if (!dry_run) {
     ssid <- googlesheets4::as_sheets_id(ss)
@@ -1214,26 +1233,27 @@ gs_data_writing_request <- function(
   if (!is.character(sheet)) {
     stop("sheet must be a character")
   }
-  range_spec <- googlesheets4:::as_range_spec(
+
+  range_spec <- as_range_spec(
     range,
     sheet = sheet,
     sheets_df = x$sheets,
     nr_df = x$named_ranges
   )
   range_spec$sheet_name <- range_spec$sheet_name %||%
-    googlesheets4:::first_visible_name(x$sheets)
+    first_visible_name(x$sheets)
   requests <- list()
-  s <- googlesheets4:::lookup_sheet(range_spec$sheet_name, sheets_df = x$sheets)
-  loc <- googlesheets4:::prepare_loc(range_spec)
-  dims_needed <- googlesheets4:::prepare_dims(loc, data, col_names)
-  resize_req <- googlesheets4:::prepare_resize_request(
+  s <- lookup_sheet(range_spec$sheet_name, sheets_df = x$sheets)
+  loc <- prepare_loc(range_spec)
+  dims_needed <- prepare_dims(loc, data, col_names)
+  resize_req <- prepare_resize_request(
     s,
     nrow_needed = dims_needed$nrow,
     ncol_needed = dims_needed$ncol,
     exact = FALSE
   )
   if (!is.null(resize_req)) {
-    new_dims <- googlesheets4:::pluck(
+    new_dims <- purrr::pluck(
       resize_req,
       "updateSheetProperties",
       "properties",
@@ -1246,9 +1266,9 @@ gs_data_writing_request <- function(
   } else {
     "userEnteredValue"
   }
-  data_req <- googlesheets4:::new(
+  data_req <- new(
     "UpdateCellsRequest",
-    rows = googlesheets4:::as_RowData(data, col_names = col_names),
+    rows = as_RowData(data, col_names = col_names),
     fields = fields,
     !!!loc
   )
