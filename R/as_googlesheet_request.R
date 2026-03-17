@@ -774,9 +774,11 @@ gs_create_style_request <- function(
   # Number and date formatting
   if (!is.null(format)) {
     user_format$numberFormat <- list(
-      type = format$type,
-      pattern = format$pattern
+      type = format$type
     )
+    if (!is.null(format$pattern)) {
+      user_format$numberFormat$pattern <- format$pattern
+    }
   }
 
   # We have to tell the api which fields we want to upate
