@@ -1,7 +1,6 @@
 library(tablespan)
 library(testthat)
 library(dplyr)
-google_sheet <- fake_gs4_dribble()
 remove_token <- function(x) {
   x$token <- NULL
   x$url <- "https://sheets.googleapis.com/v4/spreadsheets/spreadsheet_id:batchUpdate"
@@ -12,16 +11,28 @@ googlesheets4::gs4_deauth()
 
 dry_run <- TRUE
 
-token <- if (dry_run) {
-  NULL
+if (dry_run) {
+  token <- NULL
 } else {
-  googlesheets4::gs4_token()
+  googlesheets4::gs4_auth()
+  token <- googlesheets4::gs4_token()
 }
 
-run_test <- function(tbl, google_sheet, sheet, token, dry_run, ...) {
+# google_sheet <- googlesheets4::gs4_get("your-test-sheet-id-here")
+google_sheet <- fake_gs4_dribble()
+
+run_test <- function(
+  tbl,
+  google_sheet,
+  sheet,
+  token,
+  dry_run,
+  snapshot_variant = sheet,
+  ...
+) {
   if (!dry_run && !sheet %in% googlesheets4::sheet_names(google_sheet)) {
     googlesheets4::sheet_add(google_sheet, sheet)
-  } else {
+  } else if (dry_run) {
     google_sheet <- add_fake_sheet(google_sheet, sheet_name = sheet)
   }
 
@@ -31,6 +42,7 @@ run_test <- function(tbl, google_sheet, sheet, token, dry_run, ...) {
     sheet = sheet,
     dry_run = dry_run,
     token = token,
+    silent = TRUE,
     ...
   )
   if (!dry_run) {
@@ -42,7 +54,32 @@ run_test <- function(tbl, google_sheet, sheet, token, dry_run, ...) {
   gs_request <- gs_request |>
     remove_token()
 
-  testthat::expect_snapshot(x = str(gs_request))
+  request_text <- paste(capture.output(str(gs_request)), collapse = "\n")
+  sanitized_url <- "https://sheets.googleapis.com/v4/spreadsheets/spreadsheet_id:batchUpdate"
+
+  testthat::expect_null(gs_request$token)
+  testthat::expect_true(
+    grepl(sanitized_url, request_text, fixed = TRUE),
+    info = "Request URL was not sanitized to the placeholder spreadsheet id."
+  )
+  testthat::expect_false(
+    grepl("docs\\.google\\.com/spreadsheets/d/", request_text, perl = TRUE),
+    info = "Request text contains a direct Google Sheets document URL."
+  )
+  testthat::expect_false(
+    grepl(
+      "Authorization|Bearer|access_token|refresh_token|oauth|api_key|client_secret|private_key",
+      request_text,
+      ignore.case = TRUE,
+      perl = TRUE
+    ),
+    info = "Request text contains credential-like fields."
+  )
+
+  testthat::expect_snapshot(
+    x = str(gs_request),
+    variant = snapshot_variant
+  )
 }
 
 test_that("cars", {

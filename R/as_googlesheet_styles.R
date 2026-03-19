@@ -6,8 +6,6 @@ gs_get_style_requests <- function(
 ) {
   require_googlesheets4()
 
-  styles <- tbl$styles
-
   style_requests <- initialize_styles_googlesheet(
     tbl = tbl,
     locations = locations,
@@ -262,7 +260,7 @@ style_column_googlesheet <- function(
     for (column_style in tbl$styles$columns[[column_name]]) {
       rows_series <- get_subseries_minmax(column_style$rows)
 
-      for (i in 1:nrow(rows_series)) {
+      for (i in seq_len(nrow(rows_series))) {
         style_requests[[
           length(style_requests) + 1
         ]] <- create_style_googlesheet(

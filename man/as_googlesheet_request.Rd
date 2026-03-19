@@ -12,7 +12,8 @@ as_googlesheet_request(
   start_col = 1,
   merge_rownames = TRUE,
   dry_run = is(google_sheet, "fake_sheet"),
-  token = googlesheets4::gs4_token()
+  token = NULL,
+  silent = FALSE
 )
 }
 \arguments{
@@ -30,7 +31,11 @@ as_googlesheet_request(
 
 \item{dry_run}{if set to TRUE, no API calls will be made. This is useful when just testing the function}
 
-\item{token}{token; see ?googlesheets4::request_generate}
+\item{token}{optional token for authenticated requests. If NULL and `dry_run = FALSE`,
+tablespan will use `googlesheets4::gs4_token()` automatically.
+You can also pass an explicit token from `googlesheets4::gs4_token()`.}
+
+\item{silent}{suppress messages when TRUE}
 }
 \value{
 A request that can be passed to googlesheets4::request_make to write the
@@ -76,6 +81,15 @@ if(require_googlesheets4(throw = FALSE)) {
   req <- as_googlesheet_request(tbl = tbl,
                                 google_sheet = google_sheet,
                                 sheet = "Sheet1")
+
+  # For real (non-dry-run) requests, authenticate first and pass a token:
+  # googlesheets4::gs4_auth()
+  # token <- googlesheets4::gs4_token()
+  # req <- as_googlesheet_request(tbl = tbl,
+  #                               google_sheet = google_sheet,
+  #                               sheet = "Sheet1",
+  #                               dry_run = FALSE,
+  #                               token = token)
 
   # Make the actual request:
   # googlesheets4::request_make(req)
