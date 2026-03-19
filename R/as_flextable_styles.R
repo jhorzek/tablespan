@@ -60,7 +60,7 @@ style_subtitle_flex <- function(flex_styles, tbl) {
 }
 
 style_header_flex <- function(flex_styles, tbl) {
-  require_gt()
+  require_flextable()
 
   force(tbl)
 
@@ -80,7 +80,7 @@ style_header_cells_flex <- function(flex_styles, tbl) {
 }
 
 style_footnote_flex <- function(flex_styles, tbl) {
-  require_gt()
+  require_flextable()
 
   force(tbl)
 

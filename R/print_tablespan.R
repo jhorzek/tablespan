@@ -28,5 +28,5 @@ print.Tablespan <- function(
     return(invisible(NULL))
   }
 
-  cat(as_string(tbl = x, digits = digits, n = 3, ...))
+  cat(as_string(tbl = x, digits = digits, n = n, ...))
 }

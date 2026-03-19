@@ -58,7 +58,7 @@ style_subtitle_hux <- function(hux_styles, tbl) {
 }
 
 style_header_hux <- function(hux_styles, tbl) {
-  require_gt()
+  require_huxtable()
 
   force(tbl)
 
@@ -78,7 +78,7 @@ style_header_cells_hux <- function(hux_styles, tbl) {
 }
 
 style_footnote_hux <- function(hux_styles, tbl) {
-  require_gt()
+  require_huxtable()
 
   force(tbl)
 
