@@ -2,31 +2,12 @@ library(tablespan)
 library(testthat)
 library(dplyr)
 
+test_tables <- build_tablespan_test_tables()
+
 test_that("cars", {
-  summarized_table <- mtcars |>
-    group_by(cyl, vs) |>
-    summarise(
-      N = n(),
-      mean_hp = mean(hp),
-      sd_hp = sd(hp),
-      mean_wt = mean(wt),
-      sd_wt = sd(wt)
-    )
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars)
 
-  tbl <- tablespan(
-    data = summarized_table,
-    formula = Cylinder:cyl + Engine:vs ~
-      N +
-      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-      (`Weight` = Mean:mean_wt + SD:sd_wt),
-    title = "Motor Trend Car Road Tests",
-    subtitle = "A table created with tablespan",
-    footnote = "Data from the infamous mtcars data set."
-  )
-
-  gt_tbl <- as_gt(tbl = tbl)
-
-  expected <- summarized_table |>
+  expected <- test_tables$data$summarized_table |>
     gt::gt(groupname_col = NULL) |>
     gt::tab_header(
       title = "Motor Trend Car Road Tests",
@@ -63,11 +44,13 @@ test_that("cars", {
     gt::fmt_auto() |>
     gt::sub_missing(missing_text = "")
 
-  for (i in colnames(summarized_table)) {
+  for (i in colnames(test_tables$data$summarized_table)) {
     expected <- expected |>
       gt::fmt_number(
         columns = all_of(i),
-        decimals = tablespan:::smart_round(x = summarized_table[[i]])
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
       )
   }
 
@@ -75,50 +58,9 @@ test_that("cars", {
 })
 
 test_that("cars - no autostyle", {
-  library(tablespan)
-  library(testthat)
-  library(dplyr)
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars, auto_format = FALSE)
 
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
-
-  summarized_table <- mtcars |>
-    group_by(cyl, vs) |>
-    summarise(
-      N = n(),
-      mean_hp = mean(hp),
-      sd_hp = sd(hp),
-      mean_wt = mean(wt),
-      sd_wt = sd(wt)
-    )
-
-  tbl <- tablespan(
-    data = summarized_table,
-    formula = Cylinder:cyl + Engine:vs ~
-      N +
-      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-      (`Weight` = Mean:mean_wt + SD:sd_wt),
-    title = "Motor Trend Car Road Tests",
-    subtitle = "A table created with tablespan",
-    footnote = "Data from the infamous mtcars data set."
-  )
-
-  gt_tbl <- as_gt(tbl = tbl, auto_format = FALSE)
-
-  expected <- summarized_table |>
+  expected <- test_tables$data$summarized_table |>
     gt::gt(groupname_col = NULL) |>
     gt::tab_header(
       title = "Motor Trend Car Road Tests",
@@ -153,11 +95,13 @@ test_that("cars - no autostyle", {
       sd_wt = "SD"
     )
 
-  for (i in colnames(summarized_table)) {
+  for (i in colnames(test_tables$data$summarized_table)) {
     expected <- expected |>
       gt::fmt_number(
         columns = all_of(i),
-        decimals = tablespan:::smart_round(x = summarized_table[[i]])
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
       )
   }
 
@@ -165,51 +109,9 @@ test_that("cars - no autostyle", {
 })
 
 test_that("cars-additional_spanners", {
-  library(tablespan)
-  library(testthat)
-  library(dplyr)
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_additional_spanners)
 
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
-
-  summarized_table <- mtcars |>
-    group_by(cyl, vs) |>
-    summarise(
-      N = n(),
-      mean_hp = mean(hp),
-      sd_hp = sd(hp),
-      mean_wt = mean(wt),
-      sd_wt = sd(wt)
-    )
-
-  tbl <- tablespan(
-    data = summarized_table,
-    formula = Cylinder:cyl + Engine:vs ~
-      (Results = N +
-        (`Horse Power` = (Mean = Mean:mean_hp) +
-          (`Standard Deviation` = SD:sd_hp)) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt)),
-    title = "Motor Trend Car Road Tests",
-    subtitle = "A table created with tablespan",
-    footnote = "Data from the infamous mtcars data set."
-  )
-
-  gt_tbl <- as_gt(tbl = tbl)
-
-  expected <- summarized_table |>
+  expected <- test_tables$data$summarized_table |>
     gt::gt(groupname_col = NULL) |>
     gt::tab_header(
       title = "Motor Trend Car Road Tests",
@@ -268,11 +170,13 @@ test_that("cars-additional_spanners", {
     gt::fmt_auto() |>
     gt::sub_missing(missing_text = "")
 
-  for (i in colnames(summarized_table)) {
+  for (i in colnames(test_tables$data$summarized_table)) {
     expected <- expected |>
       gt::fmt_number(
         columns = all_of(i),
-        decimals = tablespan:::smart_round(x = summarized_table[[i]])
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
       )
   }
 
@@ -280,52 +184,9 @@ test_that("cars-additional_spanners", {
 })
 
 test_that("cars-no_row_names", {
-  library(tablespan)
-  library(testthat)
-  library(dplyr)
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_no_row_names)
 
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
-
-  summarized_table <- mtcars |>
-    group_by(cyl, vs) |>
-    summarise(
-      N = n(),
-      mean_hp = mean(hp),
-      sd_hp = sd(hp),
-      mean_wt = mean(wt),
-      sd_wt = sd(wt)
-    )
-
-  # no row names
-  tbl <- tablespan(
-    data = summarized_table,
-    formula = 1 ~
-      (Results = N +
-        (`Horse Power` = (Mean = Mean:mean_hp) +
-          (`Standard Deviation` = SD:sd_hp)) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt)),
-    title = "Motor Trend Car Road Tests",
-    subtitle = "A table created with tablespan",
-    footnote = "Data from the infamous mtcars data set."
-  )
-
-  gt_tbl <- as_gt(tbl = tbl)
-
-  expected <- summarized_table |>
+  expected <- test_tables$data$summarized_table |>
     ungroup() |>
     select(-dplyr::all_of(c("cyl", "vs"))) |>
     gt::gt(groupname_col = NULL) |>
@@ -380,7 +241,9 @@ test_that("cars-no_row_names", {
     expected <- expected |>
       gt::fmt_number(
         columns = all_of(i),
-        decimals = tablespan:::smart_round(x = summarized_table[[i]])
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
       )
   }
 
@@ -388,48 +251,9 @@ test_that("cars-no_row_names", {
 })
 
 test_that("cars-no_titles", {
-  library(tablespan)
-  library(testthat)
-  library(dplyr)
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_no_titles)
 
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
-
-  summarized_table <- mtcars |>
-    group_by(cyl, vs) |>
-    summarise(
-      N = n(),
-      mean_hp = mean(hp),
-      sd_hp = sd(hp),
-      mean_wt = mean(wt),
-      sd_wt = sd(wt)
-    )
-
-  tbl <- tablespan(
-    data = summarized_table,
-    formula = Cylinder:cyl + Engine:vs ~
-      N +
-      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-      (`Weight` = Mean:mean_wt + SD:sd_wt),
-    footnote = "Data from the infamous mtcars data set."
-  )
-
-  gt_tbl <- as_gt(tbl = tbl)
-
-  expected <- summarized_table |>
+  expected <- test_tables$data$summarized_table |>
     gt::gt(groupname_col = NULL) |>
     gt::opt_align_table_header(align = c("left")) |>
     gt::tab_footnote(footnote = "Data from the infamous mtcars data set.") |>
@@ -462,11 +286,13 @@ test_that("cars-no_titles", {
     gt::fmt_auto() |>
     gt::sub_missing(missing_text = "")
 
-  for (i in colnames(summarized_table)) {
+  for (i in colnames(expected$`_data`)) {
     expected <- expected |>
       gt::fmt_number(
-        columns = all_of(i),
-        decimals = tablespan:::smart_round(x = summarized_table[[i]])
+        columns = dplyr::all_of(i),
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
       )
   }
 
@@ -474,47 +300,9 @@ test_that("cars-no_titles", {
 })
 
 test_that("cars-no_titles_no_footnotes", {
-  library(tablespan)
-  library(testthat)
-  library(dplyr)
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_no_titles_no_footnotes)
 
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
-
-  summarized_table <- mtcars |>
-    group_by(cyl, vs) |>
-    summarise(
-      N = n(),
-      mean_hp = mean(hp),
-      sd_hp = sd(hp),
-      mean_wt = mean(wt),
-      sd_wt = sd(wt)
-    )
-
-  tbl <- tablespan(
-    data = summarized_table,
-    formula = Cylinder:cyl + Engine:vs ~
-      N +
-      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-      (`Weight` = Mean:mean_wt + SD:sd_wt)
-  )
-
-  gt_tbl <- as_gt(tbl = tbl)
-
-  expected <- summarized_table |>
+  expected <- test_tables$data$summarized_table |>
     gt::gt(groupname_col = NULL) |>
     gt::opt_align_table_header(align = c("left")) |>
     gt::tab_spanner(
@@ -550,7 +338,9 @@ test_that("cars-no_titles_no_footnotes", {
     expected <- expected |>
       gt::fmt_number(
         columns = all_of(i),
-        decimals = tablespan:::smart_round(x = summarized_table[[i]])
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
       )
   }
 
@@ -558,51 +348,9 @@ test_that("cars-no_titles_no_footnotes", {
 })
 
 test_that("cars-duplicated_spanner_names", {
-  library(tablespan)
-  library(testthat)
-  library(dplyr)
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_duplicated_spanner_names)
 
-  compare_tables <- function(tbl_1, tbl_2) {
-    tbl_1_html <- tbl_1 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    tbl_2_html <- tbl_2 |>
-      gt::as_raw_html(inline_css = TRUE) |>
-      # the following is taken from https://github.com/rstudio/gt/blob/1e4bae1af102c171a19316bca512db4260592645/tests/testthat/test-as_raw_html.R#L6
-      # and removes the unique id:
-      gsub(pattern = "id=\"[a-z]*?\"", replacement = "", x = _)
-
-    return(tbl_1_html == tbl_2_html)
-  }
-
-  model_1 <- lm(mpg ~ wt + qsec, data = mtcars) |>
-    summary() |>
-    (\(.x) as.data.frame(.x$coefficients))()
-  model_2 <- lm(mpg ~ wt + qsec, data = mtcars) |>
-    summary() |>
-    (\(.x) as.data.frame(.x$coefficients))()
-
-  model_1$Parameter <- rownames(model_1)
-  model_2$Parameter <- rownames(model_2)
-
-  combined_models <- full_join(model_1, model_2, by = "Parameter")
-
-  tbl <- combined_models |>
-    dplyr::as_tibble() |>
-    tablespan(
-      formula = Parameter ~
-        (`Model 1` = Estimate:Estimate.x +
-          (Significance = `t-value`:`t value.x` + `p-value`:`Pr(>|t|).x`)) +
-        (`Model 2` = Estimate:Estimate.y +
-          (Significance = `t-value`:`t value.y` + `p-value`:`Pr(>|t|).y`))
-    )
-
-  gt_tbl <- as_gt(tbl)
-
-  expected <- combined_models |>
+  expected <- test_tables$data$combined_models |>
     select(all_of(c(
       "Parameter",
       "Estimate.x",
@@ -675,34 +423,9 @@ test_that("cars-duplicated_spanner_names", {
 
 
 test_that("cars - gt styling", {
-  library(tablespan)
-  library(testthat)
-  library(dplyr)
+  gt_tbl_base <- as_gt(tbl = test_tables$tables$cars)
 
-  summarized_table <- mtcars |>
-    group_by(cyl, vs) |>
-    summarise(
-      N = n(),
-      mean_hp = mean(hp),
-      sd_hp = sd(hp),
-      mean_wt = mean(wt),
-      sd_wt = sd(wt)
-    )
-
-  tbl <- tablespan(
-    data = summarized_table,
-    formula = Cylinder:cyl + Engine:vs ~
-      N +
-      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-      (`Weight` = Mean:mean_wt + SD:sd_wt),
-    title = "Motor Trend Car Road Tests",
-    subtitle = "A table created with tablespan",
-    footnote = "Data from the infamous mtcars data set."
-  )
-
-  gt_tbl_base <- as_gt(tbl = tbl)
-
-  expected_base <- summarized_table |>
+  expected_base <- test_tables$data$summarized_table |>
     gt::gt(groupname_col = NULL) |>
     gt::tab_header(
       title = "Motor Trend Car Road Tests",
@@ -739,7 +462,7 @@ test_that("cars - gt styling", {
     gt::fmt_auto() |>
     gt::sub_missing(missing_text = "")
 
-  for (i in colnames(summarized_table)) {
+  for (i in colnames(test_tables$data$summarized_table)) {
     expected_base <- expected_base |>
       gt::fmt_number(
         columns = all_of(i),
@@ -753,8 +476,7 @@ test_that("cars - gt styling", {
 
   # title
   compare_html_tables(
-    tbl |>
-      style_title(text_color = "#000000", background_color = "#983439") |>
+    test_tables$tables$cars_title_style_black_red |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -770,8 +492,7 @@ test_that("cars - gt styling", {
   )
 
   compare_html_tables(
-    tbl |>
-      style_title(background_color = "#983439", text_color = "#ffffff") |>
+    test_tables$tables$cars_title_style_white_red |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -787,13 +508,7 @@ test_that("cars - gt styling", {
   )
 
   compare_html_tables(
-    tbl |>
-      style_title(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
+    test_tables$tables$cars_title_style_bold_italic |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -813,19 +528,7 @@ test_that("cars - gt styling", {
   )
 
   compare_html_tables(
-    tbl |>
-      style_title(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_subtitle(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
+    test_tables$tables$cars_title_subtitle_style_bold_italic |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -857,20 +560,7 @@ test_that("cars - gt styling", {
   )
 
   compare_html_tables(
-    tbl |>
-      style_title(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_subtitle(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_footnote(font_size = 8) |>
+    test_tables$tables$cars_title_subtitle_footnote_size |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -906,21 +596,7 @@ test_that("cars - gt styling", {
   )
 
   compare_html_tables(
-    tbl |>
-      style_title(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_subtitle(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_footnote(font_size = 8) |>
-      style_header(background_color = "#B65455", bold = TRUE) |>
+    test_tables$tables$cars_title_subtitle_footnote_header_style |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -970,32 +646,7 @@ test_that("cars - gt styling", {
   )
 
   compare_html_tables(
-    tbl |>
-      style_title(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_subtitle(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_footnote(italic = TRUE) |>
-      style_header(background_color = "#B65455", bold = TRUE) |>
-      format_column(
-        columns = dplyr::where(is.double),
-        rows = 2:3,
-        fmt = format_number(decimals = 1)
-      ) |>
-      style_column(
-        columns = dplyr::where(is.double),
-        rows = 2:3,
-        italic = TRUE,
-        text_color = "#B54321"
-      ) |>
+    test_tables$tables$cars_title_subtitle_footnote_header_format_cell_style |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -1059,102 +710,314 @@ test_that("cars - gt styling", {
       gt::as_raw_html()
   )
 
-  color_scale = c(
-    "#123456" = min(
-      summarized_table |> select(where(is.double)),
-      na.rm = TRUE
-    ),
-    "#B46983" = max(
-      summarized_table |> select(where(is.double)),
-      na.rm = TRUE
-    )
-  )
   testthat::expect_no_error(
-    tbl |>
-      style_title(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_subtitle(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_footnote(font_size = 8) |>
-      style_header(background_color = "#B65455", bold = TRUE) |>
-      format_column(
-        columns = dplyr::where(is.double),
-        rows = 2:3,
-        fmt = format_number(decimals = 1)
-      ) |>
-      style_column(
-        columns = dplyr::where(is.double),
-        color_scale = color_scale
-      ) |>
-      style_column(
-        columns = dplyr::where(is.double),
-        rows = 2:3,
-        italic = TRUE,
-        text_color = "#B54321"
-      ) |>
+    test_tables$tables$cars_title_subtitle_footnote_header_format_color_scale_2_cell_style |>
       as_gt()
   )
 
-  color_scale = c(
-    "#123456" = min(
-      summarized_table |> select(where(is.double)),
-      na.rm = TRUE
-    ),
-    "#ffffff" = 50,
-    "#B46983" = max(
-      summarized_table |> select(where(is.double)),
-      na.rm = TRUE
-    )
-  )
-
-  lower_scale <- scales::col_numeric(
-    palette = names(color_scale)[1:2],
-    domain = color_scale[1:2]
-  )
-  upper_scale <- scales::col_numeric(
-    palette = names(color_scale)[2:3],
-    domain = color_scale[2:3]
-  )
-
   testthat::expect_no_error(
-    tbl |>
-      style_title(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_subtitle(
-        background_color = "#983439",
-        text_color = "#ffffff",
-        bold = TRUE,
-        italic = TRUE
-      ) |>
-      style_footnote(font_size = 8) |>
-      style_header(background_color = "#B65455", bold = TRUE) |>
-      format_column(
-        columns = dplyr::where(is.double),
-        rows = 2:3,
-        fmt = format_number(decimals = 1)
-      ) |>
-      style_column(
-        columns = dplyr::where(is.double),
-        color_scale = color_scale
-      ) |>
-      style_column(
-        columns = dplyr::where(is.double),
-        rows = 2:3,
-        italic = TRUE,
-        text_color = "#B54321"
-      ) |>
+    test_tables$tables$cars_title_subtitle_footnote_header_format_color_scale_3_cell_style |>
       as_gt()
   )
+})
+
+test_that("date_text_base", {
+  gt_tbl <- as_gt(tbl = test_tables$tables$date_text_base)
+
+  expected <- test_tables$data$mixed_date_text_data |>
+    gt::gt(groupname_col = NULL) |>
+    gt::tab_header(
+      title = "Date/Text Formatting Example",
+      subtitle = "Fixture for format_date and format_text"
+    ) |>
+    gt::opt_align_table_header(align = c("left")) |>
+    gt::tab_footnote(footnote = "Synthetic data for tests") |>
+    gt::tab_style(
+      style = gt::cell_borders(
+        sides = c("right"),
+        weight = gt::px(1),
+        color = "gray"
+      ),
+      locations = gt::cells_body(columns = all_of(c("group")))
+    ) |>
+    gt::cols_label(
+      group = "Group",
+      event_date = "Date",
+      comment = "Comment",
+      amount = "Amount"
+    ) |>
+    gt::fmt_auto() |>
+    gt::sub_missing(missing_text = "")
+
+  for (i in c("amount")) {
+    expected <- expected |>
+      gt::fmt_number(
+        columns = all_of(i),
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$mixed_date_text_data[[i]]
+        )
+      )
+  }
+
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
+})
+
+test_that("date_text_formatted", {
+  gt_tbl <- as_gt(tbl = test_tables$tables$date_text_formatted)
+
+  expected <- test_tables$data$mixed_date_text_data |>
+    gt::gt(groupname_col = NULL) |>
+    gt::tab_header(
+      title = "Date/Text Formatting Example",
+      subtitle = "Fixture for format_date and format_text"
+    ) |>
+    gt::opt_align_table_header(align = c("left")) |>
+    gt::tab_footnote(footnote = "Synthetic data for tests") |>
+    gt::tab_style(
+      style = gt::cell_borders(
+        sides = c("right"),
+        weight = gt::px(1),
+        color = "gray"
+      ),
+      locations = gt::cells_body(columns = all_of(c("group")))
+    ) |>
+    gt::cols_label(
+      group = "Group",
+      event_date = "Date",
+      comment = "Comment",
+      amount = "Amount"
+    ) |>
+    gt::fmt_auto() |>
+    gt::sub_missing(missing_text = "") |>
+    gt::fmt_date(
+      columns = all_of("event_date"),
+      date_style = "iso"
+    ) |>
+    gt::fmt_auto(columns = all_of("comment")) |>
+    gt::fmt_number(
+      columns = all_of("amount"),
+      decimals = 1
+    )
+
+  for (i in c("amount")) {
+    expected <- expected |>
+      gt::fmt_number(
+        columns = all_of(i),
+        decimals = 1
+      )
+  }
+
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
+})
+
+test_that("cars_header_cells_styled", {
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_header_cells_styled)
+
+  expected <- test_tables$data$summarized_table |>
+    gt::gt(groupname_col = NULL) |>
+    gt::tab_header(
+      title = "Motor Trend Car Road Tests",
+      subtitle = "A table created with tablespan"
+    ) |>
+    gt::opt_align_table_header(align = c("left")) |>
+    gt::tab_footnote(footnote = "Data from the infamous mtcars data set.") |>
+    gt::tab_spanner(
+      label = "Horse Power",
+      id = "__BASE_LEVEL__Horse Power",
+      columns = dplyr::all_of(c("mean_hp", "sd_hp"))
+    ) |>
+    gt::tab_spanner(
+      label = "Weight",
+      id = "__BASE_LEVEL__Weight",
+      columns = dplyr::all_of(c("mean_wt", "sd_wt"))
+    ) |>
+    gt::tab_style(
+      style = gt::cell_borders(
+        sides = c("right"),
+        weight = gt::px(1),
+        color = "gray"
+      ),
+      locations = gt::cells_body(columns = all_of(c("vs")))
+    ) |>
+    gt::cols_label(
+      cyl = "Cylinder",
+      vs = "Engine",
+      mean_hp = "Mean",
+      sd_hp = "SD",
+      mean_wt = "Mean",
+      sd_wt = "SD"
+    ) |>
+    gt::fmt_auto() |>
+    gt::sub_missing(missing_text = "")
+
+  for (i in colnames(test_tables$data$summarized_table)) {
+    expected <- expected |>
+      gt::fmt_number(
+        columns = all_of(i),
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
+      )
+  }
+
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
+})
+
+test_that("cars_hline_styled", {
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_hline_styled)
+
+  expected <- test_tables$data$summarized_table |>
+    gt::gt(groupname_col = NULL) |>
+    gt::tab_header(
+      title = "Motor Trend Car Road Tests",
+      subtitle = "A table created with tablespan"
+    ) |>
+    gt::opt_align_table_header(align = c("left")) |>
+    gt::tab_footnote(footnote = "Data from the infamous mtcars data set.") |>
+    gt::tab_spanner(
+      label = "Horse Power",
+      id = "__BASE_LEVEL__Horse Power",
+      columns = dplyr::all_of(c("mean_hp", "sd_hp"))
+    ) |>
+    gt::tab_spanner(
+      label = "Weight",
+      id = "__BASE_LEVEL__Weight",
+      columns = dplyr::all_of(c("mean_wt", "sd_wt"))
+    ) |>
+    gt::tab_style(
+      style = gt::cell_borders(
+        sides = c("right"),
+        weight = gt::px(1),
+        color = "gray"
+      ),
+      locations = gt::cells_body(columns = all_of(c("vs")))
+    ) |>
+    gt::cols_label(
+      cyl = "Cylinder",
+      vs = "Engine",
+      mean_hp = "Mean",
+      sd_hp = "SD",
+      mean_wt = "Mean",
+      sd_wt = "SD"
+    ) |>
+    gt::fmt_auto() |>
+    gt::sub_missing(missing_text = "")
+
+  for (i in colnames(test_tables$data$summarized_table)) {
+    expected <- expected |>
+      gt::fmt_number(
+        columns = all_of(i),
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
+      )
+  }
+
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
+})
+
+test_that("cars_vline_styled", {
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_vline_styled)
+
+  expected <- test_tables$data$summarized_table |>
+    gt::gt(groupname_col = NULL) |>
+    gt::tab_header(
+      title = "Motor Trend Car Road Tests",
+      subtitle = "A table created with tablespan"
+    ) |>
+    gt::opt_align_table_header(align = c("left")) |>
+    gt::tab_footnote(footnote = "Data from the infamous mtcars data set.") |>
+    gt::tab_spanner(
+      label = "Horse Power",
+      id = "__BASE_LEVEL__Horse Power",
+      columns = dplyr::all_of(c("mean_hp", "sd_hp"))
+    ) |>
+    gt::tab_spanner(
+      label = "Weight",
+      id = "__BASE_LEVEL__Weight",
+      columns = dplyr::all_of(c("mean_wt", "sd_wt"))
+    ) |>
+    gt::tab_style(
+      style = gt::cell_borders(
+        sides = c("right"),
+        weight = gt::px(1),
+        color = "gray"
+      ),
+      locations = gt::cells_body(columns = all_of(c("vs")))
+    ) |>
+    gt::cols_label(
+      cyl = "Cylinder",
+      vs = "Engine",
+      mean_hp = "Mean",
+      sd_hp = "SD",
+      mean_wt = "Mean",
+      sd_wt = "SD"
+    ) |>
+    gt::fmt_auto() |>
+    gt::sub_missing(missing_text = "")
+
+  for (i in colnames(test_tables$data$summarized_table)) {
+    expected <- expected |>
+      gt::fmt_number(
+        columns = all_of(i),
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
+      )
+  }
+
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
+})
+
+test_that("cars_header_cells_hline_vline_styled", {
+  gt_tbl <- as_gt(tbl = test_tables$tables$cars_header_cells_hline_vline_styled)
+
+  expected <- test_tables$data$summarized_table |>
+    gt::gt(groupname_col = NULL) |>
+    gt::tab_header(
+      title = "Motor Trend Car Road Tests",
+      subtitle = "A table created with tablespan"
+    ) |>
+    gt::opt_align_table_header(align = c("left")) |>
+    gt::tab_footnote(footnote = "Data from the infamous mtcars data set.") |>
+    gt::tab_spanner(
+      label = "Horse Power",
+      id = "__BASE_LEVEL__Horse Power",
+      columns = dplyr::all_of(c("mean_hp", "sd_hp"))
+    ) |>
+    gt::tab_spanner(
+      label = "Weight",
+      id = "__BASE_LEVEL__Weight",
+      columns = dplyr::all_of(c("mean_wt", "sd_wt"))
+    ) |>
+    gt::tab_style(
+      style = gt::cell_borders(
+        sides = c("right"),
+        weight = gt::px(1),
+        color = "gray"
+      ),
+      locations = gt::cells_body(columns = all_of(c("vs")))
+    ) |>
+    gt::cols_label(
+      cyl = "Cylinder",
+      vs = "Engine",
+      mean_hp = "Mean",
+      sd_hp = "SD",
+      mean_wt = "Mean",
+      sd_wt = "SD"
+    ) |>
+    gt::fmt_auto() |>
+    gt::sub_missing(missing_text = "")
+
+  for (i in colnames(test_tables$data$summarized_table)) {
+    expected <- expected |>
+      gt::fmt_number(
+        columns = all_of(i),
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
+      )
+  }
+
+  compare_html_tables(gt::as_raw_html(gt_tbl), gt::as_raw_html(expected))
 })
