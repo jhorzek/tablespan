@@ -212,30 +212,30 @@ initialize_styles_googlesheet <- function(tbl, locations, google_sheet, sheet) {
           locations$col$start_col_footnote,
           locations$col$end_col_footnote
         ),
-        bold = if (is.null(tbl$styles$subtitle$bold)) {
+        bold = if (is.null(tbl$styles$footnote$bold)) {
           TRUE
         } else {
-          tbl$styles$subtitle$bold
+          tbl$styles$footnote$bold
         },
-        italic = if (is.null(tbl$styles$subtitle$italic)) {
+        italic = if (is.null(tbl$styles$footnote$italic)) {
           FALSE
         } else {
-          tbl$styles$subtitle$italic
+          tbl$styles$footnote$italic
         },
-        font_size = if (is.null(tbl$styles$subtitle$font_size)) {
+        font_size = if (is.null(tbl$styles$footnote$font_size)) {
           10
         } else {
-          tbl$styles$subtitle$font_size
+          tbl$styles$footnote$font_size
         },
-        background_color = if (is.null(tbl$styles$subtitle$background_color)) {
+        background_color = if (is.null(tbl$styles$footnote$background_color)) {
           NULL
         } else {
-          tbl$styles$subtitle$background_color
+          tbl$styles$footnote$background_color
         },
-        text_color = if (is.null(tbl$styles$subtitle$text_color)) {
+        text_color = if (is.null(tbl$styles$footnote$text_color)) {
           NULL
         } else {
-          tbl$styles$subtitle$text_color
+          tbl$styles$footnote$text_color
         },
         format = NULL
       )
