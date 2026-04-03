@@ -562,7 +562,12 @@ write_data_openxlsx <- function(
         data_cols <- locations$col$start_col_header_lhs +
           which(names(column_styles) == column_name) -
           1
-        if (is(style$style$openxlsx, "Style")) {
+        if (
+          methods::is(
+            style$style$openxlsx,
+            methods::getClass("Style", where = asNamespace("openxlsx"))
+          )
+        ) {
           openxlsx::addStyle(
             wb = workbook,
             sheet = sheet,
