@@ -6,7 +6,7 @@ build_tablespan_test_tables <- function() {
 
     summarized_table <- mtcars |>
         dplyr::summarise(
-            N = n(),
+            N = dplyr::n(),
             mean_hp = mean(hp),
             sd_hp = sd(hp),
             mean_wt = mean(wt),
@@ -155,7 +155,7 @@ build_tablespan_test_tables <- function() {
         tablespan::style_footnote(font_size = 8) |>
         tablespan::style_header(background_color = "#B65455", bold = TRUE)
 
-    tables$cars_title_subtitle_footnote_header_format_cell_style <- tables$cars |>
+    tables$cars_tsf_hf_cell_style <- tables$cars |>
         tablespan::style_title(
             background_color = "#983439",
             text_color = "#ffffff",
@@ -195,7 +195,7 @@ build_tablespan_test_tables <- function() {
         )
     )
 
-    tables$cars_title_subtitle_footnote_header_format_color_scale_2_cell_style <- tables$cars |>
+    tables$cars_tsf_hf_cs2_cell_style <- tables$cars |>
         tablespan::style_title(
             background_color = "#983439",
             text_color = "#ffffff",
@@ -240,7 +240,7 @@ build_tablespan_test_tables <- function() {
         )
     )
 
-    tables$cars_title_subtitle_footnote_header_format_color_scale_3_cell_style <- tables$cars |>
+    tables$cars_tsf_hf_cs3_cell_style <- tables$cars |>
         tablespan::style_title(
             background_color = "#983439",
             text_color = "#ffffff",
@@ -350,4 +350,50 @@ build_tablespan_test_tables <- function() {
         ),
         tables = tables
     ))
+}
+
+create_excel_reference_tables <- function() {
+    ref_tables <- build_tablespan_test_tables()
+    reference_excel <- openxlsx::createWorkbook()
+
+    sheet_names <- c(
+        names(ref_tables$tables),
+        "cars_tsf_hf_cs3_cell_style_shifted"
+    )
+
+    # sheet names must be less than 31 characters
+    sheet_names <- substr(sheet_names, 1, 29)
+    sheet_names <- make.unique(sheet_names, sep = "_")
+    names(sheet_names) <- c(
+        names(ref_tables$tables),
+        "cars_tsf_hf_cs3_cell_style_shifted"
+    )
+
+    for (tbl in names(ref_tables$tables)) {
+        reference_excel <- tablespan::as_excel(
+            ref_tables$tables[[tbl]],
+            workbook = reference_excel,
+            sheet = sheet_names[tbl]
+        )
+    }
+
+    reference_excel <- tablespan::as_excel(
+        ref_tables$tables$cars_tsf_hf_cs3_cell_style,
+        reference_excel,
+        sheet = sheet_names[
+            paste0(
+                "cars_tsf_hf_cs3_cell_style",
+                "_shifted"
+            )
+        ],
+        start_row = 5,
+        start_col = 3
+    )
+
+    # write to the xlsx_files directory
+    openxlsx::saveWorkbook(
+        reference_excel,
+        file = file.path("xlsx_files", "reference_tables.xlsx"),
+        overwrite = TRUE
+    )
 }

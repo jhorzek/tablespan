@@ -56,12 +56,13 @@ get_formats_openxlsx <- function(tbl) {
           length(formats$columns[[column_name]]) + 1
         ]] <- local({
           format_str <- form$fmt$args$format
+          format_style <- format_date_openxlsx(format_str)
           list(
             openxlsx = function(wb, sheet, row, col) {
               return(openxlsx::addStyle(
                 wb = wb,
                 sheet = sheet,
-                style = format_str,
+                style = format_style,
                 rows = row,
                 cols = col,
                 stack = TRUE,
@@ -128,4 +129,60 @@ format_number_openxlsx <- function(decimals, sep_mark, dec_mark) {
 format_text_openxlsx <- function() {
   require_openxlsx()
   return(openxlsx::createStyle(numFmt = "TEXT"))
+}
+
+format_date_openxlsx <- function(format_str) {
+  require_openxlsx()
+  return(openxlsx::createStyle(numFmt = format_str))
+}
+
+format_to_openxlsx_date_style <- function(format_str = NULL) {
+  # Default ISO format
+  iso_format <- "yyyy-mm-dd"
+
+  # Mapping from R strftime -> Excel format
+  mappings <- c(
+    "%Y-%m-%d" = "yyyy-mm-dd",
+    "%Y/%m/%d" = "yyyy/mm/dd",
+    "%d/%m/%Y" = "dd/mm/yyyy",
+    "%m/%d/%Y" = "mm/dd/yyyy",
+    "%d.%m.%Y" = "dd.mm.yyyy",
+    "%Y" = "yyyy",
+    "%b %Y" = "mmm yyyy",
+    "%B %Y" = "mmmm yyyy",
+    "%d-%b-%Y" = "dd-mmm-yyyy",
+    "%d-%B-%Y" = "dd-mmmm-yyyy"
+  )
+
+  # If NULL or empty: default ISO
+  if (is.null(format_str) || !nzchar(format_str)) {
+    return(iso_format)
+  }
+
+  # Direct match
+  if (format_str %in% names(mappings)) {
+    return(unname(mappings[format_str]))
+  }
+
+  # Basic token replacement (fallback for simple formats)
+  converted <- format_str
+
+  converted <- gsub("%Y", "yyyy", converted)
+  converted <- gsub("%y", "yy", converted)
+  converted <- gsub("%m", "mm", converted)
+  converted <- gsub("%d", "dd", converted)
+  converted <- gsub("%b", "mmm", converted)
+  converted <- gsub("%B", "mmmm", converted)
+
+  # If nothing changed, warn and return ISO
+  if (identical(converted, format_str)) {
+    warning(
+      "Unknown format: ",
+      format_str,
+      ". Falling back to ISO format (yyyy-mm-dd)."
+    )
+    return(iso_format)
+  }
+
+  return(converted)
 }

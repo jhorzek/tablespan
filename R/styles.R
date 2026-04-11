@@ -42,34 +42,6 @@ default_styles <- function(tbl) {
   return(tbl)
 }
 
-#' default_styles_flex
-#'
-#' Sets the default styles for flextable tables in a tablespan table.
-#'
-#' This function adds default styling for flextable tables to the provided default_styles list.
-#' If the flextable package is not available, the original default_styles are returned unchanged.
-#'
-#' @param default_styles a list containing default styles for different table elements
-#' @returns a list with default styles for flextable tables added to the input default_styles
-#' @noRd
-default_styles_flex <- function(default_styles) {
-  if (!requireNamespace("flextable", quietly = TRUE)) {
-    return(default_styles)
-  }
-
-  default <- list(function(tbl, row, col, part) {
-    return(tbl)
-  })
-  default_styles$title$flex <- default
-  default_styles$subtitle$flex <- default
-  default_styles$header$flex <- default
-  default_styles$header_cells$flex <- default
-  default_styles$footnote$flex <- default
-  default_styles$hline$flex <- default
-  default_styles$vline$flex <- default
-  return(default_styles)
-}
-
 #' style_title
 #'
 #' Set the style used for the title of the tablespan table.

@@ -10,7 +10,7 @@ test_that("googlesheet snapshots contain no sensitive information", {
   snapshots_dir <- testthat::test_path("_snaps")
   snapshot_files <- Sys.glob(file.path(
     snapshots_dir,
-    "Test*",
+    "cars_*",
     "googlesheet-cars.md"
   ))
 
@@ -38,7 +38,10 @@ test_that("googlesheet snapshots contain no sensitive information", {
   )
 
   for (snapshot_file in snapshot_files) {
-    snapshot_text <- paste(readLines(snapshot_file, warn = FALSE), collapse = "\n")
+    snapshot_text <- paste(
+      readLines(snapshot_file, warn = FALSE),
+      collapse = "\n"
+    )
 
     expect_equal(
       count_fixed_matches(snapshot_text, placeholder_url),

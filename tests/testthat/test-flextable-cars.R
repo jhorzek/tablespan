@@ -286,7 +286,7 @@ test_that("cars - flextable styling", {
 
     compare_flextables(
         as_flextable(
-            test_tables$tables$cars_title_subtitle_footnote_header_format_cell_style
+            test_tables$tables$cars_tsf_hf_cell_style
         ),
         expected_base |>
             flextable::bg(i = 1:2, bg = "#983439", part = "header") |>
@@ -311,10 +311,10 @@ test_that("cars - flextable styling", {
     )
 
     testthat::expect_no_error(as_flextable(
-        test_tables$tables$cars_title_subtitle_footnote_header_format_color_scale_2_cell_style
+        test_tables$tables$cars_tsf_hf_cs2_cell_style
     ))
     testthat::expect_no_error(as_flextable(
-        test_tables$tables$cars_title_subtitle_footnote_header_format_color_scale_3_cell_style
+        test_tables$tables$cars_tsf_hf_cs3_cell_style
     ))
 })
 

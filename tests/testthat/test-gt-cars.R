@@ -334,7 +334,7 @@ test_that("cars-no_titles_no_footnotes", {
     gt::fmt_auto() |>
     gt::sub_missing(missing_text = "")
 
-  for (i in colnames(summarized_table)) {
+  for (i in colnames(test_tables$data$summarized_table)) {
     expected <- expected |>
       gt::fmt_number(
         columns = all_of(i),
@@ -414,7 +414,9 @@ test_that("cars-duplicated_spanner_names", {
     expected <- expected |>
       gt::fmt_number(
         columns = all_of(i),
-        decimals = tablespan:::smart_round(x = combined_models[[i]])
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$combined_models[[i]]
+        )
       )
   }
 
@@ -466,7 +468,9 @@ test_that("cars - gt styling", {
     expected_base <- expected_base |>
       gt::fmt_number(
         columns = all_of(i),
-        decimals = tablespan:::smart_round(x = summarized_table[[i]])
+        decimals = tablespan:::smart_round(
+          x = test_tables$data$summarized_table[[i]]
+        )
       )
   }
   compare_html_tables(
@@ -646,7 +650,7 @@ test_that("cars - gt styling", {
   )
 
   compare_html_tables(
-    test_tables$tables$cars_title_subtitle_footnote_header_format_cell_style |>
+    test_tables$tables$cars_tsf_hf_cell_style |>
       as_gt() |>
       gt::as_raw_html(),
     expected_base |>
@@ -711,12 +715,12 @@ test_that("cars - gt styling", {
   )
 
   testthat::expect_no_error(
-    test_tables$tables$cars_title_subtitle_footnote_header_format_color_scale_2_cell_style |>
+    test_tables$tables$cars_tsf_hf_cs2_cell_style |>
       as_gt()
   )
 
   testthat::expect_no_error(
-    test_tables$tables$cars_title_subtitle_footnote_header_format_color_scale_3_cell_style |>
+    test_tables$tables$cars_tsf_hf_cs3_cell_style |>
       as_gt()
   )
 })
@@ -763,7 +767,9 @@ test_that("date_text_base", {
 })
 
 test_that("date_text_formatted", {
-  gt_tbl <- as_gt(tbl = test_tables$tables$date_text_formatted)
+  testthat::expect_warning(
+    gt_tbl <- as_gt(tbl = test_tables$tables$date_text_formatted)
+  )
 
   expected <- test_tables$data$mixed_date_text_data |>
     gt::gt(groupname_col = NULL) |>

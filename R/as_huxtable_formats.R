@@ -50,13 +50,16 @@ get_formats_hux <- function(tbl) {
           length(formats$columns[[column_name]]) + 1
         ]] <- local({
           format_str <- form$fmt$args$format
+          format_fun = list(function(x) {
+            format(as.Date(x), format_str)
+          })
           list(
             hux = function(tbl, row, col) {
               huxtable::set_number_format(
-                x = tbl,
-                i = row,
-                j = col,
-                value = format_str
+                ht = tbl,
+                row = row,
+                col = col,
+                value = format_fun
               )
             },
             rows = form$row

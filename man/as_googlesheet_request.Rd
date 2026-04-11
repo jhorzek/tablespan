@@ -13,6 +13,7 @@ as_googlesheet_request(
   merge_rownames = TRUE,
   dry_run = is(google_sheet, "fake_sheet"),
   token = NULL,
+  escape_formulas = TRUE,
   silent = FALSE
 )
 }
@@ -34,6 +35,12 @@ as_googlesheet_request(
 \item{token}{optional token for authenticated requests. If NULL and `dry_run = FALSE`,
 tablespan will use `googlesheets4::gs4_token()` automatically.
 You can also pass an explicit token from `googlesheets4::gs4_token()`.}
+
+\item{escape_formulas}{should formulas be escaped to prevent execution in Google Sheets?
+Default is TRUE, which means that any cell content starting with "=" will be escaped by prefixing it with a single quote (').
+This ensures that the content is treated as text rather than a formula in Google Sheets.
+If set to FALSE, cells starting with "=" will be written as formulas and executed in
+Google Sheets. Use with caution if your data may contain content that could be interpreted as formulas.}
 
 \item{silent}{suppress messages when TRUE}
 }
