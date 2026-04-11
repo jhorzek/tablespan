@@ -12,10 +12,7 @@ style_subtitle(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
-  openxlsx_style = NULL,
-  gt_style = NULL,
-  hux_style = NULL,
-  flex_style = NULL
+  ...
 )
 ```
 
@@ -45,31 +42,9 @@ style_subtitle(
 
   set to TRUE for italic
 
-- openxlsx_style:
+- ...:
 
-  optional custom openxlsx style. When provided, all other arguments are
-  ignored
-
-- gt_style:
-
-  optional custom gt style. When provided, all other arguments are
-  ignored
-
-- hux_style:
-
-  optional custom huxtable style. When provided, all other arguments are
-  ignored. Must be a function with the following signature:
-  function(tbl, row, col){apply some style to the table and return the
-  table}. Example: function(tbl, row, col){tbl \|\>
-  huxtable::set_bold(row = row, col = col)}
-
-- flex_style:
-
-  optional custom flextable style. When provided, all other arguments
-  are ignored. Must be a function with the following signature:
-  function(tbl, row, col, part){apply some style to the table and return
-  the table}. Example: function(tbl, row, col, part){tbl \|\>
-  flextable::color(i = row, j = col, color = "red", part = part)}
+  optional additional arguments. Currently not used
 
 ## Value
 
@@ -99,8 +74,12 @@ summarized_table <- mtcars |>
             sd_hp = sd(hp),
             mean_wt = mean(wt),
             sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by cyl and vs.
+#> ℹ Output is grouped by cyl.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(cyl, vs))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 
 # Create a tablespan:
 tbl <- tablespan(data = summarized_table,

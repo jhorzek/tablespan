@@ -15,11 +15,8 @@ style_column(
   bold = FALSE,
   italic = FALSE,
   color_scale = NULL,
-  openxlsx_style = NULL,
-  gt_style = NULL,
-  hux_style = NULL,
-  flex_style = NULL,
-  stack = TRUE
+  stack = TRUE,
+  ...
 )
 ```
 
@@ -68,39 +65,19 @@ style_column(
   minimum, mean, or maximum respectively (e.g., color_scale =
   c("#EE2F43" = -1, "#FFFFFF" = 0, "#37E65A" = 1) will be replaced by
   color_scale = c("#EE2F43" = min(data), "#FFFFFF" = 0, "#37E65A" =
-  max(data))).
-
-- openxlsx_style:
-
-  optional custom openxlsx style. When provided, all other arguments are
-  ignored
-
-- gt_style:
-
-  optional custom gt style. When provided, all other arguments are
-  ignored
-
-- hux_style:
-
-  optional custom huxtable style. When provided, all other arguments are
-  ignored. Must be a function with the following signature:
-  function(tbl, row, col){apply some style to the table and return the
-  table}. Example: function(tbl, row, col){tbl \|\>
-  huxtable::set_bold(row = row, col = col)}
-
-- flex_style:
-
-  optional custom flextable style. When provided, all other arguments
-  are ignored. Must be a function with the following signature:
-  function(tbl, row, col, part){apply some style to the table and return
-  the table}. Example: function(tbl, row, col, part){tbl \|\>
-  flextable::color(i = row, j = col, color = "red", part = part)}
+  max(data))). NOTE: When exporting to gt, make sure to apply the color
+  scale before you change the text color; otherwise, gt will overwrite
+  the text color.
 
 - stack:
 
   When set to TRUE, the style is added on top of the existing styles.
   This is mostly relevant for openxlsx. When set to FALSE, the new style
   replaces all previous styling.
+
+- ...:
+
+  optional additional arguments. Currently not used
 
 ## Value
 
@@ -121,8 +98,12 @@ summarized_table <- mtcars |>
             sd_hp = sd(hp),
             mean_wt = mean(wt),
             sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by cyl and vs.
+#> ℹ Output is grouped by cyl.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(cyl, vs))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 
 # Create a tablespan:
 tbl <- tablespan(data = summarized_table,

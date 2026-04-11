@@ -52,7 +52,12 @@ is used to create the borders around cells in openxlsx.</p>
 <span>  font_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bold <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  italic <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  openxlsx_style <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  border_color <span class="op">=</span> <span class="st">"#000000"</span>,</span>
+<span>  top <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  bottom <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  left <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  right <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -84,8 +89,28 @@ is used to create the borders around cells in openxlsx.</p>
 <dd><p>set to TRUE for italic</p></dd>
 
 
-<dt id="arg-openxlsx-style">openxlsx_style<a class="anchor" aria-label="anchor" href="#arg-openxlsx-style"></a></dt>
-<dd><p>optional custom openxlsx style. When provided, all other arguments are ignored</p></dd>
+<dt id="arg-border-color">border_color<a class="anchor" aria-label="anchor" href="#arg-border-color"></a></dt>
+<dd><p>set the color of the border for the header cells</p></dd>
+
+
+<dt id="arg-top">top<a class="anchor" aria-label="anchor" href="#arg-top"></a></dt>
+<dd><p>boolean. Set to TRUE to add a top border</p></dd>
+
+
+<dt id="arg-bottom">bottom<a class="anchor" aria-label="anchor" href="#arg-bottom"></a></dt>
+<dd><p>boolean. Set to TRUE to add a bottom border</p></dd>
+
+
+<dt id="arg-left">left<a class="anchor" aria-label="anchor" href="#arg-left"></a></dt>
+<dd><p>boolean. Set to TRUE to add a left border</p></dd>
+
+
+<dt id="arg-right">right<a class="anchor" aria-label="anchor" href="#arg-right"></a></dt>
+<dd><p>boolean. Set to TRUE to add a right border</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>optional additional arguments. Currently not used</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -112,8 +137,12 @@ will then be applied to the header</p>
 <span class="r-in"><span>            sd_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            mean_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> argument.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `summarise()` has regrouped the output.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summaries were computed grouped by <span style="color: #0000BB;">cyl</span> and <span style="color: #0000BB;">vs</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Output is grouped by <span style="color: #0000BB;">cyl</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use `summarise(.groups = "drop_last")` to silence this message.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use `summarise(.by = c(cyl, vs))` for per-operation grouping</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   (`?dplyr::dplyr_by`) instead.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a tablespan:</span></span></span>
 <span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span></span>

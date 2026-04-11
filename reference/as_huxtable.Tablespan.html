@@ -81,8 +81,12 @@ is easy to export to all formats directly supported by huxtable.</p>
 <span class="r-in"><span>            sd_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            mean_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> argument.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `summarise()` has regrouped the output.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summaries were computed grouped by <span style="color: #0000BB;">cyl</span> and <span style="color: #0000BB;">vs</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Output is grouped by <span style="color: #0000BB;">cyl</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use `summarise(.groups = "drop_last")` to silence this message.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use `summarise(.by = c(cyl, vs))` for per-operation grouping</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   (`?dplyr::dplyr_by`) instead.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span></span>
 <span class="r-in"><span>                 formula <span class="op">=</span> <span class="op">(</span><span class="va">LHS</span> <span class="op">=</span> <span class="va">Cylinder</span><span class="op">:</span><span class="va">cyl</span> <span class="op">+</span> <span class="va">Engine</span><span class="op">:</span><span class="va">vs</span><span class="op">)</span> <span class="op">~</span></span></span>
@@ -103,19 +107,19 @@ is easy to export to all formats directly supported by huxtable.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:dplyr’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     add_rownames</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           ┌───────────────────┬────┬─────────────────────────────────┐</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           │                   │    │ Results                         │</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           ├───────────────────┤    ├─────────────────┬───────────────┤</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           │ LHS               │    │ Horse Power     │ Weight        │</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           ├──────────┬────────┼────┼────────┬────────┼────────┬──────┤</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           │ Cylinder │ Engine │ N  │ Mean   │ SD     │ Mean   │ SD   │</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           ├──────────┴────────┼────┴────────┴────────┴────────┴──────┤</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           │        4        0 │  1    91.00            2.1400        │</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           │        4        1 │ 10    81.80   21.872   2.3003   0.60 │</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           │        6        0 │  3   131.67   37.528   2.7550   0.13 │</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           │        6        1 │  4   115.25    9.179   3.3887   0.12 │</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           │        8        0 │ 14   209.21   50.977   3.9992   0.76 │</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           └───────────────────┴──────────────────────────────────────┘</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ┌───────────────────┬───────┬──────────────────────────────────┐</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         │                   │       │ Results                          │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ├───────────────────┤       ├─────────────────┬────────────────┤</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         │ LHS               │       │ Horse Power     │ Weight         │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ├──────────┬────────┼───────┼────────┬────────┼────────┬───────┤</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         │ Cylinder │ Engine │ N     │ Mean   │ SD     │ Mean   │ SD    │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ├──────────┴────────┼───────┴────────┴────────┴────────┴───────┤</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         │        4        0 │     1    91.00            2.1400         │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         │        4        1 │    10    81.80   21.872   2.3003    0.60 │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         │        6        0 │     3   131.67   37.528   2.7550    0.13 │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         │        6        1 │     4   115.25    9.179   3.3887    0.12 │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         │        8        0 │    14   209.21   50.977   3.9992    0.76 │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         └───────────────────┴──────────────────────────────────────────┘</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Column names: cyl, vs, N, mean_hp, sd_hp, mean_wt, sd_wt</span>
 </code></pre></div>

@@ -9,10 +9,7 @@ format_column(
   tbl,
   columns = dplyr::everything(),
   rows = NULL,
-  format_gt = gt::fmt_auto,
-  format_openxlsx = "GENERAL",
-  format_hux = NULL,
-  format_flex = NULL,
+  fmt,
   stack = TRUE
 )
 ```
@@ -33,26 +30,10 @@ format_column(
   indices of the rows which should be styled. When set to NULL, the
   style is applied to all rows
 
-- format_gt:
+- fmt:
 
-  formatting used for gt. This must be a function with the following
-  signature: function(tbl, columns, rows, ...) and return the tbl with
-  applied formatting. See examples.
-
-- format_openxlsx:
-
-  an argument passed to the numFmt field for openxlsx::createStyle.
-
-- format_hux:
-
-  set to NULL to use default formatting. Alternative, use a value that
-  can be passed to huxtable::set_number_format()
-
-- format_flex:
-
-  formatting used for flextable. Must be a function with the following
-  signature: function(tbl, i, j, part) and must return the tbl object
-  with applied formatting.
+  fromatting object. Use format_number to format numeric values,
+  format_text for text elements, and format_date for dates.
 
 - stack:
 
@@ -79,8 +60,12 @@ summarized_table <- mtcars |>
             sd_hp = sd(hp),
             mean_wt = mean(wt),
             sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by cyl and vs.
+#> ℹ Output is grouped by cyl.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(cyl, vs))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 
 # Create a tablespan:
 tbl <- tablespan(data = summarized_table,
@@ -92,17 +77,13 @@ tbl <- tablespan(data = summarized_table,
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
 
-if(require_gt(throw = FALSE))
+if(require_gt(throw = FALSE)){
 tbl |>
   format_column(columns = mean_hp,
                 rows = c(1,3),
-                format_gt = function(tbl, columns, rows, ...){
-                             return(gt::fmt_number(tbl,
-                                       columns = columns,
-                                       rows = rows,
-                                       decimals = 4))},
-                format_openxlsx = "0.0000") |>
+                fmt = format_number(decimals = 4)) |>
   as_gt()
+}
 
 
   

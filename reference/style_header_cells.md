@@ -13,7 +13,12 @@ style_header_cells(
   font_size = NULL,
   bold = FALSE,
   italic = FALSE,
-  openxlsx_style = NULL
+  border_color = "#000000",
+  top = FALSE,
+  bottom = TRUE,
+  left = TRUE,
+  right = TRUE,
+  ...
 )
 ```
 
@@ -43,10 +48,29 @@ style_header_cells(
 
   set to TRUE for italic
 
-- openxlsx_style:
+- border_color:
 
-  optional custom openxlsx style. When provided, all other arguments are
-  ignored
+  set the color of the border for the header cells
+
+- top:
+
+  boolean. Set to TRUE to add a top border
+
+- bottom:
+
+  boolean. Set to TRUE to add a bottom border
+
+- left:
+
+  boolean. Set to TRUE to add a left border
+
+- right:
+
+  boolean. Set to TRUE to add a right border
+
+- ...:
+
+  optional additional arguments. Currently not used
 
 ## Value
 
@@ -72,8 +96,12 @@ summarized_table <- mtcars |>
             sd_hp = sd(hp),
             mean_wt = mean(wt),
             sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by cyl and vs.
+#> ℹ Output is grouped by cyl.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(cyl, vs))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 
 # Create a tablespan:
 tbl <- tablespan(data = summarized_table,

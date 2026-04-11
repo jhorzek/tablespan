@@ -72,14 +72,12 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mtcars"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">summarized_table</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>            mean_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
 <span>            sd_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
 <span>            mean_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
-<span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span></span>
-<span><span class="co">#&gt; argument.</span></span>
+<span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
+<span>            .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>                 formula <span class="op">=</span> <span class="va">Cylinder</span><span class="op">:</span><span class="va">cyl</span> <span class="op">+</span> <span class="va">Engine</span><span class="op">:</span><span class="va">vs</span> <span class="op">~</span></span>
@@ -89,6 +87,8 @@
 <span>                 title <span class="op">=</span> <span class="st">"Motor Trend Car Road Tests"</span>,</span>
 <span>                 subtitle <span class="op">=</span> <span class="st">"A table created with tablespan"</span>,</span>
 <span>                 footnote <span class="op">=</span> <span class="st">"Data from the infamous mtcars data set."</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in tablespan(data = summarized_table, formula = Cylinder:cyl +</span></span>
+<span><span class="co">#&gt; Engine:vs ~ : Tablespan uses tibble internally. Translating data to tibble</span></span>
 <span><span class="va">tbl</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Motor Trend Car Road Tests</span></span>
@@ -97,17 +97,17 @@
 <span><span class="co">#&gt;  |                 |     Horse Power       Weight      |</span></span>
 <span><span class="co">#&gt;  | Cylinder Engine | N   Mean        SD    Mean   SD   |</span></span>
 <span><span class="co">#&gt;  | -------- ------ - --  ----------- ----- ------ ---- |</span></span>
-<span><span class="co">#&gt;  | 4        0      | 1   91                2.14        |</span></span>
-<span><span class="co">#&gt;  | 4        1      | 10  81.8        21.87 2.3    0.6  |</span></span>
 <span><span class="co">#&gt;  | 6        0      | 3   131.67      37.53 2.76   0.13 |</span></span>
+<span><span class="co">#&gt;  | 4        1      | 10  81.8        21.87 2.3    0.6  |</span></span>
+<span><span class="co">#&gt;  | 6        1      | 4   115.25      9.18  3.39   0.12 |</span></span>
 <span><span class="co">#&gt;  | ...      ...    | ... ...         ...   ...    ...  |</span></span>
 <span><span class="co">#&gt; Data from the infamous mtcars data set.</span></span></code></pre></div>
 <p>This basic table can now be easily exported to other table formats.</p>
 </div>
 <div class="section level1">
-<h1 id="r-packages-for-table-conversion-and-export">R Packages for Table Conversion and Export<a class="anchor" aria-label="anchor" href="#r-packages-for-table-conversion-and-export"></a>
+<h1 id="table-conversion-and-export">Table Conversion and Export<a class="anchor" aria-label="anchor" href="#table-conversion-and-export"></a>
 </h1>
-<p><code>tablespan</code> builds on the awesome packages <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>, <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> , <a href="https://ardata-fr.github.io/flextable-book/index.html" class="external-link"><code>flextable</code></a>, and <a href="https://hughjonesd.github.io/huxtable/index.html" class="external-link"><code>huxtable</code></a>. This allows <code>tablespan</code> tables to be exported to a large number of formats:</p>
+<p><code>tablespan</code> builds on the awesome packages <a href="https://gt.rstudio.com/" class="external-link"><code>gt</code></a>, <a href="https://ycphs.github.io/openxlsx/" class="external-link"><code>openxlsx</code></a> , <a href="https://ardata-fr.github.io/flextable-book/index.html" class="external-link"><code>flextable</code></a>, <a href="https://hughjonesd.github.io/huxtable/index.html" class="external-link"><code>huxtable</code></a>, and <a href="https://googlesheets4.tidyverse.org" class="external-link"><code>googlesheets4</code></a>. This allows <code>tablespan</code> tables to be exported to a large number of formats:</p>
 <table class="table">
 <colgroup>
 <col width="25%">
@@ -123,16 +123,28 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td>–</td>
+<td><code><a href="reference/as_string.html">as_string()</a></code></td>
+<td>Exporting the table to string can be very useful for copy-pasting the table (e.g., to send in a message or use as input to an LLM).</td>
+<td>String</td>
+</tr>
+<tr class="even">
 <td><strong>gt</strong></td>
 <td><code><a href="reference/as_gt.html">as_gt()</a></code></td>
 <td>The <strong>gt</strong> package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout.</td>
 <td>HTML, PDF, PNG, LaTeX, RTF, Word (<a href="https://gt.rstudio.com/reference/gtsave.html" class="external-link">docs</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><strong>openxlsx</strong></td>
 <td><code><a href="reference/as_excel.html">as_excel()</a></code></td>
 <td>The <strong>openxlsx</strong> package offers Excel file creation and manipulation. Great for reporting tables to end-users.</td>
 <td>Excel (<a href="https://ycphs.github.io/openxlsx/index.html" class="external-link">docs</a>)</td>
+</tr>
+<tr class="even">
+<td><strong>googlesheets4</strong></td>
+<td><code><a href="reference/as_googlesheet_request.html">as_googlesheet_request()</a></code></td>
+<td>Using <strong>googlesheets4</strong> (<a href="https://googlesheets4.tidyverse.org" class="external-link">docs</a>), <strong>tablespan</strong> tables can be directly exported into google sheets requests that can be executed with <code><a href="https://googlesheets4.tidyverse.org/reference/request_make.html" class="external-link">googlesheets4::request_make</a></code>. Experimental; use at your own risk</td>
+<td>google sheets</td>
 </tr>
 <tr class="odd">
 <td><strong>flextable</strong></td>
@@ -171,25 +183,20 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mtcars"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">summarized_table</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>            mean_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
 <span>            sd_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
 <span>            mean_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
-<span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span></span>
-<span><span class="co">#&gt; argument.</span></span>
+<span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
+<span>            .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">summarized_table</span>, use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 7</span></span>
-<span><span class="co">#&gt; # Groups:   cyl [3]</span></span>
-<span><span class="co">#&gt;     cyl    vs     N mean_hp sd_hp mean_wt  sd_wt</span></span>
-<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1     4     0     1    91   NA       2.14 NA    </span></span>
-<span><span class="co">#&gt; 2     4     1    10    81.8 21.9     2.30  0.598</span></span>
-<span><span class="co">#&gt; 3     6     0     3   132.  37.5     2.76  0.128</span></span>
-<span><span class="co">#&gt; 4     6     1     4   115.   9.18    3.39  0.116</span></span>
-<span><span class="co">#&gt; 5     8     0    14   209.  51.0     4.00  0.759</span></span></code></pre></div>
+<span><span class="co">#&gt;   cyl vs  N  mean_hp    sd_hp  mean_wt     sd_wt</span></span>
+<span><span class="co">#&gt; 1   6  0  3 131.6667 37.52777 2.755000 0.1281601</span></span>
+<span><span class="co">#&gt; 2   4  1 10  81.8000 21.87236 2.300300 0.5982073</span></span>
+<span><span class="co">#&gt; 3   6  1  4 115.2500  9.17878 3.388750 0.1162164</span></span>
+<span><span class="co">#&gt; 4   8  0 14 209.2143 50.97689 3.999214 0.7594047</span></span>
+<span><span class="co">#&gt; 5   4  0  1  91.0000       NA 2.140000        NA</span></span></code></pre></div>
 <p>We don’t want to share the table as is - the variable names are all a bit technical and the table could need some spanners summarizing columns. So, we want to share a table that looks something like this:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="sc">|</span>                   <span class="er">|</span> Horse Power <span class="sc">|</span>   Weight  <span class="sc">|</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="er">|</span> Cylinder <span class="sc">|</span> Engine <span class="sc">|</span> Mean  <span class="sc">|</span>  SD <span class="sc">|</span> Mean <span class="sc">|</span> SD <span class="sc">|</span></span>
@@ -205,12 +212,14 @@
 <span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in tablespan(data = summarized_table, formula = cyl ~ mean_hp + :</span></span>
+<span><span class="co">#&gt; Tablespan uses tibble internally. Translating data to tibble</span></span>
 <span><span class="co">#&gt;                         </span></span>
 <span><span class="co">#&gt;  | cyl | mean_hp sd_hp |</span></span>
 <span><span class="co">#&gt;  | --- - ------- ----- |</span></span>
-<span><span class="co">#&gt;  | 4   | 91            |</span></span>
-<span><span class="co">#&gt;  | 4   | 81.8    21.87 |</span></span>
 <span><span class="co">#&gt;  | 6   | 131.67  37.53 |</span></span>
+<span><span class="co">#&gt;  | 4   | 81.8    21.87 |</span></span>
+<span><span class="co">#&gt;  | 6   | 115.25  9.18  |</span></span>
 <span><span class="co">#&gt;  | ... | ...     ...   |</span></span></code></pre></div>
 <p>Note that the row names (<code>cyl</code>) are in a separate block to the left.</p>
 </div>
@@ -222,27 +231,32 @@
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">mean_hp</span> <span class="op">+</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in tablespan(data = summarized_table, formula = cyl ~ (Horsepower =</span></span>
+<span><span class="co">#&gt; mean_hp + : Tablespan uses tibble internally. Translating data to tibble</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | cyl | mean_hp    sd_hp |</span></span>
 <span><span class="co">#&gt;  | --- - ---------- ----- |</span></span>
-<span><span class="co">#&gt;  | 4   | 91               |</span></span>
-<span><span class="co">#&gt;  | 4   | 81.8       21.87 |</span></span>
 <span><span class="co">#&gt;  | 6   | 131.67     37.53 |</span></span>
+<span><span class="co">#&gt;  | 4   | 81.8       21.87 |</span></span>
+<span><span class="co">#&gt;  | 6   | 115.25     9.18  |</span></span>
 <span><span class="co">#&gt;  | ... | ...        ...   |</span></span></code></pre></div>
 <p>Spanners can also be nested:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="op">(</span><span class="va">Mean</span> <span class="op">=</span> <span class="va">mean_hp</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">SD</span>  <span class="op">=</span> <span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in tablespan(data = summarized_table, formula = cyl ~ (Horsepower =</span></span>
+<span><span class="co">#&gt; (Mean = mean_hp) + : Tablespan uses tibble internally. Translating data to</span></span>
+<span><span class="co">#&gt; tibble</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  |     | Mean       SD    |</span></span>
 <span><span class="co">#&gt;  | cyl | mean_hp    sd_hp |</span></span>
 <span><span class="co">#&gt;  | --- - ---------- ----- |</span></span>
-<span><span class="co">#&gt;  | 4   | 91               |</span></span>
-<span><span class="co">#&gt;  | 4   | 81.8       21.87 |</span></span>
 <span><span class="co">#&gt;  | 6   | 131.67     37.53 |</span></span>
+<span><span class="co">#&gt;  | 4   | 81.8       21.87 |</span></span>
+<span><span class="co">#&gt;  | 6   | 115.25     9.18  |</span></span>
 <span><span class="co">#&gt;  | ... | ...        ...   |</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -253,13 +267,15 @@
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="va">cyl</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in tablespan(data = summarized_table, formula = cyl ~ (Horsepower =</span></span>
+<span><span class="co">#&gt; Mean:mean_hp + : Tablespan uses tibble internally. Translating data to tibble</span></span>
 <span><span class="co">#&gt;                            </span></span>
 <span><span class="co">#&gt;  |     | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | cyl | Mean       SD    |</span></span>
 <span><span class="co">#&gt;  | --- - ---------- ----- |</span></span>
-<span><span class="co">#&gt;  | 4   | 91               |</span></span>
-<span><span class="co">#&gt;  | 4   | 81.8       21.87 |</span></span>
 <span><span class="co">#&gt;  | 6   | 131.67     37.53 |</span></span>
+<span><span class="co">#&gt;  | 4   | 81.8       21.87 |</span></span>
+<span><span class="co">#&gt;  | 6   | 115.25     9.18  |</span></span>
 <span><span class="co">#&gt;  | ... | ...        ...   |</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -272,14 +288,12 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mtcars"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">summarized_table</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>            mean_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
 <span>            sd_hp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hp</span><span class="op">)</span>,</span>
 <span>            mean_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
-<span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; `summarise()` has grouped output by 'cyl'. You can override using the `.groups`</span></span>
-<span><span class="co">#&gt; argument.</span></span>
+<span>            sd_wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span>,</span>
+<span>            .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>                 formula <span class="op">=</span> <span class="va">Cylinder</span><span class="op">:</span><span class="va">cyl</span> <span class="op">+</span> <span class="va">Engine</span><span class="op">:</span><span class="va">vs</span> <span class="op">~</span></span>
@@ -289,6 +303,8 @@
 <span>                 title <span class="op">=</span> <span class="st">"Motor Trend Car Road Tests"</span>,</span>
 <span>                 subtitle <span class="op">=</span> <span class="st">"A table created with tablespan"</span>,</span>
 <span>                 footnote <span class="op">=</span> <span class="st">"Data from the infamous mtcars data set."</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in tablespan(data = summarized_table, formula = Cylinder:cyl +</span></span>
+<span><span class="co">#&gt; Engine:vs ~ : Tablespan uses tibble internally. Translating data to tibble</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tbl</span>, use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Motor Trend Car Road Tests</span></span>
@@ -297,9 +313,9 @@
 <span><span class="co">#&gt;  |                 |     Horse Power       Weight      |</span></span>
 <span><span class="co">#&gt;  | Cylinder Engine | N   Mean        SD    Mean   SD   |</span></span>
 <span><span class="co">#&gt;  | -------- ------ - --  ----------- ----- ------ ---- |</span></span>
-<span><span class="co">#&gt;  | 4        0      | 1   91                2.14        |</span></span>
-<span><span class="co">#&gt;  | 4        1      | 10  81.8        21.87 2.3    0.6  |</span></span>
 <span><span class="co">#&gt;  | 6        0      | 3   131.67      37.53 2.76   0.13 |</span></span>
+<span><span class="co">#&gt;  | 4        1      | 10  81.8        21.87 2.3    0.6  |</span></span>
+<span><span class="co">#&gt;  | 6        1      | 4   115.25      9.18  3.39   0.12 |</span></span>
 <span><span class="co">#&gt;  | ...      ...    | ... ...         ...   ...    ...  |</span></span>
 <span><span class="co">#&gt; Data from the infamous mtcars data set.</span></span></code></pre></div>
 </div>
@@ -311,13 +327,15 @@
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tablespan.html">tablespan</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">summarized_table</span>,</span>
 <span>          formula <span class="op">=</span> <span class="fl">1</span> <span class="op">~</span> <span class="op">(</span><span class="va">Horsepower</span> <span class="op">=</span> <span class="va">Mean</span><span class="op">:</span><span class="va">mean_hp</span> <span class="op">+</span> <span class="va">SD</span><span class="op">:</span><span class="va">sd_hp</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>use_hux <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in tablespan(data = summarized_table, formula = 1 ~ (Horsepower =</span></span>
+<span><span class="co">#&gt; Mean:mean_hp + : Tablespan uses tibble internally. Translating data to tibble</span></span>
 <span><span class="co">#&gt;                      </span></span>
 <span><span class="co">#&gt;  | Horsepower       |</span></span>
 <span><span class="co">#&gt;  | Mean       SD    |</span></span>
 <span><span class="co">#&gt;  | ---------- ----- |</span></span>
-<span><span class="co">#&gt;  | 91               |</span></span>
-<span><span class="co">#&gt;  | 81.8       21.87 |</span></span>
 <span><span class="co">#&gt;  | 131.67     37.53 |</span></span>
+<span><span class="co">#&gt;  | 81.8       21.87 |</span></span>
+<span><span class="co">#&gt;  | 115.25     9.18  |</span></span>
 <span><span class="co">#&gt;  | ...        ...   |</span></span></code></pre></div>
 </div>
 </div>
@@ -463,21 +481,13 @@
 <div class="section level2">
 <h2 id="formatting">Formatting<a class="anchor" aria-label="anchor" href="#formatting"></a>
 </h2>
-<p>In addition to applying specific styles to the table, you can also adapt the number formatting. The current setup is slightly more complicated because unifying all of the possible styles supported by <code>gt</code> and <code>openxlsx</code> is challenging.</p>
+<p>In addition to applying specific styles to the table, you can also adapt the number formatting.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/format_column.html">format_column</a></span><span class="op">(</span></span>
 <span>        columns <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/where.html" class="external-link">where</a></span><span class="op">(</span><span class="va">is.double</span><span class="op">)</span>,</span>
 <span>        rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">3</span>,</span>
-<span>        <span class="co"># For great tables, we need a function that </span></span>
-<span>        <span class="co"># takes in the table, columns, and rows and then</span></span>
-<span>        <span class="co"># applies the style</span></span>
-<span>        format_gt <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">columns</span>, <span class="va">rows</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>          <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/fmt_number.html" class="external-link">fmt_number</a></span><span class="op">(</span><span class="va">x</span>, columns <span class="op">=</span> <span class="va">columns</span>, rows <span class="op">=</span> <span class="va">rows</span>, decimals <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span>        <span class="op">}</span>,</span>
-<span>        <span class="co"># For openxlsx, we have to provide the style that will be passed</span></span>
-<span>        <span class="co"># to numFmt in openxlsx::createStyle</span></span>
-<span>        format_openxlsx <span class="op">=</span> <span class="st">"0.0000"</span></span>
+<span>        fmt <span class="op">=</span> <span class="fu"><a href="reference/format_number.html">format_number</a></span><span class="op">(</span>decimals <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span>      <span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/as_gt.html">as_gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
@@ -531,6 +541,7 @@
 <ul>
 <li>gt: Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K, Roy O (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.11.1.9000, <a href="https://github.com/rstudio/gt" class="external-link uri">https://github.com/rstudio/gt</a>, <a href="https://gt.rstudio.com" class="external-link uri">https://gt.rstudio.com</a>.</li>
 <li>openxlsx: Schauberger P, Walker A (2023). <em>openxlsx: Read, Write and Edit xlsx Files</em>. R package version 4.2.5.2, <a href="https://ycphs.github.io/openxlsx/" class="external-link uri">https://ycphs.github.io/openxlsx/</a>.</li>
+<li>googlesheets4: Bryan, J. (2025). <em>googlesheets4: Access Google Sheets using the Sheets API V4</em>. R package version 1.1.2, <a href="https://CRAN.R-project.org/package=googlesheets4" class="external-link uri">https://CRAN.R-project.org/package=googlesheets4</a>.</li>
 <li>flextable: Gohel D, Skintzos P (2025). <em>flextable: Functions for Tabular Reporting</em>. R package version 0.9.10, <a href="https://CRAN.R-project.org/package=flextable" class="external-link uri">https://CRAN.R-project.org/package=flextable</a>
 </li>
 <li>huxtable: Hugh-Jones D (2025). <em>huxtable: Easily Create and Style Tables for LaTeX, HTML and Other Formats</em>. R package version 5.8.0, <a href="https://CRAN.R-project.org/package=huxtable" class="external-link uri">https://CRAN.R-project.org/package=huxtable</a>

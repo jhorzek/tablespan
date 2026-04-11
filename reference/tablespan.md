@@ -149,8 +149,12 @@ summarized_table <- mtcars |>
             sd_hp = sd(hp),
             mean_wt = mean(wt),
             sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by cyl and vs.
+#> ℹ Output is grouped by cyl.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(cyl, vs))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 
 # Create a tablespan:
 tbl <- tablespan(data = summarized_table,
@@ -163,21 +167,20 @@ tbl <- tablespan(data = summarized_table,
                  footnote = "Data from the infamous mtcars data set.")
 
 tbl
-#>             Motor Trend Car Road Tests                                
-#>             A table created with tablespan                            
-#>           ┌───────────────────┬────┬─────────────────┬───────────────┐
-#>           │                   │    │ Horse Power     │ Weight        │
-#>           ├──────────┬────────┼────┼────────┬────────┼────────┬──────┤
-#>           │ Cylinder │ Engine │ N  │ Mean   │ SD     │ Mean   │ SD   │
-#>           ├──────────┴────────┼────┴────────┴────────┴────────┴──────┤
-#>           │        4        0 │  1    91.00            2.1400        │
-#>           │        4        1 │ 10    81.80   21.872   2.3003   0.60 │
-#>           │        6        0 │  3   131.67   37.528   2.7550   0.13 │
-#>           │        6        1 │  4   115.25    9.179   3.3887   0.12 │
-#>           │        8        0 │ 14   209.21   50.977   3.9992   0.76 │
-#>           └───────────────────┴──────────────────────────────────────┘
-#>             Data from the infamous mtcars data                        
-#>             set.                                                      
+#>           Motor Trend Car Road Tests                                    
+#>           A table created with tablespan                                
+#>         ┌───────────────────┬───────┬─────────────────┬────────────────┐
+#>         │                   │       │ Horse Power     │ Weight         │
+#>         ├──────────┬────────┼───────┼────────┬────────┼────────┬───────┤
+#>         │ Cylinder │ Engine │ N     │ Mean   │ SD     │ Mean   │ SD    │
+#>         ├──────────┴────────┼───────┴────────┴────────┴────────┴───────┤
+#>         │        4        0 │     1    91.00            2.1400         │
+#>         │        4        1 │    10    81.80   21.872   2.3003    0.60 │
+#>         │        6        0 │     3   131.67   37.528   2.7550    0.13 │
+#>         │        6        1 │     4   115.25    9.179   3.3887    0.12 │
+#>         │        8        0 │    14   209.21   50.977   3.9992    0.76 │
+#>         └───────────────────┴──────────────────────────────────────────┘
+#>           Data from the infamous mtcars data set.                       
 #> 
 #> Column names: cyl, vs, N, mean_hp, sd_hp, mean_wt, sd_wt
 
@@ -320,14 +323,14 @@ if([require_huxtable](https://jhorzek.github.io/tablespan/reference/require_huxt
 = FALSE)) {
 huxtable::[as_huxtable](https://hughjonesd.github.io/huxtable/reference/as_huxtable.html)(tbl)
 } \#\> Motor Trend Car Road Tests \#\> A table created with tablespan
-\#\> ┌───────────────────┬────┬─────────────────┬───────────────┐ \#\> │
-│ │ Horse Power │ Weight │ \#\>
-├──────────┬────────┼────┼────────┬────────┼────────┬──────┤ \#\> │
+\#\> ┌───────────────────┬───────┬─────────────────┬────────────────┐
+\#\> │ │ │ Horse Power │ Weight │ \#\>
+├──────────┬────────┼───────┼────────┬────────┼────────┬───────┤ \#\> │
 Cylinder │ Engine │ N │ Mean │ SD │ Mean │ SD │ \#\>
-├──────────┴────────┼────┴────────┴────────┴────────┴──────┤ \#\> │ 4 0
-│ 1 91.00      2.1400     │ \#\> │ 4 1 │ 10 81.80 21.872 2.3003 0.60 │
-\#\> │ 6 0 │ 3 131.67 37.528 2.7550 0.13 │ \#\> │ 6 1 │ 4 115.25 9.179
+├──────────┴────────┼───────┴────────┴────────┴────────┴───────┤ \#\> │
+4 0 │ 1 91.00      2.1400     │ \#\> │ 4 1 │ 10 81.80 21.872 2.3003 0.60
+│ \#\> │ 6 0 │ 3 131.67 37.528 2.7550 0.13 │ \#\> │ 6 1 │ 4 115.25 9.179
 3.3887 0.12 │ \#\> │ 8 0 │ 14 209.21 50.977 3.9992 0.76 │ \#\>
-└───────────────────┴──────────────────────────────────────┘ \#\> Data
-from the infamous mtcars data \#\> set. \#\> \#\> Column names: cyl, vs,
+└───────────────────┴──────────────────────────────────────────┘ \#\>
+Data from the infamous mtcars data set. \#\> \#\> Column names: cyl, vs,
 N, mean_hp, sd_hp, mean_wt, sd_wt

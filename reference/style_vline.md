@@ -6,7 +6,7 @@ Currently only supported for excel export.
 ## Usage
 
 ``` r
-style_vline(tbl, openxlsx_style)
+style_vline(tbl, color = "#000000", ...)
 ```
 
 ## Arguments
@@ -15,9 +15,13 @@ style_vline(tbl, openxlsx_style)
 
   tablespan table
 
-- openxlsx_style:
+- color:
 
-  style used when exporting to openxlsx
+  color used for the border
+
+- ...:
+
+  optional additional arguments. Currently not used
 
 ## Value
 
@@ -44,8 +48,12 @@ summarized_table <- mtcars |>
             sd_hp = sd(hp),
             mean_wt = mean(wt),
             sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by cyl and vs.
+#> ℹ Output is grouped by cyl.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(cyl, vs))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 
 # Create a tablespan:
 tbl <- tablespan(data = summarized_table,

@@ -19,14 +19,12 @@ library(tablespan)
 data("mtcars")
 
 summarized_table <- mtcars |>
-  group_by(cyl, vs) |>
   summarise(N = n(),
             mean_hp = mean(hp),
             sd_hp = sd(hp),
             mean_wt = mean(wt),
-            sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+            sd_wt = sd(wt),
+            .by = c(cyl, vs))
 
 tbl <- tablespan(data = summarized_table,
                  formula = Cylinder:cyl + Engine:vs ~
@@ -36,6 +34,8 @@ tbl <- tablespan(data = summarized_table,
                  title = "Motor Trend Car Road Tests",
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
+#> Warning in tablespan(data = summarized_table, formula = Cylinder:cyl +
+#> Engine:vs ~ : Tablespan uses tibble internally. Translating data to tibble
 tbl |>
   print(use_hux = FALSE)
 #> Motor Trend Car Road Tests
@@ -44,30 +44,33 @@ tbl |>
 #>  |                 |     Horse Power       Weight      |
 #>  | Cylinder Engine | N   Mean        SD    Mean   SD   |
 #>  | -------- ------ - --  ----------- ----- ------ ---- |
-#>  | 4        0      | 1   91                2.14        |
-#>  | 4        1      | 10  81.8        21.87 2.3    0.6  |
 #>  | 6        0      | 3   131.67      37.53 2.76   0.13 |
+#>  | 4        1      | 10  81.8        21.87 2.3    0.6  |
+#>  | 6        1      | 4   115.25      9.18  3.39   0.12 |
 #>  | ...      ...    | ... ...         ...   ...    ...  |
 #> Data from the infamous mtcars data set.
 ```
 
 This basic table can now be easily exported to other table formats.
 
-# R Packages for Table Conversion and Export
+# Table Conversion and Export
 
 `tablespan` builds on the awesome packages
 [`gt`](https://gt.rstudio.com/),
 [`openxlsx`](https://ycphs.github.io/openxlsx/) ,
 [`flextable`](https://ardata-fr.github.io/flextable-book/index.html),
-and [`huxtable`](https://hughjonesd.github.io/huxtable/index.html). This
-allows `tablespan` tables to be exported to a large number of formats:
+[`huxtable`](https://hughjonesd.github.io/huxtable/index.html), and
+[`googlesheets4`](https://googlesheets4.tidyverse.org). This allows
+`tablespan` tables to be exported to a large number of formats:
 
-| Package       | Conversion Function                                                       | Description                                                                                                                                                       | Export Formats                                                                                                               |
-|---------------|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-| **gt**        | [`as_gt()`](https://jhorzek.github.io/tablespan/reference/as_gt.md)       | The **gt** package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout.        | HTML, PDF, PNG, LaTeX, RTF, Word ([docs](https://gt.rstudio.com/reference/gtsave.html))                                      |
-| **openxlsx**  | [`as_excel()`](https://jhorzek.github.io/tablespan/reference/as_excel.md) | The **openxlsx** package offers Excel file creation and manipulation. Great for reporting tables to end-users.                                                    | Excel ([docs](https://ycphs.github.io/openxlsx/index.html))                                                                  |
-| **flextable** | `as_flextable()`                                                          | **flextable** specializes in creating complex, publication-quality tables with extensive formatting capabilities. Integrates well with Word/PowerPoint workflows. | HTML, Word, RTF, PowerPoint, PDF, PNG ([docs](https://ardata-fr.github.io/flextable-book/rendering.html))                    |
-| **huxtable**  | `as_huxtable()`                                                           | **huxtable** provides a unified interface for creating tables in multiple output formats. Also provides styled printing to the console.                           | LaTeX, Typst, HTML, Word, Excel, RTF, markdown, console ([docs](https://hughjonesd.github.io/huxtable/reference/index.html)) |
+| Package           | Conversion Function                                                                                   | Description                                                                                                                                                                                                                                                                                                     | Export Formats                                                                                                               |
+|-------------------|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| –                 | [`as_string()`](https://jhorzek.github.io/tablespan/reference/as_string.md)                           | Exporting the table to string can be very useful for copy-pasting the table (e.g., to send in a message or use as input to an LLM).                                                                                                                                                                             | String                                                                                                                       |
+| **gt**            | [`as_gt()`](https://jhorzek.github.io/tablespan/reference/as_gt.md)                                   | The **gt** package (Great Tables) provides a grammar for creating publication-ready tables with fine-grained control over styling, formatting, and layout.                                                                                                                                                      | HTML, PDF, PNG, LaTeX, RTF, Word ([docs](https://gt.rstudio.com/reference/gtsave.html))                                      |
+| **openxlsx**      | [`as_excel()`](https://jhorzek.github.io/tablespan/reference/as_excel.md)                             | The **openxlsx** package offers Excel file creation and manipulation. Great for reporting tables to end-users.                                                                                                                                                                                                  | Excel ([docs](https://ycphs.github.io/openxlsx/index.html))                                                                  |
+| **googlesheets4** | [`as_googlesheet_request()`](https://jhorzek.github.io/tablespan/reference/as_googlesheet_request.md) | Using **googlesheets4** ([docs](https://googlesheets4.tidyverse.org)), **tablespan** tables can be directly exported into google sheets requests that can be executed with [`googlesheets4::request_make`](https://googlesheets4.tidyverse.org/reference/request_make.html). Experimental; use at your own risk | google sheets                                                                                                                |
+| **flextable**     | `as_flextable()`                                                                                      | **flextable** specializes in creating complex, publication-quality tables with extensive formatting capabilities. Integrates well with Word/PowerPoint workflows.                                                                                                                                               | HTML, Word, RTF, PowerPoint, PDF, PNG ([docs](https://ardata-fr.github.io/flextable-book/rendering.html))                    |
+| **huxtable**      | `as_huxtable()`                                                                                       | **huxtable** provides a unified interface for creating tables in multiple output formats. Also provides styled printing to the console.                                                                                                                                                                         | LaTeX, Typst, HTML, Word, Excel, RTF, markdown, console ([docs](https://hughjonesd.github.io/huxtable/reference/index.html)) |
 
 ## Installation
 
@@ -99,25 +102,20 @@ library(dplyr)
 data("mtcars")
 
 summarized_table <- mtcars |>
-  group_by(cyl, vs) |>
   summarise(N = n(),
             mean_hp = mean(hp),
             sd_hp = sd(hp),
             mean_wt = mean(wt),
-            sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+            sd_wt = sd(wt),
+            .by = c(cyl, vs))
 
 print(summarized_table, use_hux = FALSE)
-#> # A tibble: 5 × 7
-#> # Groups:   cyl [3]
-#>     cyl    vs     N mean_hp sd_hp mean_wt  sd_wt
-#>   <dbl> <dbl> <int>   <dbl> <dbl>   <dbl>  <dbl>
-#> 1     4     0     1    91   NA       2.14 NA    
-#> 2     4     1    10    81.8 21.9     2.30  0.598
-#> 3     6     0     3   132.  37.5     2.76  0.128
-#> 4     6     1     4   115.   9.18    3.39  0.116
-#> 5     8     0    14   209.  51.0     4.00  0.759
+#>   cyl vs  N  mean_hp    sd_hp  mean_wt     sd_wt
+#> 1   6  0  3 131.6667 37.52777 2.755000 0.1281601
+#> 2   4  1 10  81.8000 21.87236 2.300300 0.5982073
+#> 3   6  1  4 115.2500  9.17878 3.388750 0.1162164
+#> 4   8  0 14 209.2143 50.97689 3.999214 0.7594047
+#> 5   4  0  1  91.0000       NA 2.140000        NA
 ```
 
 We don’t want to share the table as is - the variable names are all a
@@ -144,12 +142,14 @@ library(tablespan)
 tablespan(data = summarized_table,
           formula = cyl ~ mean_hp + sd_hp) |>
   print(use_hux = FALSE)
+#> Warning in tablespan(data = summarized_table, formula = cyl ~ mean_hp + :
+#> Tablespan uses tibble internally. Translating data to tibble
 #>                         
 #>  | cyl | mean_hp sd_hp |
 #>  | --- - ------- ----- |
-#>  | 4   | 91            |
-#>  | 4   | 81.8    21.87 |
 #>  | 6   | 131.67  37.53 |
+#>  | 4   | 81.8    21.87 |
+#>  | 6   | 115.25  9.18  |
 #>  | ... | ...     ...   |
 ```
 
@@ -165,13 +165,15 @@ following defines a spanner for `mean_hp` and `sd_hp` with the name
 tablespan(data = summarized_table,
           formula = cyl ~ (Horsepower = mean_hp + sd_hp)) |>
   print(use_hux = FALSE)
+#> Warning in tablespan(data = summarized_table, formula = cyl ~ (Horsepower =
+#> mean_hp + : Tablespan uses tibble internally. Translating data to tibble
 #>                            
 #>  |     | Horsepower       |
 #>  | cyl | mean_hp    sd_hp |
 #>  | --- - ---------- ----- |
-#>  | 4   | 91               |
-#>  | 4   | 81.8       21.87 |
 #>  | 6   | 131.67     37.53 |
+#>  | 4   | 81.8       21.87 |
+#>  | 6   | 115.25     9.18  |
 #>  | ... | ...        ...   |
 ```
 
@@ -181,14 +183,17 @@ Spanners can also be nested:
 tablespan(data = summarized_table,
           formula = cyl ~ (Horsepower = (Mean = mean_hp) + (SD  = sd_hp))) |>
   print(use_hux = FALSE)
+#> Warning in tablespan(data = summarized_table, formula = cyl ~ (Horsepower =
+#> (Mean = mean_hp) + : Tablespan uses tibble internally. Translating data to
+#> tibble
 #>                            
 #>  |     | Horsepower       |
 #>  |     | Mean       SD    |
 #>  | cyl | mean_hp    sd_hp |
 #>  | --- - ---------- ----- |
-#>  | 4   | 91               |
-#>  | 4   | 81.8       21.87 |
 #>  | 6   | 131.67     37.53 |
+#>  | 4   | 81.8       21.87 |
+#>  | 6   | 115.25     9.18  |
 #>  | ... | ...        ...   |
 ```
 
@@ -206,13 +211,15 @@ achieved with `new_name:old_name`. For example,
 tablespan(data = summarized_table,
           formula = cyl ~ (Horsepower = Mean:mean_hp + SD:sd_hp)) |>
   print(use_hux = FALSE)
+#> Warning in tablespan(data = summarized_table, formula = cyl ~ (Horsepower =
+#> Mean:mean_hp + : Tablespan uses tibble internally. Translating data to tibble
 #>                            
 #>  |     | Horsepower       |
 #>  | cyl | Mean       SD    |
 #>  | --- - ---------- ----- |
-#>  | 4   | 91               |
-#>  | 4   | 81.8       21.87 |
 #>  | 6   | 131.67     37.53 |
+#>  | 4   | 81.8       21.87 |
+#>  | 6   | 115.25     9.18  |
 #>  | ... | ...        ...   |
 ```
 
@@ -227,14 +234,12 @@ library(tablespan)
 data("mtcars")
 
 summarized_table <- mtcars |>
-  group_by(cyl, vs) |>
   summarise(N = n(),
             mean_hp = mean(hp),
             sd_hp = sd(hp),
             mean_wt = mean(wt),
-            sd_wt = sd(wt))
-#> `summarise()` has grouped output by 'cyl'. You can override using the `.groups`
-#> argument.
+            sd_wt = sd(wt),
+            .by = c(cyl, vs))
 
 tbl <- tablespan(data = summarized_table,
                  formula = Cylinder:cyl + Engine:vs ~
@@ -244,6 +249,8 @@ tbl <- tablespan(data = summarized_table,
                  title = "Motor Trend Car Road Tests",
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
+#> Warning in tablespan(data = summarized_table, formula = Cylinder:cyl +
+#> Engine:vs ~ : Tablespan uses tibble internally. Translating data to tibble
 
 print(tbl, use_hux = FALSE)
 #> Motor Trend Car Road Tests
@@ -252,9 +259,9 @@ print(tbl, use_hux = FALSE)
 #>  |                 |     Horse Power       Weight      |
 #>  | Cylinder Engine | N   Mean        SD    Mean   SD   |
 #>  | -------- ------ - --  ----------- ----- ------ ---- |
-#>  | 4        0      | 1   91                2.14        |
-#>  | 4        1      | 10  81.8        21.87 2.3    0.6  |
 #>  | 6        0      | 3   131.67      37.53 2.76   0.13 |
+#>  | 4        1      | 10  81.8        21.87 2.3    0.6  |
+#>  | 6        1      | 4   115.25      9.18  3.39   0.12 |
 #>  | ...      ...    | ... ...         ...   ...    ...  |
 #> Data from the infamous mtcars data set.
 ```
@@ -269,13 +276,15 @@ defines:
 tablespan(data = summarized_table,
           formula = 1 ~ (Horsepower = Mean:mean_hp + SD:sd_hp)) |>
   print(use_hux = FALSE)
+#> Warning in tablespan(data = summarized_table, formula = 1 ~ (Horsepower =
+#> Mean:mean_hp + : Tablespan uses tibble internally. Translating data to tibble
 #>                      
 #>  | Horsepower       |
 #>  | Mean       SD    |
 #>  | ---------- ----- |
-#>  | 91               |
-#>  | 81.8       21.87 |
 #>  | 131.67     37.53 |
+#>  | 81.8       21.87 |
+#>  | 115.25     9.18  |
 #>  | ...        ...   |
 ```
 
@@ -434,24 +443,14 @@ table](reference/figures/tablespan_example_gt_cars_costum.png)
 ## Formatting
 
 In addition to applying specific styles to the table, you can also adapt
-the number formatting. The current setup is slightly more complicated
-because unifying all of the possible styles supported by `gt` and
-`openxlsx` is challenging.
+the number formatting.
 
 ``` r
 tbl |> 
   format_column(
         columns = dplyr::where(is.double),
         rows = 2:3,
-        # For great tables, we need a function that 
-        # takes in the table, columns, and rows and then
-        # applies the style
-        format_gt = function(x, columns, rows, ...) {
-          gt::fmt_number(x, columns = columns, rows = rows, decimals = 4)
-        },
-        # For openxlsx, we have to provide the style that will be passed
-        # to numFmt in openxlsx::createStyle
-        format_openxlsx = "0.0000"
+        fmt = format_number(decimals = 1)
       ) |> 
   as_gt()
 ```
@@ -521,6 +520,9 @@ spanner](reference/figures/tablespan_example_new_spanner.png)
 - openxlsx: Schauberger P, Walker A (2023). *openxlsx: Read, Write and
   Edit xlsx Files*. R package version 4.2.5.2,
   <https://ycphs.github.io/openxlsx/>.
+- googlesheets4: Bryan, J. (2025). *googlesheets4: Access Google Sheets
+  using the Sheets API V4*. R package version 1.1.2,
+  <https://CRAN.R-project.org/package=googlesheets4>.
 - flextable: Gohel D, Skintzos P (2025). *flextable: Functions for
   Tabular Reporting*. R package version 0.9.10,
   <https://CRAN.R-project.org/package=flextable>
