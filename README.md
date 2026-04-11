@@ -67,14 +67,15 @@ tbl |>
 
 This basic table can now be easily exported to other table formats.
 
-# R Packages for Table Conversion and Export
+# Table Conversion and Export
 
 `tablespan` builds on the awesome packages
 [`gt`](https://gt.rstudio.com/),
 [`openxlsx`](https://ycphs.github.io/openxlsx/) ,
 [`flextable`](https://ardata-fr.github.io/flextable-book/index.html),
-and [`huxtable`](https://hughjonesd.github.io/huxtable/index.html). This
-allows `tablespan` tables to be exported to a large number of formats:
+[`huxtable`](https://hughjonesd.github.io/huxtable/index.html), and
+[`googlesheets4`](https://googlesheets4.tidyverse.org). This allows
+`tablespan` tables to be exported to a large number of formats:
 
 | Package | Conversion Function | Description | Export Formats |
 |----|----|----|----|
