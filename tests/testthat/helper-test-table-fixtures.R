@@ -79,6 +79,11 @@ build_tablespan_test_tables <- function() {
 
     combined_models <- dplyr::full_join(model_1, model_2, by = "Parameter")
 
+    combined_models$`t value.x` <- round(combined_models$`t value.x`, 3)
+    combined_models$`t value.y` <- round(combined_models$`t value.y`, 3)
+    combined_models$`Pr(>|t|).x` <- round(combined_models$`Pr(>|t|).x`, 3)
+    combined_models$`Pr(>|t|).y` <- round(combined_models$`Pr(>|t|).y`, 3)
+
     tables$cars_duplicated_spanner_names <- dplyr::as_tibble(combined_models) |>
         tablespan::tablespan(
             formula = Parameter ~

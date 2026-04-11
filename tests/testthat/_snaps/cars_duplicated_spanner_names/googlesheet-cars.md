@@ -164,7 +164,7 @@
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
-        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0.000765
+        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0.001
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
@@ -176,7 +176,7 @@
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
-        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0.000765
+        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0.001
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. ..$ values:List of 7
@@ -194,7 +194,7 @@
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
-        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 2.52e-11
+        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
@@ -206,7 +206,7 @@
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
-        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 2.52e-11
+        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. ..$ values:List of 7
@@ -224,7 +224,7 @@
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
-        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0.0015
+        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0.001
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
@@ -236,7 +236,7 @@
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. .. .. .. ..$ :List of 1
         .. .. .. .. .. .. .. .. ..$ userEnteredValue:List of 1
-        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0.0015
+        .. .. .. .. .. .. .. .. .. ..$ numberValue: num 0.001
         .. .. .. .. .. .. .. .. ..- attr(*, "class")= chr [1:3] "googlesheets4_schema_CellData" "googlesheets4_schema" "list"
         .. .. .. .. ..$ fields: chr "userEnteredValue,userEnteredFormat"
         .. .. .. .. ..$ range :List of 5
