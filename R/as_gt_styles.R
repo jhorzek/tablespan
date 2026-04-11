@@ -7,7 +7,7 @@
 #'
 #' @returns a list with default styles for gt tables added to the input styles
 #' @noRd
-initialize_styles_gt <- function(tbl) {
+initialize_styles_gt <- function() {
   require_gt()
 
   styles <- list()

@@ -116,7 +116,8 @@ as_excel <- function(
     tbl = tbl,
     workbook = workbook,
     sheet = sheet,
-    locations = locations
+    locations = locations,
+    styles = styles
   )
 
   # We create the outlines last as we may have to overwrite some border colors.
