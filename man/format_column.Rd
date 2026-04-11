@@ -8,10 +8,7 @@ format_column(
   tbl,
   columns = dplyr::everything(),
   rows = NULL,
-  format_gt = gt::fmt_auto,
-  format_openxlsx = "GENERAL",
-  format_hux = NULL,
-  format_flex = NULL,
+  fmt,
   stack = TRUE
 )
 }
@@ -22,15 +19,8 @@ format_column(
 
 \item{rows}{indices of the rows which should be styled. When set to NULL, the style is applied to all rows}
 
-\item{format_gt}{formatting used for gt. This must be a function with the following signature: function(tbl, columns, rows, ...)
-and return the tbl with applied formatting. See examples.}
-
-\item{format_openxlsx}{an argument passed to the numFmt field for openxlsx::createStyle.}
-
-\item{format_hux}{set to NULL to use default formatting. Alternative, use a value that can be passed to huxtable::set_number_format()}
-
-\item{format_flex}{formatting used for flextable. Must be a function with the following signature: function(tbl, i, j, part) and
-must return the tbl object with applied formatting.}
+\item{fmt}{fromatting object. Use format_number to format numeric values, format_text for text elements, and format_date
+for dates.}
 
 \item{stack}{When set to TRUE, the style is added on top of the existing styles. This is mostly relevant
 for openxlsx. When set to FALSE, the new style replaces all previous styling.}
@@ -65,15 +55,11 @@ tbl <- tablespan(data = summarized_table,
                  subtitle = "A table created with tablespan",
                  footnote = "Data from the infamous mtcars data set.")
 
-if(require_gt(throw = FALSE))
+if(require_gt(throw = FALSE)){
 tbl |>
   format_column(columns = mean_hp,
                 rows = c(1,3),
-                format_gt = function(tbl, columns, rows, ...){
-                             return(gt::fmt_number(tbl,
-                                       columns = columns,
-                                       rows = rows,
-                                       decimals = 4))},
-                format_openxlsx = "0.0000") |>
+                fmt = format_number(decimals = 4)) |>
   as_gt()
+}
 }

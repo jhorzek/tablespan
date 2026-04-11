@@ -4,12 +4,14 @@
 \alias{style_hline}
 \title{style_hline}
 \usage{
-style_hline(tbl, openxlsx_style)
+style_hline(tbl, color = "#000000", ...)
 }
 \arguments{
 \item{tbl}{tablespan table}
 
-\item{openxlsx_style}{style used when exporting to openxlsx}
+\item{color}{used for the border}
+
+\item{...}{optional additional arguments. Currently not used}
 }
 \value{
 the tablespan table with added styles

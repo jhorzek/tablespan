@@ -14,7 +14,7 @@
 \item{...}{additional arguments passed to flextable::as_flextable}
 }
 \value{
-flextable that can be further adapted with the gt package.
+flextable that can be further adapted with the flextable package.
 }
 \description{
 Translates a table created with tablespan to a flextable. See <https://ardata-fr.github.io/flextable-book/>.

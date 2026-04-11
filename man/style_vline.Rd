@@ -4,12 +4,14 @@
 \alias{style_vline}
 \title{style_vline}
 \usage{
-style_vline(tbl, openxlsx_style)
+style_vline(tbl, color = "#000000", ...)
 }
 \arguments{
 \item{tbl}{tablespan table}
 
-\item{openxlsx_style}{style used when exporting to openxlsx}
+\item{color}{color used for the border}
+
+\item{...}{optional additional arguments. Currently not used}
 }
 \value{
 the tablespan table with added styles

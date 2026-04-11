@@ -7,7 +7,7 @@
 #' @param x table created with tablespan::tablespan
 #' @param theme a theme to apply to the flextable. Use one of the flextable::theme_* functions
 #' @param ... additional arguments passed to flextable::as_flextable
-#' @returns flextable that can be further adapted with the gt package.
+#' @returns flextable that can be further adapted with the flextable package.
 #' @exportS3Method flextable::as_flextable
 #' @method as_flextable Tablespan
 #' @examples
@@ -47,7 +47,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
     ...
   )
 
-  updated_tables <- flex_add_headers(x, tbl_flex)
+  updated_tables <- add_header_flex(x, tbl_flex)
   tbl_flex <- updated_tables$tbl_flex
   header_table <- updated_tables$header_table
   header_width <- updated_tables$header_width
@@ -71,7 +71,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
 
   tbl_flex <- flex_add_title(tbl = x, tbl_flex = tbl_flex)
 
-  tbl_flex <- flex_add_footnote(tbl = x, tbl_flex = tbl_flex)
+  tbl_flex <- add_footnote_flex(tbl = x, tbl_flex = tbl_flex)
 
   tbl_flex <- tbl_flex |>
     style_flex(tbl = x)
@@ -83,7 +83,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
 }
 
 
-#' flex_insert_header_entries
+#' insert_header_entries_flex
 #'
 #' Insert header entries into a matrix for flextable
 #'
@@ -94,7 +94,7 @@ as_flextable.Tablespan <- function(x, theme = flextable::theme_booktabs, ...) {
 #' @param header_width table with values encoding the width of each cell
 #' @returns header_table with entries
 #' @noRd
-flex_insert_header_entries <- function(
+insert_header_entries_flex <- function(
   header_partial,
   max_level,
   column_offset,
@@ -121,7 +121,7 @@ flex_insert_header_entries <- function(
   }
   if (!is.null(header_partial$entries)) {
     for (i in seq_along(header_partial$entries)) {
-      recursive_out <- flex_insert_header_entries(
+      recursive_out <- insert_header_entries_flex(
         header_partial = header_partial$entries[[i]],
         max_level = max_level,
         column_offset = column_offset,
@@ -136,7 +136,7 @@ flex_insert_header_entries <- function(
   return(list(header_table = header_table, header_width = header_width))
 }
 
-flex_add_headers <- function(tbl, tbl_flex) {
+add_header_flex <- function(tbl, tbl_flex) {
   require_flextable()
 
   if (!is.null(tbl$header$lhs)) {
@@ -166,7 +166,7 @@ flex_add_headers <- function(tbl, tbl_flex) {
   )
 
   if (!is.null(tbl$header$lhs)) {
-    header_table_width <- flex_insert_header_entries(
+    header_table_width <- insert_header_entries_flex(
       header_partial = tbl$header$lhs,
       max_level = max_level,
       column_offset = 1,
@@ -177,7 +177,7 @@ flex_add_headers <- function(tbl, tbl_flex) {
     header_width <- header_table_width$header_width
   }
 
-  header_table_width <- flex_insert_header_entries(
+  header_table_width <- insert_header_entries_flex(
     header_partial = tbl$header$rhs,
     max_level = max_level,
     column_offset = ifelse(
@@ -231,7 +231,7 @@ flex_add_title <- function(tbl, tbl_flex) {
   return(tbl_flex)
 }
 
-flex_add_footnote <- function(tbl, tbl_flex) {
+add_footnote_flex <- function(tbl, tbl_flex) {
   if (!is.null(tbl$footnote)) {
     tbl_flex <- flextable::add_footer_lines(tbl_flex, values = tbl$footnote)
   }
@@ -259,14 +259,17 @@ flex_add_footnote <- function(tbl, tbl_flex) {
 #' @noRd
 style_flex <- function(tbl, tbl_flex) {
   require_flextable()
+
+  styles <- flex_set_styles(tbl = tbl)
+
   # Style the title
-  if (!is.null(tbl$styles$title$flex) & !is.null(tbl$title)) {
-    for (sty in tbl$styles$title$flex) {
+  if (!is.null(styles$title$flex) & !is.null(tbl$title)) {
+    for (sty in styles$title$flex) {
       tbl_flex <- sty(tbl_flex, row = 1, col = NULL, part = "header")
     }
   }
-  if (!is.null(tbl$styles$subtitle$flex) & !is.null(tbl$subtitle)) {
-    for (sty in tbl$styles$subtitle$flex) {
+  if (!is.null(styles$subtitle$flex) & !is.null(tbl$subtitle)) {
+    for (sty in styles$subtitle$flex) {
       tbl_flex <- sty(
         tbl_flex,
         row = 1 * (!is.null(tbl$title)) + 1 * (!is.null(tbl$subtitle)),
@@ -276,8 +279,8 @@ style_flex <- function(tbl, tbl_flex) {
     }
   }
 
-  if (!is.null(tbl$styles$footnote$flex) & !is.null(tbl$footnote)) {
-    for (sty in tbl$styles$footnote$flex) {
+  if (!is.null(styles$footnote$flex) & !is.null(tbl$footnote)) {
+    for (sty in styles$footnote$flex) {
       tbl_flex <- sty(
         tbl_flex,
         row = 1,
@@ -287,7 +290,7 @@ style_flex <- function(tbl, tbl_flex) {
     }
   }
 
-  if (!is.null(tbl$styles$header$flex)) {
+  if (!is.null(styles$header$flex)) {
     start_header <- 1 * (!is.null(tbl$title)) + 1 * (!is.null(tbl$subtitle)) + 1
     if (!is.null(tbl$header$lhs)) {
       end_header <- 1 *
@@ -302,7 +305,7 @@ style_flex <- function(tbl, tbl_flex) {
         tbl$header$rhs$level -
         1
     }
-    for (sty in tbl$styles$header$flex) {
+    for (sty in styles$header$flex) {
       tbl_flex <- sty(
         tbl_flex,
         row = start_header:end_header,
@@ -313,8 +316,8 @@ style_flex <- function(tbl, tbl_flex) {
   }
 
   # Apply any custom styles
-  for (column_name in names(tbl$styles$columns)) {
-    for (c_style in tbl$styles$columns[[column_name]]) {
+  for (column_name in names(styles$columns)) {
+    for (c_style in styles$columns[[column_name]]) {
       if (is.null(c_style$style$flex)) {
         next
       }
@@ -335,9 +338,11 @@ style_flex <- function(tbl, tbl_flex) {
 
   # Apply custom formatting to columns
   # Apply formats
-  for (column_name in names(tbl$formats$columns)) {
-    for (c_format in tbl$formats$columns[[column_name]]) {
-      if (is.null(c_format$format$flex)) {
+  formats <- get_formats_flex(tbl = tbl)
+
+  for (column_name in names(formats$columns)) {
+    for (c_format in formats$columns[[column_name]]) {
+      if (is.null(c_format$flex)) {
         next
       }
 
@@ -348,7 +353,7 @@ style_flex <- function(tbl, tbl_flex) {
         rows <- c_format$rows
       }
       tbl_flex <- tbl_flex |>
-        c_format$format$flex(col = column_name, row = rows, part = "body")
+        c_format$flex(row = rows, col = column_name, part = "body")
     }
   }
 
@@ -374,4 +379,19 @@ require_flextable <- function(throw = TRUE) {
     return(FALSE)
   }
   return(TRUE)
+}
+
+flex_set_styles <- function(tbl) {
+  flex_styles <- initialize_styles_flex() |>
+    style_title_flex(flex_styles = _, tbl = tbl) |>
+    style_subtitle_flex(tbl = tbl) |>
+    style_header_flex(tbl = tbl) |>
+    style_header_cells_flex(tbl = tbl) |>
+    style_vline_flex(tbl = tbl) |>
+    style_hline_flex(tbl = tbl) |>
+    style_footnote_flex(tbl = tbl)
+
+  flex_styles <- style_column_flex(flex_styles = flex_styles, tbl = tbl)
+
+  return(flex_styles)
 }

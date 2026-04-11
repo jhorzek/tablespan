@@ -20,8 +20,8 @@ create_test_files_cars <- function() {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -45,7 +45,7 @@ create_test_files_cars <- function() {
     data = summarized_table_merge,
     formula = Cylinder:cyl + Engine:vs + N ~
       (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
@@ -148,7 +148,7 @@ create_test_files_cars <- function() {
     tbl = tbl |>
       format_column(
         columns = dplyr::where(is.double),
-        format_openxlsx = "0.00000"
+        fmt = format_number(decimals = 5)
       )
   )
 
@@ -275,8 +275,8 @@ create_test_files_cars <- function() {
     data = summarized_table,
     formula = Cylinder:cyl + Engine:vs ~
       N +
-        (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
-        (`Weight` = Mean:mean_wt + SD:sd_wt),
+      (`Horse Power` = Mean:mean_hp + SD:sd_hp) +
+      (`Weight` = Mean:mean_wt + SD:sd_wt),
     title = "Motor Trend Car Road Tests",
     subtitle = "A table created with tablespan",
     footnote = "Data from the infamous mtcars data set."
