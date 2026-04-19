@@ -419,27 +419,6 @@ tbl |>
 ![Standard
 table](reference/figures/tablespan_example_gt_cars_footnote.png)
 
-### Custom styles
-
-The current interface only exports a small amount of the styles
-available in `gt` and `openxlsx`. However, you can also provide custom
-styles:
-
-``` r
-tbl |> 
-  style_column(
-    columns = dplyr::where(is.double),
-    # custom style for the gt table export:
-    gt_style = gt::cell_text(decorate = "underline"),
-    # custom style for the excel table export:
-    openxlsx_style = openxlsx::createStyle(textDecoration = "underline")
-  ) |> 
-  as_gt()
-```
-
-![Standard
-table](reference/figures/tablespan_example_gt_cars_costum.png)
-
 ## Formatting
 
 In addition to applying specific styles to the table, you can also adapt
